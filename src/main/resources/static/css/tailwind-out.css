@@ -592,6 +592,11 @@ video {
   visibility: collapse;
 }
 
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .mb-0 {
   margin-bottom: 0px;
 }
@@ -620,8 +625,16 @@ video {
   margin-inline-end: auto;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .table {
   display: table;
+}
+
+.hidden {
+  display: none;
 }
 
 .w-auto {

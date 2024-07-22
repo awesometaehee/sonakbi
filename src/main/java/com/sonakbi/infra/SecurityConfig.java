@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         http.formLogin(form -> form.loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/", true) // 로그인 시 /error?continue 페이지 이동 현상 해결
                 .permitAll());
         http.logout(logout -> logout.logoutSuccessUrl("/"));
         http.rememberMe(remember -> remember

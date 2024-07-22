@@ -75,7 +75,7 @@
     <div class="collapse navbar-collapse">
         <div class="me-auto"></div>
         <ul class="navbar-nav me-2">
-            <li class="nav-item">
+            <li class="nav-item" sec:authorize="isAuthenticated()">
                 <a class="nav-link" th:href="@{/}">
                     <i class="fa fa-bell-o" aria-hidden="true"></i>
                 </a>
@@ -94,17 +94,20 @@
                 새 글 작성
             </a>
         </div>
-        <div sec:authorize="isAuthenticated()" class="round shadow-effect dropdown">
+        <div sec:authorize="isAuthenticated()" class="dropdown">
             <a class="dropdown-toggle d-block" href="#" data-bs-toggle="dropdown"
                style="width:37px; height:37px">
-                <img class="w-100 h-100" th:src="${account?.profileImage}" alt="profile-image" />
+                <img class="w-100 h-100 round shadow-effect" th:src="${account?.profileImage}" alt="profile-image" />
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li>
-                    <a class="dropdown-item" th:href="@{/}">내 블로그</a>
+                    <span class="text-secondary fs-7 dropdown-item" th:text="${account.userId}">admin</span>
                 </li>
                 <li>
-                    <a class="dropdown-item" th:href="@{/}">내 정보 수정</a>
+                    <a class="dropdown-item" th:href="@{/blog}">내 블로그</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/profile}">내 정보 수정</a>
                 </li>
                 <li>
                     <form th:action="@{/logout}" method="post">

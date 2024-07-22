@@ -22,6 +22,12 @@ public class Account {
 
     private String password;
 
+    private String url;
+
+    private String location;
+
+    private String company;
+
     @Lob @Basic(fetch = FetchType.EAGER)
     private String profileImage;
 
