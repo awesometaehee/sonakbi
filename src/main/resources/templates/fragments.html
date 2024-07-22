@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>sonakbi</title>
+    <!--<link rel="stylesheet" th:href="@{/css/tailwind-out.css}" />-->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:300,400,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css" />
+
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .container {
+            max-width: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        a {
+            text-decoration: none !important;
+        }
+
+        a.form-text:hover {
+            text-decoration: underline !important;
+        }
+
+        body,
+        input,
+        button,
+        select,
+        optgroup,
+        textarea,
+        .tooltip,
+        .popover {
+            font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+        table th {
+            font-weight: lighter;
+        }
+
+        .fs-7 {
+            font-size:0.75rem;
+        }
+
+        .round {
+            border-radius: 50%;
+        }
+
+        .shadow-effect {
+            transition:0.2s ease;
+        }
+
+        .shadow-effect:hover {
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+
+        .dropdown-toggle::after {
+            display:none !important;
+        }
+    </style>
+</head>
+
+<nav th:fragment="main-nav" class="navbar navbar-expand-sm px-4 border border-bottom">
+    <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+        <h4 class="text-black mb-0">ihatethislovesong.</h4>
+    </a>
+    <div class="collapse navbar-collapse">
+        <div class="me-auto"></div>
+        <ul class="navbar-nav me-2">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/}">
+                    <i class="fa fa-bell-o" aria-hidden="true"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/}">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+        <div class="me-3">
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-dark fs-7">
+                시작하기
+            </a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/}" class="btn btn-dark fs-7">
+                새 글 작성
+            </a>
+        </div>
+        <div sec:authorize="isAuthenticated()" class="round shadow-effect dropdown">
+            <a class="dropdown-toggle d-block" href="#" data-bs-toggle="dropdown"
+               style="width:37px; height:37px">
+                <img class="w-100 h-100" th:src="${account?.profileImage}" alt="profile-image" />
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" th:href="@{/}">내 블로그</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" th:href="@{/}">내 정보 수정</a>
+                </li>
+                <li>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="dropdown-item" th:href="@{/logout}">로그아웃</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script type="application/javascript" th:fragment="form-validation">
+    (function () {
+        'use strict';
+
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        }, false)
+    }())
+</script>
+
+</html>
