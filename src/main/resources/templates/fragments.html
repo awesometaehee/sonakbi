@@ -25,6 +25,7 @@
 
         a {
             text-decoration: none !important;
+            color:#000 !important;
         }
 
         a.form-text:hover {
@@ -46,6 +47,10 @@
             font-weight: lighter;
         }
 
+        p {
+            margin:0 !important;
+        }
+
         .fs-7 {
             font-size:0.75rem;
         }
@@ -64,6 +69,24 @@
 
         .dropdown-toggle::after {
             display:none !important;
+        }
+
+        .blog-nav .nav-item {
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+        }
+
+        .blog-nav .nav-item .nav-link {
+            width:128px;
+            height:48px;
+            font-size:19px;
+        }
+
+        .blog-nav .nav-item .nav-link.active {
+            color:#20c997 !important;
+            border-bottom:2px solid #20c997;
         }
     </style>
 </head>
@@ -90,7 +113,7 @@
             <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-dark fs-7">
                 시작하기
             </a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/}" class="btn btn-dark fs-7">
+            <a sec:authorize="isAuthenticated()" th:href="@{/}" class="btn btn-dark fs-7 text-white">
                 새 글 작성
             </a>
         </div>
@@ -104,7 +127,7 @@
                     <span class="text-secondary fs-7 dropdown-item" th:text="${account.userId}">admin</span>
                 </li>
                 <li>
-                    <a class="dropdown-item" th:href="@{/blog}">내 블로그</a>
+                    <a class="dropdown-item" th:href="@{/blog/post}">내 블로그</a>
                 </li>
                 <li>
                     <a class="dropdown-item" th:href="@{/profile}">내 정보 수정</a>
@@ -118,6 +141,29 @@
         </div>
     </div>
 </nav>
+
+<div class="py-5 d-flex align-items-center" th:fragment="about">
+    <img class="round" style="width: 180px; height:180px" th:src="${account?.profileImage}" alt="profile-image" />
+    <div class="ms-3">
+        <p class="fs-4 fw-bold mb-2" th:text="${account.userId}">아이디</p>
+        <a class="fs-7 fw-light mb-4 text-primary" th:text="${account.url}" th:attr="href=${account.url}" target="_blank">url</a>
+        <p class="fs-6 fw-light" th:text="${account.shortDescription}">자기소개</p>
+    </div>
+</div>
+
+<div th:fragment="blog-menu (curMenu)">
+    <ul class="nav justify-content-center blog-nav">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${curMenu == 'post'} ? active" th:href="@{/blog/post}">글</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${curMenu == 'series'} ? active" th:href="@{/blog/series}">시리즈</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${curMenu == 'about'} ? active" th:href="@{/blog/about}">소개</a>
+        </li>
+    </ul>
+</div>
 
 <script type="application/javascript" th:fragment="form-validation">
     (function () {

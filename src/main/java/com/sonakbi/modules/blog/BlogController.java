@@ -12,10 +12,24 @@ public class BlogController {
     private static final String BLOG_URL = "/blog";
     private static final String BLOG = "blog";
 
-    @GetMapping(BLOG_URL)
-    public String myBlogForm(@CurrentAccount Account account, Model model) {
+    @GetMapping(BLOG_URL + "/post")
+    public String myPostForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
 
-        return BLOG + "/blog";
+        return BLOG + "/post";
+    }
+
+    @GetMapping(BLOG_URL + "/series")
+    public String mySeriesForm(@CurrentAccount Account account, Model model) {
+        model.addAttribute(account);
+
+        return BLOG + "/series";
+    }
+
+    @GetMapping(BLOG_URL + "/about")
+    public String myAboutForm(@CurrentAccount Account account, Model model) {
+        model.addAttribute(account);
+
+        return BLOG + "/about";
     }
 }
