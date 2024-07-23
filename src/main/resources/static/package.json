@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@toast-ui/editor": "^3.2.2",
     "bootstrap": "^5.3.3",
     "cropper": "^4.1.0",
     "font-awesome": "^4.7.0",

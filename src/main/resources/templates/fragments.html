@@ -113,7 +113,7 @@
             <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-dark fs-7">
                 시작하기
             </a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/}" class="btn btn-dark fs-7 text-white">
+            <a sec:authorize="isAuthenticated()" th:href="@{/editor/write}" class="btn btn-dark fs-7 text-white">
                 새 글 작성
             </a>
         </div>

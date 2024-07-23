@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+
+<body>
+    <div th:replace="fragments :: main-nav"></div>
+
+    <form>
+        <div>
+            <label for="editTitle"></label>
+            <input id="editTitle" type="text" />
+        </div>
+        <div id="editor"></div>
+    </form>
+
+    <!--toast-editor는 cdn을 사용해야함... -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+
+    <script>
+        const Editor = toastui.Editor;
+        const editor = new Editor({
+            el: document.querySelector('#editor'),
+            height: '500px',
+            initialEditType: 'markdown',
+            previewStyle: 'vertical'
+        });
+
+        editor.getMarkdown();
+    </script>
+</body>
+
+</html>
