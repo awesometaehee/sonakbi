@@ -2,48 +2,52 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments :: head"></head>
 <body>
+<div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
-    <div class="py-5 text-center">
-        <h2>계정 만들기</h2>
+    <div class="container" style="margin-top:58px;">
+        <div class="py-5 text-center">
+            <h2>계정 만들기</h2>
+        </div>
+        <div class="row justify-content-center">
+            <form class="needs-validation col-sm-6" th:action="@{/sign-up}" th:object="${signUpForm}"
+                  method="post" novalidate>
+                <div class="mb-3">
+                    <label for="email">이메일</label>
+                    <input type="text" id="email" th:field="*{email}" class="form-control"
+                           aria-describedby="emailHelp" required />
+                    <small id="emailHelp" class="form-text text-muted d-block">
+                        이 블로그는 사용자의 이메일을 공개하지 않습니다.
+                    </small>
+                    <small class="invalid-feedback">이메일을 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</small>
+                </div>
+                <div class="mb-3">
+                    <label for="userId">아이디</label>
+                    <input type="text" id="userId" th:field="*{userId}" class="form-control"
+                           minlength="3" maxlength="20" aria-describedby="userIdHelp" required />
+                    <small id="userIdHelp" class="form-text text-muted d-block">
+                        공백없이 문자와 숫자로만 3자 이상 20자 이내로 입력하세요. 가입 후에 변경할 수 있습니다.
+                    </small>
+                    <small class="invalid-feedback">아이디를 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}">userId Error</small>
+                </div>
+                <div class="mb-3">
+                    <label for="userPassword">패스워드</label>
+                    <input type="password" id="userPassword" th:field="*{userPassword}" class="form-control"
+                           minlength="8" maxlength="20" aria-describedby="userPasswordHelp" required/>
+                    <small id="userPasswordHelp" class="form-text text-muted d-block">
+                        8자 이상 20자 이내로 입력하세요. 영문자, 숫자, 특수기호를 사용할 수 있으며 공백은 사용할 수 없습니다.
+                    </small>
+                    <small class="invalid-feedback">패스워드를 입력하세요.</small>
+                    <small class="form-text text-danger" th:if="${#fields.hasErrors('userPassword')}" th:errors="*{userPassword}">userId Error</small>
+                </div>
+                <div class="mb-4">
+                    <button class="btn btn-dark btn-block w-100" type="submit">회원가입</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="row justify-content-center">
-        <form class="needs-validation col-sm-6" th:action="@{/sign-up}" th:object="${signUpForm}"
-              method="post" novalidate>
-            <div class="mb-3">
-                <label for="email">이메일</label>
-                <input type="text" id="email" th:field="*{email}" class="form-control"
-                       aria-describedby="emailHelp" required />
-                <small id="emailHelp" class="form-text text-muted d-block">
-                    이 블로그는 사용자의 이메일을 공개하지 않습니다.
-                </small>
-                <small class="invalid-feedback">이메일을 입력하세요.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</small>
-            </div>
-            <div class="mb-3">
-                <label for="userId">아이디</label>
-                <input type="text" id="userId" th:field="*{userId}" class="form-control"
-                       minlength="3" maxlength="20" aria-describedby="userIdHelp" required />
-                <small id="userIdHelp" class="form-text text-muted d-block">
-                    공백없이 문자와 숫자로만 3자 이상 20자 이내로 입력하세요. 가입 후에 변경할 수 있습니다.
-                </small>
-                <small class="invalid-feedback">아이디를 입력하세요.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}">userId Error</small>
-            </div>
-            <div class="mb-3">
-                <label for="userPassword">패스워드</label>
-                <input type="password" id="userPassword" th:field="*{userPassword}" class="form-control"
-                       minlength="8" maxlength="20" aria-describedby="userPasswordHelp" required/>
-                <small id="userPasswordHelp" class="form-text text-muted d-block">
-                    8자 이상 20자 이내로 입력하세요. 영문자, 숫자, 특수기호를 사용할 수 있으며 공백은 사용할 수 없습니다.
-                </small>
-                <small class="invalid-feedback">패스워드를 입력하세요.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('userPassword')}" th:errors="*{userPassword}">userId Error</small>
-            </div>
-            <div class="mb-4">
-                <button class="btn btn-dark btn-block w-100" type="submit">회원가입</button>
-            </div>
-        </form>
-    </div>
+</div>
 </body>
 <script th:replace="fragments :: form-validation"></script>
 </html>

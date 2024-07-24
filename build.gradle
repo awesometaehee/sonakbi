@@ -12,6 +12,7 @@ node {
     nodeProjectDir = file("${projectDir}/src/main/resources/static")
 }
 
+/*
 def tailwindCss = tasks.register('tailwindcss', NpxTask) {
     command = 'tailwind'
     args = ['-i', "${projectDir}/src/main/resources/static/tailwinds.css", '-o', "${projectDir}/src/main/resources/static/css/tailwind-out.css"]
@@ -21,6 +22,7 @@ def tailwindCss = tasks.register('tailwindcss', NpxTask) {
 tasks.processResources {
     dependsOn(tailwindCss)
 }
+*/
 
 group = 'com.sonakbi'
 version = '0.0.1-SNAPSHOT'
