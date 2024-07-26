@@ -64,7 +64,7 @@ public class AccountController {
         return "login";
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/{userId}/profile")
     public String profileForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute("profileForm", modelMapper.map(account, ProfileForm.class));

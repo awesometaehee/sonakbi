@@ -6,8 +6,11 @@ import com.sonakbi.modules.tag.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,33 +20,45 @@ import java.util.Set;
 @AllArgsConstructor @NoArgsConstructor
 public class Editor {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Size(min = 1, max = 100)
     @Column(nullable = false)
     private String title;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column(nullable = false)
     private String mainText;
 
-    @OneToOne
+    @Size(max = 150)
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
     private Account writer;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String url;
 
     @ManyToMany
-    private Set<Tag> tags;
+    private List<Tag> tags;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String thumbnail;
 
-    private boolean disclosure;
+    private boolean disclosure = true;
 
     @ManyToMany
-    private Set<Series> series;
+    private List<Series> series;
 
     private LocalDateTime publishedTime;
+
+    public void setWrite(Account account) {
+        this.writer = account;
+        this.publishedTime = LocalDateTime.now();
+    }
 }
