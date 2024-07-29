@@ -1,16 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments :: head"></head>
 <body>
 <div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
     <div class="container" style="margin-top:58px;">
         <div class="w-50 mx-auto">
-            <div th:text="${editor.title}"></div>
-            <div th:utext="${editor.mainText}"></div>
-            <div class="before-time" th:text="${editor.publishedTime}"></div>
+            <div style="margin-top:130px; margin-bottom:40px">
+                <h1 th:text="${editor.title}"></h1>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <div>
+                    <a class="text-dark underline"
+                       th:href="@{'/blog/' + ${editor.writer.userId} + '/post'}" th:text="${editor.writer.userId}"></a> ⋅
+                    <span class="before-time" th:text="${editor.publishedTime}"></span>
+                </div>
+                <div sec:authorize="isAuthenticated()" th:if="${editor.isWriter(#authentication.principal)}">
+                    <a class="text-muted me-2" th:href="@{/editor/modify}">수정</a>
+                    <a class="text-muted" th:href="@{/editor/delete}">삭제</a>
+                </div>
+            </div>
+            <div style="margin-bottom: 50px">
+                <span class="badge rounded-pill bg-dark me-2" th:each="tag : ${editor.tags}">
+                    <a th:text="${tag.value}"></a>
+                </span>
+            </div>
+            <div id="viewer"></div>
+            <div style="margin-top:16rem; margin-bottom:6rem;">
+                <div class="d-flex align-items-center mb-5">
+                    <img class="round" style="width: 150px; height:150px" th:src="${editor.writer.profileImage}" alt="profile-image" />
+                    <div class="ms-3 mb-4">
+                        <p class="fw-bold mb-2">
+                            <a class="text-dark underline"
+                               th:href="@{'/blog/' + ${editor.writer.userId} + '/post'}" th:text="${editor.writer.userId}"></a>
+                        </p>
+                        <p class="fw-light" th:text="${editor.writer.shortDescription}">자기소개</p>
+                    </div>
+                </div>
+                <hr />
+            </div>
         </div>
     </div>
+</div>
+
+<link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/dist/toastui-editor-viewer.css">
+<script src="https://uicdn.toast.com/tui-editor/dist/toastui-editor-viewer.min.js"></script>
+
+<script type="application/javascript" th:inline="javascript">
+    $(function() {
+        const $mainText = [[${editor.mainText}]];
+
+        new toastui.Editor.factory({
+            el : document.querySelector('#viewer'),
+            initialValue: $mainText,
+            viewer: true
+        })
+    })
+
+</script>
+
 </body>
 <script th:replace="fragments :: change-time-ago"></script>
 </html>

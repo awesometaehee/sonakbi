@@ -1,6 +1,7 @@
 package com.sonakbi.modules.editor;
 
 import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.account.UserAccount;
 import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.tag.Tag;
 import jakarta.persistence.*;
@@ -60,5 +61,9 @@ public class Editor {
     public void setWrite(Account account) {
         this.writer = account;
         this.publishedTime = LocalDateTime.now();
+    }
+
+    public boolean isWriter(UserAccount userAccount) {
+        return this.writer.equals(userAccount.getAccount());
     }
 }

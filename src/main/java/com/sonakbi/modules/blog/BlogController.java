@@ -1,6 +1,7 @@
 package com.sonakbi.modules.blog;
 
 import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorService;
@@ -9,41 +10,52 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import static com.sonakbi.modules.blog.BlogController.BLOG_URL;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping(BLOG_URL + "/{userId}")
 public class BlogController {
 
     private final EditorService editorService;
+    private final AccountService accountService;
 
-    private static final String BLOG_URL = "/blog";
-    private static final String BLOG = "blog";
+    public static final String BLOG_URL = "/blog";
+    public static final String BLOG = "blog";
 
-    @GetMapping(BLOG_URL + "/{userId}/post")
+    @GetMapping("/post")
     public String myPostForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
         model.addAttribute(account);
+        Account accountInfo = accountService.getAccountInfo(userId);
+        model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("postList", editorService.getEditorList(accountInfo));
 
         return BLOG + "/post";
     }
 
-    @GetMapping(BLOG_URL + "/{userId}/series")
-    public String mySeriesForm(@CurrentAccount Account account, Model model) {
+    @GetMapping("/series")
+    public String mySeriesForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
         model.addAttribute(account);
+        model.addAttribute("accountInfo", accountService.getAccountInfo(userId));
 
         return BLOG + "/series";
     }
 
-    @GetMapping(BLOG_URL + "/{userId}/about")
-    public String myAboutForm(@CurrentAccount Account account, Model model) {
+    @GetMapping("/about")
+    public String myAboutForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
         model.addAttribute(account);
+        model.addAttribute("accountInfo", accountService.getAccountInfo(userId));
 
         return BLOG + "/about";
     }
 
-    @GetMapping(BLOG_URL + "/{userId}/view/{url}")
+    @GetMapping("/view/{url}")
     public String viewForm(@CurrentAccount Account account, Model model,
                            @PathVariable String userId, @PathVariable String url) {
-        Editor editor = editorService.getEditor(url);
+
+        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
         model.addAttribute(account);
         model.addAttribute(editor);
 

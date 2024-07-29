@@ -70,6 +70,6 @@ public class EditorController {
             e.printStackTrace();
         }
 
-        return "redirect:/blog/" + account.getUserId() + "/view/" + editorForm.getUrl();
+        return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editorForm.getUrl();
     }
 }

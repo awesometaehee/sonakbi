@@ -1,10 +1,8 @@
 package com.sonakbi.modules.editor;
 
 import com.sonakbi.modules.account.Account;
-import com.sonakbi.modules.editor.form.EditorForm;
 import com.sonakbi.modules.tag.Tag;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +22,8 @@ public class EditorService {
         editorRepository.save(editor);
     }
 
-    public Editor getEditor(String url) {
-        Editor editor = editorRepository.findByUrl(url);
+    public Editor getEditor(String url, Account writer) {
+        Editor editor = editorRepository.findEditorWithTagsByUrl(url, writer.getUserId());
         checkIfExistingEditor(url, editor);
         return editor;
     }
@@ -34,5 +32,9 @@ public class EditorService {
         if(editor == null) {
             throw new IllegalArgumentException(url + "에 해당하는 글이 없습니다.");
         }
+    }
+
+    public List<Editor> getEditorList(Account writer) {
+        return editorRepository.findEditorByWriter(writer);
     }
 }

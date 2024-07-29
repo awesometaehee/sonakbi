@@ -4,7 +4,12 @@ package com.sonakbi.modules.account;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Entity
 @Getter @Setter
@@ -39,5 +44,9 @@ public class Account {
 
     public String getProfileImage() {
         return profileImage == null ? "/images/account-icon.png" : profileImage;
+    }
+
+    public String getAccountPath(String path) {
+        return URLDecoder.decode(path, UTF_8);
     }
 }

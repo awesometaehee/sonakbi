@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@toast-ui/editor": "^3.2.2",
     "@yaireo/tagify": "^4.27.0",
     "bootstrap": "^5.3.3",
     "cropper": "^4.1.0",

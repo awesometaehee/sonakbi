@@ -19,8 +19,10 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String value;
 
+    /*
     @Override
     public String toString() {
-        return "TagString{" + "value='" + value + '\'' + '}';
+        return "Tag{" + "value='" + value + '\'' + '}';
     }
+    */
 }

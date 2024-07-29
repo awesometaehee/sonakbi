@@ -70,4 +70,11 @@ public class AccountService implements UserDetailsService {
         modelMapper.map(profileForm, account);
         accountRepository.save(account);
     }
+
+    public Account getAccountInfo(String userId) {
+        if(!accountRepository.existsByUserId(userId)) {
+            throw new IllegalArgumentException(userId + "에 해당하는 아이디가 없습니다.");
+        }
+        return accountRepository.findByUserId(userId);
+    }
 }

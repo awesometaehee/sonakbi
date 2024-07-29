@@ -15,6 +15,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -71,8 +72,8 @@ public class AccountController {
         return "account/profile";
     }
 
-    @PostMapping("/profile")
-    public String profileFormSubmit(@CurrentAccount Account account, @Valid ProfileForm profileForm, Errors errors, Model model, RedirectAttributes attributes) {
+    @PostMapping("/{userId}/profile")
+    public String profileFormSubmit(@CurrentAccount Account account, @PathVariable String userId, @Valid ProfileForm profileForm, Errors errors, Model model, RedirectAttributes attributes) {
         if(errors.hasErrors()) {
             model.addAttribute(account);
             return "account/profile";
@@ -80,6 +81,7 @@ public class AccountController {
 
         accountService.updateProfile(account, profileForm);
         attributes.addFlashAttribute("message", "프로필을 수정헀습니다.");
-        return "redirect:/profile";
+        return "redirect:/" + account.getAccountPath(userId) + "/profile";
+
     }
 }

@@ -101,35 +101,9 @@
         </form>
     </div>
 
-    <!--toast-editor는 cdn을 사용해야함... -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-    <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css"/>
-
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-    <script src="/node_modules/@yaireo/tagify/dist/tagify.js"></script>
-
-    <script th:replace="fragments :: ajax-csrf-header"></script>
+    <script src="/js/editor.js"></script>
     <script type="application/javascript">
         $(function() {
-            // *************** toast editor **************
-            const Editor = toastui.Editor;
-            const editor = new Editor({
-                el: document.querySelector('#editor'),
-                height: '100%',
-                initialEditType: 'markdown',
-                previewStyle: 'vertical'
-            });
-            let $mainText = $('#mainText');
-            const $publishedBtn = $('#publishedBtn');
-
-            editor.getMarkdown();
-
-            document.querySelector('#mainText').insertAdjacentHTML('afterbegin' ,editor.getHTML());
-            $publishedBtn.click(function() {
-                $mainText.val(editor.getHTML());
-            })
-
-            // ******************************************
 
             // *************** tagify js ***************
             let input = document.querySelector("#tags");
@@ -203,24 +177,6 @@
 
                     reader.readAsDataURL(e.target.files[0]);
                 }
-            }
-
-            function fn_publishedRequest(param) {
-                $.ajax({
-                    method : 'POST',
-                    url : '/editor/write',
-                    contentType: "application/json; charset=utf-8",
-                    dataType : 'json',
-                    data : JSON.stringify(param),
-                    success : function(data, textStatus, jqXHR) {
-                        if (jqXHR.status === 302) {
-                            window.location.href = jqXHR.getResponseHeader('Location');
-                        }
-                    },
-                    error : function(jqXHR, textStatus, errorThrown) {
-                        console.error('Error:', textStatus, errorThrown);
-                    }
-                })
             }
         })
 
