@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
 import com.sonakbi.modules.editor.form.EditorForm;
 import com.sonakbi.modules.editor.validator.EditorValidator;
@@ -17,15 +18,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
+import static com.sonakbi.modules.editor.EditorController.EDITOR_URL;
+
 @Controller
 @RequiredArgsConstructor
+@RequestMapping(EDITOR_URL)
 public class EditorController {
 
     private final EditorService editorService;
@@ -34,8 +36,9 @@ public class EditorController {
     private final SeriesService seriesService;
     private final ObjectMapper objectMapper;
     private final EditorValidator editorValidator;
+    private final AccountService accountService;
 
-    private static final String EDITOR_URL = "/editor";
+    public static final String EDITOR_URL = "/editor";
     private static final String EDITOR = "editor";
 
     @InitBinder("editorForm")
@@ -43,7 +46,7 @@ public class EditorController {
         webDataBinder.addValidators(editorValidator);
     }
 
-    @GetMapping(EDITOR_URL + "/write")
+    @GetMapping("/write")
     public String writeForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute("editorForm", new EditorForm());
@@ -51,7 +54,7 @@ public class EditorController {
         return EDITOR + "/write";
     }
 
-    @PostMapping(EDITOR_URL + "/write")
+    @PostMapping("/write")
     public String writeFormSubmit(@CurrentAccount Account account, @Valid EditorForm editorForm,
                                   Errors errors, Model model) throws JsonProcessingException {
         if(errors.hasErrors()) {
@@ -71,5 +74,15 @@ public class EditorController {
         }
 
         return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editorForm.getUrl();
+    }
+
+    @GetMapping("/{userId}/{url}/update")
+    public String updateEditorForm(@CurrentAccount Account account, @PathVariable String userId, @PathVariable String url, Model model) {
+        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+        model.addAttribute(account);
+        model.addAttribute(editor);
+        model.addAttribute(modelMapper.map(editor, EditorForm.class));
+
+        return "editor/write";
     }
 }

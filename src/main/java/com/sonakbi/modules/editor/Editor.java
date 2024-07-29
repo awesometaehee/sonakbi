@@ -58,6 +58,8 @@ public class Editor {
 
     private LocalDateTime publishedTime;
 
+    private Long like = 0L;
+
     public void setWrite(Account account) {
         this.writer = account;
         this.publishedTime = LocalDateTime.now();

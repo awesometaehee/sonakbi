@@ -11,15 +11,27 @@
             <div class="py-5">
                 <div th:replace="fragments :: blog-menu (curMenu='post')"></div>
             </div>
-            <div th:each="post : ${postList}">
-                <h2 th:text="${post.title}"></h2>
-                <p th:text="${post.description}"></p>
-                <span th:each="tag : ${post.tags}">
-                    <a th:text="${tag.value}"></a>
-                </span>
+            <div>
+                <div class="py-5 border-bottom" th:each="post : ${postList}">
+                    <a class="d-inline-block text-dark" th:href="@{'/blog/' + ${post.writer.userId} + '/view/' + ${post.url}}">
+                        <h3 class="mb-4" th:text="${post.title}"></h3>
+                    </a>
+                    <p class="mb-3" th:text="${post.description}"></p>
+                    <div class="mb-1">
+                        <span class="badge rounded-pill bg-dark me-2" th:each="tag : ${post.tags}">
+                            <a th:text="${tag.value}"></a>
+                        </span>
+                    </div>
+                    <div>
+                        <span class="before-time fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
+                        <span class="fs-7 text-muted">댓글 <b>0</b>개</span> ⋅
+                        <span class="fs-7 text-muted">♥ <b th:text="${post.like}">0</b></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 </body>
+<script th:replace="fragments :: change-time-ago"></script>
 </html>

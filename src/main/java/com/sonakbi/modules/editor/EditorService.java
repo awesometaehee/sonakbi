@@ -35,6 +35,6 @@ public class EditorService {
     }
 
     public List<Editor> getEditorList(Account writer) {
-        return editorRepository.findEditorByWriter(writer);
+        return editorRepository.findEditorByWriterOrderByPublishedTimeDesc(writer);
     }
 }
