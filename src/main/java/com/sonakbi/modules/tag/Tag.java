@@ -1,15 +1,15 @@
 package com.sonakbi.modules.tag;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.sonakbi.modules.editorTag.EditorTag;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
-@Builder
 @AllArgsConstructor @NoArgsConstructor
 public class Tag {
 
@@ -19,10 +19,6 @@ public class Tag {
     @Column(unique = true, nullable = false)
     private String value;
 
-    /*
-    @Override
-    public String toString() {
-        return "Tag{" + "value='" + value + '\'' + '}';
-    }
-    */
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EditorTag> editorTags = new HashSet<>();
 }

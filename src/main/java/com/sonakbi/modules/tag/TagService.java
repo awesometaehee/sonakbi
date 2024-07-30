@@ -14,18 +14,4 @@ import java.util.Set;
 public class TagService {
 
     private final TagRepository tagRepository;
-
-    public List<Tag> addTags(List<Tag> tags) {
-        List<Tag> tagList = new ArrayList<>();
-
-        for(Tag tag : tags) {
-            Tag tagObj = tagRepository.findByValue(tag.getValue());
-            if(tagObj == null) {
-                Tag t = tagRepository.save(Tag.builder().value(tag.getValue()).build());
-                tagList.add(t);
-            }
-        }
-
-        return tagList;
-    }
 }

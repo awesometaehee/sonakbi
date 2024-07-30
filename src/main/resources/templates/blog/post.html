@@ -18,14 +18,14 @@
                     </a>
                     <p class="mb-3" th:text="${post.description}"></p>
                     <div class="mb-1">
-                        <span class="badge rounded-pill bg-dark me-2" th:each="tag : ${post.tags}">
-                            <a th:text="${tag.value}"></a>
+                        <span class="badge rounded-pill bg-dark me-2" th:each="editorTag : ${post.editorTags}">
+                            <a th:text="${editorTag.tag.value}"></a>
                         </span>
                     </div>
                     <div>
                         <span class="before-time fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
                         <span class="fs-7 text-muted">댓글 <b>0</b>개</span> ⋅
-                        <span class="fs-7 text-muted">♥ <b th:text="${post.like}">0</b></span>
+                        <span class="fs-7 text-muted">♥ <b th:text="${post.likes.size}">0</b></span>
                     </div>
                 </div>
             </div>

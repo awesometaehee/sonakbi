@@ -1,15 +1,18 @@
 package com.sonakbi.modules.editor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.UserAccount;
+import com.sonakbi.modules.editorTag.EditorTag;
+import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.tag.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +20,11 @@ import java.util.Set;
 @Entity
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
-@Builder
 @AllArgsConstructor @NoArgsConstructor
+@NamedEntityGraph(name = "Editor.withTags", attributeNodes = {
+        @NamedAttributeNode("editorTags"),
+        @NamedAttributeNode("writer")
+})
 public class Editor {
 
     @Id
@@ -44,8 +50,9 @@ public class Editor {
     @Column(unique = true, nullable = false)
     private String url;
 
-    @ManyToMany
-    private List<Tag> tags;
+    @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("editor")
+    private Set<EditorTag> editorTags = new HashSet<>();
 
     @Lob
     @Basic(fetch = FetchType.EAGER)
@@ -58,7 +65,10 @@ public class Editor {
 
     private LocalDateTime publishedTime;
 
-    private Long like = 0L;
+    @OneToMany
+    private List<Likes> likes = new ArrayList<>();
+
+    // private int like = 0;
 
     public void setWrite(Account account) {
         this.writer = account;
@@ -67,5 +77,11 @@ public class Editor {
 
     public boolean isWriter(UserAccount userAccount) {
         return this.writer.equals(userAccount.getAccount());
+    }
+
+    public void addTags(Tag tag) {
+        EditorTag editorTag = new EditorTag(this, tag);
+        this.editorTags.add(editorTag);
+        tag.getEditorTags().add(editorTag);
     }
 }

@@ -17,4 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     $publishedBtn.click(function() {
         $mainText.val(editor.getHTML());
     })
+
+    editor.setHTML($mainText[0].innerText);
+
 })

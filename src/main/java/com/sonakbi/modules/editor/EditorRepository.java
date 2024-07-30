@@ -17,6 +17,10 @@ public interface EditorRepository extends JpaRepository<Editor, Long> {
     @Query("select e from Editor e where e.url = :url and e.writer.userId = :userId")
     Editor findEditorWithTagsByUrl(@Param("url") String url, @Param("userId") String userId);
 
-    @EntityGraph(attributePaths = {"tags", "writer"})
+    @EntityGraph(attributePaths = {"writer"})
+    @Query("select e from Editor e where e.url = :url and e.writer.userId = :userId")
+    Editor findEditorByUrl(@Param("url") String url, @Param("userId") String userId);
+
+    @EntityGraph(value = "Editor.withTags", type = EntityGraph.EntityGraphType.LOAD)
     List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer);
 }

@@ -368,7 +368,7 @@
 </div>
 
 <div class="d-grid" th:fragment="write-form (mode, action)">
-    <form class="needs-validation d-grid" th:action="@{action}" method="post" th:object="${editorForm}" novalidate>
+    <form class="needs-validation d-grid" th:action="@{${action}}" method="post" th:object="${editorForm}" novalidate>
         <div style="margin-top:58px;">
             <div class="d-grid w-100 h-100">
                 <div class="d-grid" style="grid-template-rows: 1fr 70px;">
@@ -456,8 +456,9 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <button class="btn btn-light" data-bs-dismiss="modal" aria-label="Close" style="width:150px">취소</button>
-                                        <button type="submit" id="publishedBtn" class="btn btn-dark" style="width:150px">출간하기</button>
+                                        <a class="btn btn-light" data-bs-dismiss="modal" aria-label="Close" style="width:150px">취소</a>
+                                        <button th:if="${mode == 'new'}" type="submit" id="publishedBtn" class="btn btn-dark" style="width:150px">출간하기</button>
+                                        <button th:if="${mode == 'mod'}" type="submit" id="publishedBtn" class="btn btn-dark" style="width:150px">수정하기</button>
                                     </div>
                                 </section>
                             </div>
@@ -501,6 +502,19 @@
             $currentThumbnailImage.show();
         })
 
+        if($thumbnailImage[0].value.length > 0) {
+            let img = document.createElement("img");
+            img.id = 'new-thumbnail';
+            img.src = $thumbnailImage[0].value;
+            img.className = 'rounded';
+            img.setAttribute('width', '100%');
+
+            $newThumbnailImage.html(img);
+            $newThumbnailImage.show();
+            $currentThumbnailImage.hide();
+            $thumbnailSettingWrap.show();
+        }
+
         function fn_imageReader(e) {
             if (e.target.files.length === 1) {
                 const reader = new FileReader();
@@ -522,7 +536,7 @@
                         $currentThumbnailImage.hide();
                         $thumbnailSettingWrap.show();
 
-                        $thumbnailImage = reader.result;
+                        $thumbnailImage.val(reader.result);
                     }
                 }
 
