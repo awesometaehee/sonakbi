@@ -13,5 +13,4 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class TagService {
 
-    private final TagRepository tagRepository;
 }

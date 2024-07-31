@@ -11,8 +11,26 @@
             <div class="py-5">
                 <div th:replace="fragments :: blog-menu (curMenu='post')"></div>
             </div>
-            <div>
+            <div class="position-relative">
+                <aside class="tag-list">
+                    <div class="border-bottom pb-3 mb-3">태그 목록</div>
+                    <ul class="fs-7">
+                        <li>
+                            <a class="text-dark" th:href="@{'/blog/' + ${account.userId} + '/post'}">전체보기</a>
+                            <span>(<span th:text="${postList.size}">0</span>)</span>
+                        </li>
+                        <li th:each="tag : ${tagList}">
+                            <a class="text-dark" th:text="${tag.value}" th:href="@{'/blog/' + ${account.userId} + '/post'}">태그</a>
+                            <span>(<span th:text="${tag.count}">0</span>)</span>
+                        </li>
+                    </ul>
+                </aside>
                 <div th:if="${post.isWriterAndDisclosure(#authentication.principal, post.disclosure)}" class="py-5 border-bottom" th:each="post : ${postList}">
+                    <div class="mb-4" th:if="${post.useThumbnail()}">
+                        <a class="d-block" th:href="@{'/blog/' + ${post.writer.userId} + '/view/' + ${post.url}}" style="width:100%; height:400px">
+                            <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" style="object-fit:cover" />
+                        </a>
+                    </div>
                     <a class="d-inline-block text-dark" th:href="@{'/blog/' + ${post.writer.userId} + '/view/' + ${post.url}}">
                         <h3 class="mb-4" th:text="${post.title}"></h3>
                     </a>
@@ -24,7 +42,7 @@
                     </div>
                     <div>
                         <span class="before-time fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
-                        <span class="fs-7 text-muted">댓글 <b>0</b>개</span> ⋅
+                        <span class="fs-7 text-muted">댓글 <span>0</span>개</span> ⋅
                         <span class="fs-7 text-muted">♥ <b th:text="${post.likes.size}">0</b></span>
                         <span th:if="${!post.disclosure}">
                             ⋅

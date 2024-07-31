@@ -84,6 +84,10 @@ public class Editor {
         return !this.isWriter(userAccount) && disclosure;
     }
 
+    public boolean useThumbnail() {
+        return !this.getThumbnail().isEmpty();
+    }
+
     public void addTags(Tag tag) {
         for(EditorTag editorTag : editorTags) {
             if(editorTag.getTag().equals(tag)) {

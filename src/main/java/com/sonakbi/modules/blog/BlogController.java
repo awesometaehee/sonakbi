@@ -5,7 +5,9 @@ import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorService;
+import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ public class BlogController {
 
     private final EditorService editorService;
     private final AccountService accountService;
+    private final TagRepository tagRepository;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -31,6 +34,7 @@ public class BlogController {
         Account accountInfo = accountService.getAccountInfo(userId);
         model.addAttribute("accountInfo", accountInfo);
         model.addAttribute("postList", editorService.getEditorList(accountInfo));
+        model.addAttribute("tagList", tagRepository.findTagCountByUserId(userId));
 
         return BLOG + "/post";
     }
