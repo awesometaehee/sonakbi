@@ -8,6 +8,7 @@ import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
 import com.sonakbi.modules.editor.form.EditorForm;
 import com.sonakbi.modules.editor.validator.EditorValidator;
+import com.sonakbi.modules.editorTag.EditorTag;
 import com.sonakbi.modules.series.SeriesService;
 import com.sonakbi.modules.tag.Tag;
 import com.sonakbi.modules.tag.TagService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.sonakbi.modules.editor.EditorController.EDITOR_URL;
@@ -50,8 +52,10 @@ public class EditorController {
 
     @GetMapping("/write")
     public String writeForm(@CurrentAccount Account account, Model model) {
+        EditorForm editorForm = new EditorForm();
+        editorForm.setDisclosure(true);
         model.addAttribute(account);
-        model.addAttribute("editorForm", new EditorForm());
+        model.addAttribute("editorForm", editorForm);
 
         return EDITOR + "/write";
     }
@@ -70,60 +74,37 @@ public class EditorController {
         return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editorForm.getUrl();
     }
 
-    /*
     @GetMapping("/{userId}/{url}/update")
     public String updateEditorForm(@CurrentAccount Account account, @PathVariable String userId, @PathVariable String url, Model model) {
         Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
-        String getTagValueToString = getTagValueToString(editor);
+        EditorForm editorForm = modelMapper.map(editor, EditorForm.class);
 
-        EditorForm editorForm = EditorForm.builder()
-                .title(editor.getTitle())
-                .description(editor.getDescription())
-                .thumbnail(editor.getThumbnail())
-                .url(editor.getUrl())
-                .mainText(editor.getMainText())
-                .disclosure(editor.isDisclosure())
-                .tags(getTagValueToString)
-                .series("") // TODO 시리즈 추가해야됨
-                .build();
+        Set<EditorTag> editorTags = editor.getEditorTags();
+        List<Tag> tagList = editorTags.stream().map(EditorTag::getTag).toList();
+        String joinString = editorService.getTagValueToString(tagList);
+        editorForm.setTags(joinString);
 
         model.addAttribute(account);
         model.addAttribute(editor);
         model.addAttribute(editorForm);
 
-        return "editor/update-write";
+        return EDITOR + "/update-write";
     }
-
-    public String getTagValueToString(Editor editor) {
-        List<Tag> tags = editor.getTags();
-        List<String> tagValues = tags.stream().map(Tag::getValue).toList();
-
-        return String.join(", ", tagValues);
-    }
-
 
     @PostMapping("/{userId}/{url}/update")
     public String updateEditorFormSubmit(@CurrentAccount Account account, @PathVariable String url, @PathVariable String userId,
-                                         EditorForm editorForm, Errors errors, Model model) {
+                                         EditorForm editorForm, Errors errors, Model model) throws JsonProcessingException {
+        Editor editor = editorRepository.findEditorByUrl(url, userId);
+
         if(errors.hasErrors()) {
             model.addAttribute(account);
+            model.addAttribute(editor);
             model.addAttribute(editorForm);
-            return EDITOR + "/write";
+            return EDITOR + "/update-write";
         }
 
-        String jsonString = editorForm.getTags();
-        try {
-            List<Tag> tagList = objectMapper.readValue(jsonString, new TypeReference<List<Tag>>() {});
-            Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
-            tagService.addTags(tagList);
-            editorService.updateWrite(account, editorForm, editor, tagList);
-            // TODO 시리즈 추가해야됨
-            // seriesService.addSeries(editorForm.getSeries());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        editorService.updateWrite(editorForm, editor);
 
         return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editorForm.getUrl();
     }
-    */
 }

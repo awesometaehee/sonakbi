@@ -47,6 +47,6 @@ public class Account {
     }
 
     public String getAccountPath(String path) {
-        return URLDecoder.decode(path, UTF_8);
+        return URLEncoder.encode(path, UTF_8);
     }
 }

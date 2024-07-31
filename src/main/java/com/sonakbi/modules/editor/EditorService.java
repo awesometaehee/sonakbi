@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.editor.form.EditorForm;
+import com.sonakbi.modules.editorTag.EditorTagRepository;
 import com.sonakbi.modules.tag.Tag;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class EditorService {
     private final ModelMapper modelMapper;
     private final TagRepository tagRepository;
     private final ObjectMapper objectMapper;
+    private final EditorTagRepository editorTagRepository;
 
     public void createNewWrite(Account account, EditorForm editorForm) throws JsonProcessingException {
         Editor editor = modelMapper.map(editorForm, Editor.class);
@@ -40,7 +42,20 @@ public class EditorService {
         editorRepository.save(editor);
     }
 
-    private String getTagValueToString(List<Tag> tags) {
+    public void updateWrite(EditorForm editorForm, Editor editor) throws JsonProcessingException {
+        modelMapper.map(editorForm, editor);
+
+        String jsonString = editorForm.getTags();
+        List<Tag> tagList = objectMapper.readValue(jsonString, new TypeReference<List<Tag>>() {});
+        String getTagValueToString = getTagValueToString(tagList);
+        Set<Tag> tags = parseTags(getTagValueToString);
+        editor.removeAllTags(); // 태그 전체 삭제 후 다시 추가
+        for(Tag tag : tags) {
+            editor.addTags(tag);
+        }
+    }
+
+    public String getTagValueToString(List<Tag> tags) {
         List<String> tagValues = tags.stream().map(Tag::getValue).toList();
         return String.join(", ", tagValues);
     }

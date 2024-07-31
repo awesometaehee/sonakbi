@@ -12,10 +12,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter @Setter
@@ -79,9 +76,33 @@ public class Editor {
         return this.writer.equals(userAccount.getAccount());
     }
 
+    public boolean isWriterAndDisclosure(UserAccount userAccount, boolean disclosure) {
+        if(this.isWriter(userAccount)) {
+            return true;
+        }
+
+        return !this.isWriter(userAccount) && disclosure;
+    }
+
     public void addTags(Tag tag) {
+        for(EditorTag editorTag : editorTags) {
+            if(editorTag.getTag().equals(tag)) {
+                return;
+            }
+        }
+
         EditorTag editorTag = new EditorTag(this, tag);
         this.editorTags.add(editorTag);
         tag.getEditorTags().add(editorTag);
+    }
+
+    public void removeAllTags() {
+        for(Iterator<EditorTag> iterator = editorTags.iterator(); iterator.hasNext();) {
+            EditorTag editorTag = iterator.next();
+            iterator.remove();
+            editorTag.getTag().getEditorTags().remove(editorTag);
+            editorTag.setEditor(null);
+            editorTag.setTag(null);
+        }
     }
 }

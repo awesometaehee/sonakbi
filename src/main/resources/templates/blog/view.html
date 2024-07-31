@@ -15,7 +15,7 @@
                 <div>
                     <a class="text-dark underline"
                        th:href="@{'/blog/' + ${editor.writer.userId} + '/post'}" th:text="${editor.writer.userId}"></a> ⋅
-                    <span class="before-time" th:text="${editor.publishedTime}"></span>
+                    <span class="before-time text-muted" th:text="${editor.publishedTime}"></span>
                 </div>
                 <div sec:authorize="isAuthenticated()" th:if="${editor.isWriter(#authentication.principal)}">
                     <a class="text-muted me-2" th:href="@{'/editor/' + ${editor.writer.userId} + '/' + ${editor.url} + '/update'}">수정</a>
@@ -23,8 +23,8 @@
                 </div>
             </div>
             <div style="margin-bottom: 70px">
-                <span class="badge rounded-pill bg-dark me-2" th:each="tag : ${editor.tags}">
-                    <a th:text="${tag.value}"></a>
+                <span class="badge rounded-pill bg-dark me-2" th:each="editorTag : ${editor.editorTags}">
+                    <a th:text="${editorTag.tag.value}"></a>
                 </span>
             </div>
             <div id="viewer"></div>
