@@ -1,0 +1,28 @@
+package com.sonakbi.modules.comment;
+
+import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.editor.Editor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Getter @Setter
+@EqualsAndHashCode(of = "id")
+@Builder @AllArgsConstructor @NoArgsConstructor
+public class Comment {
+
+    @Id @GeneratedValue
+    private Long id;
+
+    private String content;
+
+    private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY) // 연관 Entity를 꼭 필요할 때만 로드하도록 LAZY를 권장
+    private Editor editor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Account account;
+}

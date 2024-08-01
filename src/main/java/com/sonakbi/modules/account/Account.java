@@ -1,6 +1,7 @@
 package com.sonakbi.modules.account;
 
 
+import com.sonakbi.modules.comment.Comment;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,6 +9,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -41,6 +44,9 @@ public class Account {
     private LocalDateTime joinedAt;
 
     private String authority;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public String getProfileImage() {
         return profileImage == null ? "/images/account-icon.png" : profileImage;

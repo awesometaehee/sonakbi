@@ -35,7 +35,7 @@
                         <h3 class="mb-4" th:text="${post.title}"></h3>
                     </a>
                     <p class="mb-3" th:text="${post.description}"></p>
-                    <div class="mb-1">
+                    <div class="mb-3">
                         <span class="badge rounded-pill bg-dark me-2" th:each="editorTag : ${post.editorTags}">
                             <a th:text="${editorTag.tag.value}"></a>
                         </span>
@@ -43,7 +43,7 @@
                     <div>
                         <span class="before-time fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
                         <span class="fs-7 text-muted">댓글 <span>0</span>개</span> ⋅
-                        <span class="fs-7 text-muted">♥ <b th:text="${post.likes.size}">0</b></span>
+                        <span class="fs-7 text-muted">♥ <span th:text="${post.likes.size}">0</span></span>
                         <span th:if="${!post.disclosure}">
                             ⋅
                             <span class="fs-7 badge bg-dark">

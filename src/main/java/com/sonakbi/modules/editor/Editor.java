@@ -3,6 +3,7 @@ package com.sonakbi.modules.editor;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.UserAccount;
+import com.sonakbi.modules.comment.Comment;
 import com.sonakbi.modules.editorTag.EditorTag;
 import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.series.Series;
@@ -65,7 +66,13 @@ public class Editor {
     @OneToMany
     private List<Likes> likes = new ArrayList<>();
 
-    // private int like = 0;
+    /**
+     * List : 순서 보장
+     * Set : 중복 허용 X
+     * 댓글 기능 경우 순서가 유지되는 게 중요하므로 List
+     */
+    @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public void setWrite(Account account) {
         this.writer = account;
