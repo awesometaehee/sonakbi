@@ -78,6 +78,9 @@
 <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/dist/toastui-editor-viewer.css">
 <script src="https://uicdn.toast.com/tui-editor/dist/toastui-editor-viewer.min.js"></script>
 
+<script th:replace="fragments :: ajax-csrf-header"></script>
+<script th:replace="fragments :: change-time-ago"></script>
+
 <script type="application/javascript" th:inline="javascript">
     $(function() {
         const $mainText = [[${editor.mainText}]];
@@ -91,22 +94,32 @@
 
     function updateComment() {
         const content = $('#commentContent').val();
-        const url = "/comment/" + [[${editor.url}]];
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]];
+        console.log(url);
 
         $.ajax({
-            dataType: "json",
+            type : 'post',
             contentType: "application/json; charset=utf-8",
             url : url,
-            type : 'post',
-            data : JSON.stringify({'content' : content})
-        })
-        .done(function (fragment) {
-            $('#commentTable').replaceWith(fragment);
+            data : JSON.stringify({'content' : content}),
+        }).done(function(data, status) {
+
+            let temp = '<div class="py-4 border-bottom temp">';
+            temp += '<div class="d-flex align-items-center mb-4">';
+            temp += '<img class="round" style="width: 50px; height:50px" src="' + data.profileImage +  '" alt="profile-image" />';
+            temp += '<div class="ms-2"><p class="fw-bold fs-7">';
+            temp += '<a class="text-dark underline" href="/blog/' + data.userId + '/post">' + data.userId + '</a>';
+            temp += '</p><p class="text-muted fs-8 before-time">' + data.createdAt + '</p></div></div>';
+            temp += '<div class="comment-content mb-4"><p>' + data.content + '</p></div>';
+            temp += '<div><div class="comment-reply"><i class="fa fa-plus-square-o" aria-hidden="true"></i><span class="ms-2">답글 달기</span></div></div></div>';
+
+            $('#commentTable').append(temp);
+            $('#commentContent').val('');
+
+            document.querySelector('.temp').scrollIntoView({behavior: 'smooth'});
         })
     }
 </script>
 
 </body>
-<script th:replace="fragments :: ajax-csrf-header"></script>
-<script th:replace="fragments :: change-time-ago"></script>
 </html>

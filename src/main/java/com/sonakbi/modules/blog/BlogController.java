@@ -72,12 +72,4 @@ public class BlogController {
         return BLOG + "/view";
     }
 
-    @PostMapping("/comment/{url}")
-    public String createComment(@CurrentAccount Account account, @RequestBody CommentForm commentForm, @PathVariable String url, Model model) {
-        String content = commentForm.getContent();
-        Editor editor = editorService.getEditor(url, account);
-        commentService.createComment(content, editor, account);
-
-        return "/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editor.getUrl() + " :: #commentTable";
-    }
 }

@@ -16,15 +16,14 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public void createComment(String content, Editor editor, Account account) {
-        Comment comment = Comment.builder()
-                .content(content)
-                .editor(editor)
-                .account(account)
-                .createdAt(LocalDateTime.now())
-                .build();
+    public Comment createComment(String content, Editor editor, Account account) {
+        Comment comment = new Comment();
+        comment.setAccount(account);
+        comment.setEditor(editor);
+        comment.setContent(content);
+        comment.setCreatedAt(LocalDateTime.now());
 
-        commentRepository.save(comment);
+        return commentRepository.save(comment);
     }
 
     public List<Comment> getComments(Editor editor) {
