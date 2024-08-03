@@ -42,26 +42,40 @@
                 <hr />
             </div>
             <div style="margin-bottom:5rem">
-                <h6 class="mb-4"><span>0</span>개의 댓글</h6>
+                <h6 class="mb-4"><span id="commentCount" th:text="${editor.commentCount}">0</span>개의 댓글</h6>
                 <textarea id="commentContent" class="form-control mb-4" name="content" style="height:90px" placeholder="댓글을 작성하세요"></textarea>
                 <div class="d-flex justify-content-end">
-                    <button type="button" onclick="updateComment(event)" class="btn btn-dark" style="width:120px">작성하기</button>
+                    <button type="button" id="createComment" class="btn btn-dark" style="width:120px">작성하기</button>
                 </div>
             </div>
             <div id="commentTable">
-                <div class="py-4 border-bottom" th:each="comment : ${commentList}">
-                    <div class="d-flex align-items-center mb-4">
-                        <img class="round" style="width: 50px; height:50px" th:src="${comment.account.profileImage}" alt="profile-image" />
-                        <div class="ms-2">
-                            <p class="fw-bold fs-7">
-                                <a class="text-dark underline"
-                                   th:href="@{'/blog/' + ${comment.account.userId} + '/post'}" th:text="${comment.account.userId}"></a>
-                            </p>
-                            <p class="text-muted fs-8 before-time" th:text="${comment.createdAt}">1시간 전</p>
+                <div class="comment-table py-4 border-bottom" th:each="comment : ${commentList}">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex align-items-center mb-4">
+                            <img class="round" style="width: 50px; height:50px" th:src="${comment.account.profileImage}" alt="profile-image" />
+                            <div class="ms-2">
+                                <p class="fw-bold fs-7">
+                                    <a class="text-dark underline"
+                                       th:href="@{'/blog/' + ${comment.account.userId} + '/post'}" th:text="${comment.account.userId}"></a>
+                                </p>
+                                <p class="text-muted fs-8 before-time" th:text="${comment.createdAt}">1시간 전</p>
+                                <div class="comment-id" th:text="${comment.id}" hidden="hidden"></div>
+                            </div>
+                        </div>
+                        <div th:if="${comment.account.userId == #authentication.name}">
+                            <button class="update-comment-open btn text-muted fs-7">수정</button>
+                            <button class="btn text-muted fs-7">삭제</button>
                         </div>
                     </div>
                     <div class="comment-content mb-4">
-                        <p th:text="${comment.content}">댓글 내용</p>
+                        <p class="comment-text mb-4" th:text="${comment.content}">댓글 내용</p>
+                        <div class="div-reply">
+                            <textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>
+                            <div class="d-flex justify-content-end">
+                                <button class="comment-cancel btn btn-light btn-sm me-2">취소</button>
+                                <button class="comment-update btn btn-dark btn-sm">댓글 수정</button>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <div class="comment-reply">
@@ -90,12 +104,37 @@
             initialValue: $mainText,
             viewer: true
         })
+
+        $('.div-reply').hide();
+
+        $(document).on('click', '.update-comment-open', function(e) {
+            const ct = e.target.closest('.comment-table');
+            const dr = $(ct).find('.div-reply');
+            const ta = $(dr).find('.comment-ta');
+            const ctxt = $(ct).find('.comment-text').html();
+            ta.val(ctxt);
+            dr.show();
+        })
+
+        $('.comment-cancel').click(function(e) {
+            const ct = e.target.closest('.comment-table');
+            const dr = $(ct).find('.div-reply');
+            dr.hide();
+        })
+
+        $(document).on('click', '#createComment', function(e) {
+            createComment(e);
+        })
+
+        $(document).on('click', '.comment-update', function(e) {
+            updateComment(e);
+        })
     })
 
-    function updateComment() {
+    function createComment(e) {
         const content = $('#commentContent').val();
-        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]];
-        console.log(url);
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]] + "/create";
+        let commentNumber;
 
         $.ajax({
             type : 'post',
@@ -104,19 +143,65 @@
             data : JSON.stringify({'content' : content}),
         }).done(function(data, status) {
 
-            let temp = '<div class="py-4 border-bottom temp">';
+            let temp = '<div class="py-4 border-bottom comment-table temp">';
+            temp += '<div class="d-flex justify-content-between">';
             temp += '<div class="d-flex align-items-center mb-4">';
-            temp += '<img class="round" style="width: 50px; height:50px" src="' + data.profileImage +  '" alt="profile-image" />';
-            temp += '<div class="ms-2"><p class="fw-bold fs-7">';
+            temp += '<img class="round" style="width: 50px; height:50px" src="' + data.profileImage + '" alt="profile-image" />';
+            temp += '<div class="ms-2">';
+            temp += '<p class="fw-bold fs-7">';
             temp += '<a class="text-dark underline" href="/blog/' + data.userId + '/post">' + data.userId + '</a>';
-            temp += '</p><p class="text-muted fs-8 before-time">' + data.createdAt + '</p></div></div>';
-            temp += '<div class="comment-content mb-4"><p>' + data.content + '</p></div>';
-            temp += '<div><div class="comment-reply"><i class="fa fa-plus-square-o" aria-hidden="true"></i><span class="ms-2">답글 달기</span></div></div></div>';
+            temp += '</p>';
+            temp += '<p class="text-muted fs-8 before-time">' + data.createdAt + '</p>';
+            temp += '<div class="comment-id" hidden="hidden">' + data.commentId + '</div>';
+            temp += '</div>';
+            temp += '</div>';
+            temp += '<div>';
+            temp += '<button class="update-comment-open btn text-muted fs-7">수정</button>';
+            temp += '<button class="btn text-muted fs-7">삭제</button>';
+            temp += '</div>';
+            temp += '</div>';
+            temp += '<div class="comment-content mb-4"><p class="comment-text mb-4">' + data.content + '</p>';
+            temp += '<div class="div-reply">';
+            temp += '<textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>';
+            temp += '<div class="d-flex justify-content-end">';
+            temp += '<button class="comment-cancel btn btn-light btn-sm me-2">취소</button><button class="comment-update btn btn-dark btn-sm">댓글 수정</button></div></div>';
+            temp += '<div>';
+            temp += '<div class="comment-reply"><i class="fa fa-plus-square-o" aria-hidden="true"></i><span class="ms-2">답글 달기</span></div>';
+            temp += '</div>';
+            temp += '</div>';
 
-            $('#commentTable').append(temp);
+            let $tempEl = $(temp);
+            $tempEl.find('.div-reply').hide();
+            $('#commentTable').append($tempEl);
             $('#commentContent').val('');
 
+            // 전체 댓글 수 업데이트
+            commentNumber = Number($('#commentCount').html());
+            commentNumber++;
+            $('#commentCount').html(commentNumber);
+
+            // 댓글 생성 후 생성된 댓글로 스크롤
             document.querySelector('.temp').scrollIntoView({behavior: 'smooth'});
+        })
+    }
+
+    function updateComment(e) {
+        const ct = e.target.closest('.comment-table');
+        const dr = $(ct).find('.div-reply');
+        const ta = $(dr).find('.comment-ta');
+        const cId = $(ct).find('.comment-id').html();
+        const commentTxt = $(ct).find('.comment-text');
+        const updateContent = ta.val();
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]] + "/" + cId + "/update";
+
+        $.ajax({
+            type : 'post',
+            contentType: "application/json; charset=utf-8",
+            url : url,
+            data : JSON.stringify({'content' : updateContent}),
+        }).done(function(data, status) {
+            commentTxt.html(updateContent);
+            dr.hide();
         })
     }
 </script>

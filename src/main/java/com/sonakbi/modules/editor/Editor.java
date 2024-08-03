@@ -21,7 +21,9 @@ import java.util.*;
 @AllArgsConstructor @NoArgsConstructor
 @NamedEntityGraph(name = "Editor.withTags", attributeNodes = {
         @NamedAttributeNode("editorTags"),
-        @NamedAttributeNode("writer")
+        @NamedAttributeNode("writer"),
+        @NamedAttributeNode("editorTags"),
+        @NamedAttributeNode("likes"),
 })
 public class Editor {
 
@@ -74,6 +76,8 @@ public class Editor {
     @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    private int commentCount;
+
     public void setWrite(Account account) {
         this.writer = account;
         this.publishedTime = LocalDateTime.now();
@@ -115,5 +119,13 @@ public class Editor {
             editorTag.setEditor(null);
             editorTag.setTag(null);
         }
+    }
+
+    public void addComment() {
+        this.commentCount++;
+    }
+
+    public void removeComment() {
+        this.commentCount--;
     }
 }

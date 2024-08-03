@@ -1,10 +1,8 @@
 package com.sonakbi.modules.like;
 
 import com.sonakbi.modules.account.Account;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import com.sonakbi.modules.editor.Editor;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -16,6 +14,9 @@ public class Likes {
     @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Editor editor;
 }

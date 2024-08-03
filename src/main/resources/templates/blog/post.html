@@ -42,7 +42,7 @@
                     </div>
                     <div>
                         <span class="before-time fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
-                        <span class="fs-7 text-muted">댓글 <span>0</span>개</span> ⋅
+                        <span class="fs-7 text-muted">댓글 <span th:text="${post.commentCount}">0</span>개</span> ⋅
                         <span class="fs-7 text-muted">♥ <span th:text="${post.likes.size}">0</span></span>
                         <span th:if="${!post.disclosure}">
                             ⋅

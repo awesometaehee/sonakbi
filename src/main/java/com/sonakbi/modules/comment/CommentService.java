@@ -17,6 +17,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     public Comment createComment(String content, Editor editor, Account account) {
+        editor.addComment();
+
         Comment comment = new Comment();
         comment.setAccount(account);
         comment.setEditor(editor);
@@ -28,5 +30,9 @@ public class CommentService {
 
     public List<Comment> getComments(Editor editor) {
         return commentRepository.findCommentWithEditorByUrl(editor.getUrl());
+    }
+
+    public void updateComment(Comment comment, String content) {
+        comment.setContent(content);
     }
 }

@@ -15,6 +15,6 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @EntityGraph(attributePaths = {"editor"})
-    @Query("select c from Comment c where c.editor.url = :url")
+    @Query("select c from Comment c where c.editor.url = :url order by id asc")
     List<Comment> findCommentWithEditorByUrl(@Param("url") String url);
 }
