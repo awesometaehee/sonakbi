@@ -107,4 +107,12 @@ public class EditorController {
 
         return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editorForm.getUrl();
     }
+
+    @PostMapping("/{userId}/{url}/delete")
+    public String deleteEditor(@CurrentAccount Account account, @PathVariable String url, @PathVariable String userId) {
+        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+        editorService.deleteEditor(account, editor);
+
+        return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/post";
+    }
 }

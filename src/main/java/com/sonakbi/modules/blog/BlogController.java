@@ -36,9 +36,11 @@ public class BlogController {
     public String myPostForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
         model.addAttribute(account);
         Account accountInfo = accountService.getAccountInfo(userId);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+
         model.addAttribute("accountInfo", accountInfo);
-        model.addAttribute("postList", editorService.getEditorList(accountInfo));
-        model.addAttribute("tagList", tagRepository.findTagCountByUserId(userId));
+        model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount));
+        model.addAttribute("tagList", tagRepository.findTagCountByUserId(userId, checkEqualAccount));
 
         return BLOG + "/post";
     }

@@ -24,5 +24,5 @@ public interface EditorRepository extends JpaRepository<Editor, Long> {
     Editor findEditorByUrl(@Param("url") String url, @Param("userId") String userId);
 
     @EntityGraph(value = "Editor.withTags", type = EntityGraph.EntityGraphType.LOAD)
-    List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer);
+    List<Editor> findEditorByWriterAndDisclosureOrderByPublishedTimeDesc(Account writer, boolean disclosure);
 }

@@ -55,4 +55,8 @@ public class Account {
     public String getAccountPath(String path) {
         return URLEncoder.encode(path, UTF_8);
     }
+
+    public boolean checkEqualAccount(Account userAccount, Account postAccount) {
+        return !userAccount.equals(postAccount);
+    }
 }

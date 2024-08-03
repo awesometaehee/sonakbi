@@ -17,7 +17,8 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
             + "left join et.editor e "
             + "left join e.writer a "
             + "where a.userId = :userId "
+            + "and e.disclosure = :disclosure "
             + "group by t.value "
             + "order by t.value asc")
-    List<TagCountDto> findTagCountByUserId(String userId);
+    List<TagCountDto> findTagCountByUserId(String userId, boolean disclosure);
 }

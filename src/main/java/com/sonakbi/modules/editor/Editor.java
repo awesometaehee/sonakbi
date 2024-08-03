@@ -128,4 +128,8 @@ public class Editor {
     public void removeComment() {
         this.commentCount--;
     }
+
+    public boolean checkIfExistingWriter(Editor editor, Account account) {
+        return editor.getWriter().equals(account);
+    }
 }

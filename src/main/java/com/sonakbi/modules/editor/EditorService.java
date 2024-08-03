@@ -90,7 +90,15 @@ public class EditorService {
         }
     }
 
-    public List<Editor> getEditorList(Account writer) {
-        return editorRepository.findEditorByWriterOrderByPublishedTimeDesc(writer);
+    public List<Editor> getEditorList(Account writer, boolean disclosure) {
+        return editorRepository.findEditorByWriterAndDisclosureOrderByPublishedTimeDesc(writer, disclosure);
+    }
+
+    public void deleteEditor(Account account, Editor editor) {
+        if(!editor.checkIfExistingWriter(editor, account)) {
+            throw new IllegalArgumentException(account.getUserId() + "는 삭제할 수 없습니다.");
+        }
+
+        editorRepository.delete(editor);
     }
 }
