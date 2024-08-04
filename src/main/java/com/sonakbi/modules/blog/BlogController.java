@@ -36,7 +36,7 @@ public class BlogController {
     public String myPostForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
         model.addAttribute(account);
         Account accountInfo = accountService.getAccountInfo(userId);
-        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo); // true = 본 계정 false = 방문자
 
         model.addAttribute("accountInfo", accountInfo);
         model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount));

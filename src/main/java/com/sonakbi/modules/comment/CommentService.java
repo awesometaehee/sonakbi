@@ -35,4 +35,9 @@ public class CommentService {
     public void updateComment(Comment comment, String content) {
         comment.setContent(content);
     }
+
+    public void deleteComment(Editor editor, Comment comment) {
+        editor.removeComment();
+        commentRepository.delete(comment);
+    }
 }

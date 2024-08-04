@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
-public interface EditorRepository extends JpaRepository<Editor, Long> {
+public interface EditorRepository extends JpaRepository<Editor, Long>, EditorRepositoryExtension {
     boolean existsByUrl(String url);
 
     @EntityGraph(attributePaths = {"editorTags", "writer"})
@@ -23,6 +23,6 @@ public interface EditorRepository extends JpaRepository<Editor, Long> {
     @Query("select e from Editor e where e.url = :url and e.writer.userId = :userId")
     Editor findEditorByUrl(@Param("url") String url, @Param("userId") String userId);
 
-    @EntityGraph(value = "Editor.withTags", type = EntityGraph.EntityGraphType.LOAD)
-    List<Editor> findEditorByWriterAndDisclosureOrderByPublishedTimeDesc(Account writer, boolean disclosure);
+    // @EntityGraph(value = "Editor.withTags", type = EntityGraph.EntityGraphType.LOAD)
+    // List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure);
 }

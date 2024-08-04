@@ -91,7 +91,7 @@ public class EditorService {
     }
 
     public List<Editor> getEditorList(Account writer, boolean disclosure) {
-        return editorRepository.findEditorByWriterAndDisclosureOrderByPublishedTimeDesc(writer, disclosure);
+        return editorRepository.findEditorByWriterOrderByPublishedTimeDesc(writer, disclosure);
     }
 
     public void deleteEditor(Account account, Editor editor) {

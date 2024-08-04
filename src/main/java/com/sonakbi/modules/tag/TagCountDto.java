@@ -1,5 +1,7 @@
 package com.sonakbi.modules.tag;
 
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.StringPath;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

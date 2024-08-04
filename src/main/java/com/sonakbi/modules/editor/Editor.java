@@ -22,7 +22,6 @@ import java.util.*;
 @NamedEntityGraph(name = "Editor.withTags", attributeNodes = {
         @NamedAttributeNode("editorTags"),
         @NamedAttributeNode("writer"),
-        @NamedAttributeNode("editorTags"),
         @NamedAttributeNode("likes"),
 })
 public class Editor {

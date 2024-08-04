@@ -11,7 +11,7 @@
             <div style="margin-top:130px; margin-bottom:40px">
                 <h1 th:text="${editor.title}"></h1>
             </div>
-            <div class="d-flex justify-content-between mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-2">
                 <div>
                     <a class="text-dark underline"
                        th:href="@{'/blog/' + ${editor.writer.userId} + '/post'}" th:text="${editor.writer.userId}"></a> ⋅
@@ -64,7 +64,7 @@
                         </div>
                         <div th:if="${comment.account.userId == #authentication.name}">
                             <button class="update-comment-open btn text-muted fs-7">수정</button>
-                            <button class="btn text-muted fs-7">삭제</button>
+                            <button class="delete-comment btn text-muted fs-7">삭제</button>
                         </div>
                     </div>
                     <div class="comment-content mb-4">
@@ -148,6 +148,10 @@
         $(document).on('click', '.comment-update', function(e) {
             updateComment(e);
         })
+
+        $(document).on('click', '.delete-comment', function(e) {
+            deleteComment(e);
+        })
     })
 
     function createComment(e) {
@@ -176,7 +180,7 @@
             temp += '</div>';
             temp += '<div>';
             temp += '<button class="update-comment-open btn text-muted fs-7">수정</button>';
-            temp += '<button class="btn text-muted fs-7">삭제</button>';
+            temp += '<button class="delete-comment btn text-muted fs-7">삭제</button>';
             temp += '</div>';
             temp += '</div>';
             temp += '<div class="comment-content mb-4"><p class="comment-text mb-4">' + data.content + '</p>';
@@ -221,6 +225,25 @@
         }).done(function(data, status) {
             commentTxt.html(updateContent);
             dr.hide();
+        })
+    }
+
+    function deleteComment(e) {
+        const ct = e.target.closest('.comment-table');
+        const cId = $(ct).find('.comment-id').html();
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]] + "/" + cId + "/delete";
+        let commentNumber;
+
+        $.ajax({
+            type : 'post',
+            contentType: "application/json; charset=utf-8",
+            url : url
+        }).done(function(data, status) {
+            ct.remove();
+
+            commentNumber = Number($('#commentCount').html());
+            commentNumber--;
+            $('#commentCount').html(commentNumber);
         })
     }
 </script>

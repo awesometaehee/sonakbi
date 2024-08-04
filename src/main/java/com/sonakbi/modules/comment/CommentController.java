@@ -60,4 +60,13 @@ public class CommentController {
 
         return ResponseEntity.ok(commentDto);
     }
+
+    @PostMapping("/comment/{url}/{userId}/{id}/delete")
+    @ResponseBody
+    public ResponseEntity deleteComment(@CurrentAccount Account account, @PathVariable String url, @PathVariable String userId, @PathVariable Long id) {
+        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+        Comment comment = commentRepository.findById(id).orElseThrow();
+        commentService.deleteComment(editor, comment);
+        return ResponseEntity.ok().build();
+    }
 }

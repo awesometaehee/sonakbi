@@ -57,6 +57,6 @@ public class Account {
     }
 
     public boolean checkEqualAccount(Account userAccount, Account postAccount) {
-        return !userAccount.equals(postAccount);
+        return userAccount.equals(postAccount);
     }
 }

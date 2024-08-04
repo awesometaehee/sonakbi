@@ -9,16 +9,17 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
-public interface TagRepository extends JpaRepository<Tag, Long> {
+public interface TagRepository extends JpaRepository<Tag, Long>, TagRepositoryExtension {
     Tag findByValue(String value);
 
+    /*
     @Query("select new com.sonakbi.modules.tag.TagCountDto(t.value, count(et.id)) "
             + "from Tag t left join t.editorTags et "
             + "left join et.editor e "
             + "left join e.writer a "
             + "where a.userId = :userId "
-            + "and e.disclosure = :disclosure "
             + "group by t.value "
             + "order by t.value asc")
-    List<TagCountDto> findTagCountByUserId(String userId, boolean disclosure);
+    List<TagCountDto> findTagCountByUserId(String userId);
+    */
 }
