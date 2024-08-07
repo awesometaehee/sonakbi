@@ -5,7 +5,7 @@
 <body>
 <div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
-    <div th:replace="fragments :: write-form (mode = 'mod', action = '/editor/' + ${editor.writer.userId} + '/' + ${editor.url} + '/update')"></div>
+    <div th:replace="fragments :: write-form (mode = 'mod', action = '/editor/' + ${editor.writer.id} + '/' + ${editor.url} + '/update')"></div>
 </div>
 
 <script src="/js/editor.js"></script>

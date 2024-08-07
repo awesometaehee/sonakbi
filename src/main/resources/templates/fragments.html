@@ -252,10 +252,10 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li>
-                    <span class="text-secondary fs-7 dropdown-item" th:text="${account.userId}">admin</span>
+                    <span class="text-secondary fs-7 dropdown-item" th:text="${account?.userId}">사용자</span>
                 </li>
                 <li>
-                    <a class="dropdown-item" th:href="@{'/blog/' + ${account.userId} + '/post'}">내 블로그</a>
+                    <a class="dropdown-item" th:href="@{'/blog/' + ${account?.id} + '/post'}">내 블로그</a>
                 </li>
                 <li>
                     <a class="dropdown-item" th:href="@{/profile}">내 정보 수정</a>
@@ -283,15 +283,15 @@
     <ul class="nav justify-content-center blog-nav">
         <li class="nav-item">
             <a class="nav-link" th:classappend="${curMenu == 'post'} ? active"
-               th:href="@{'/blog/' + ${accountInfo.userId} + '/post'}">글</a>
+               th:href="@{'/blog/' + ${accountInfo.id} + '/post'}">글</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" th:classappend="${curMenu == 'series'} ? active"
-               th:href="@{'/blog/' + ${accountInfo.userId} + '/series'}">시리즈</a>
+               th:href="@{'/blog/' + ${accountInfo.id} + '/series'}">시리즈</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" th:classappend="${curMenu == 'about'} ? active"
-               th:href="@{'/blog/' + ${accountInfo.userId} + '/about'}">소개</a>
+               th:href="@{'/blog/' + ${accountInfo.id} + '/about'}">소개</a>
         </li>
     </ul>
 </div>

@@ -30,12 +30,12 @@ public class CommentController {
     private final AccountService accountService;
     private final CommentRepository commentRepository;
 
-    @PostMapping("/comment/{url}/{userId}/create")
+    @PostMapping("/comment/{url}/{id}/create")
     @ResponseBody
     public ResponseEntity<CommentDto> createComment(@CurrentAccount Account account, @RequestBody CommentForm commentForm,
-                                                    @PathVariable String url, @PathVariable String userId) {
+                                                    @PathVariable String url, @PathVariable Long id) {
         String content = commentForm.getContent();
-        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         Comment comment = commentService.createComment(content, editor, account);
 
         CommentDto commentDto = new CommentDto(content, comment.getId(), account.getUserId(), account.getProfileImage(), Chrono.timesAgo(comment.getCreatedAt()));
@@ -43,12 +43,12 @@ public class CommentController {
         return ResponseEntity.ok(commentDto);
     }
 
-    @PostMapping("/comment/{url}/{userId}/{id}/update")
+    @PostMapping("/comment/{url}/{id}/update")
     @ResponseBody
     public ResponseEntity<CommentDto> updateComment(@CurrentAccount Account account, @RequestBody CommentForm commentForm,
-                                                    @PathVariable String url, @PathVariable String userId, @PathVariable Long id) {
+                                                    @PathVariable String url, @PathVariable Long id) {
         String content = commentForm.getContent();
-        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         Comment comment = commentRepository.findById(id).orElseThrow();
 
         if(editor == null) {
@@ -61,10 +61,10 @@ public class CommentController {
         return ResponseEntity.ok(commentDto);
     }
 
-    @PostMapping("/comment/{url}/{userId}/{id}/delete")
+    @PostMapping("/comment/{url}/{id}/delete")
     @ResponseBody
-    public ResponseEntity deleteComment(@CurrentAccount Account account, @PathVariable String url, @PathVariable String userId, @PathVariable Long id) {
-        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+    public ResponseEntity deleteComment(@CurrentAccount Account account, @PathVariable String url, @PathVariable Long id) {
+        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         Comment comment = commentRepository.findById(id).orElseThrow();
         commentService.deleteComment(editor, comment);
         return ResponseEntity.ok().build();

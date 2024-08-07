@@ -35,9 +35,6 @@ public class EditorController {
 
     private final EditorService editorService;
     private final ModelMapper modelMapper;
-    private final TagService tagService;
-    private final SeriesService seriesService;
-    private final ObjectMapper objectMapper;
     private final EditorValidator editorValidator;
     private final AccountService accountService;
     private final EditorRepository editorRepository;
@@ -69,14 +66,14 @@ public class EditorController {
             return EDITOR + "/write";
         }
 
-        editorService.createNewWrite(account, editorForm);
+        Editor newEditor = editorService.createNewWrite(account, editorForm);
 
-        return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editorForm.getUrl();
+        return "redirect:/blog/" + account.getId() + "/view/" + newEditor.getEncodeUrl(editorForm.getUrl());
     }
 
-    @GetMapping("/{userId}/{url}/update")
-    public String updateEditorForm(@CurrentAccount Account account, @PathVariable String userId, @PathVariable String url, Model model) {
-        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+    @GetMapping("/{id}/{url}/update")
+    public String updateEditorForm(@CurrentAccount Account account, @PathVariable Long id, @PathVariable String url, Model model) {
+        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         EditorForm editorForm = modelMapper.map(editor, EditorForm.class);
 
         Set<EditorTag> editorTags = editor.getEditorTags();
@@ -91,10 +88,10 @@ public class EditorController {
         return EDITOR + "/update-write";
     }
 
-    @PostMapping("/{userId}/{url}/update")
-    public String updateEditorFormSubmit(@CurrentAccount Account account, @PathVariable String url, @PathVariable String userId,
+    @PostMapping("/{id}/{url}/update")
+    public String updateEditorFormSubmit(@CurrentAccount Account account, @PathVariable String url, @PathVariable Long id,
                                          EditorForm editorForm, Errors errors, Model model) throws JsonProcessingException {
-        Editor editor = editorRepository.findEditorByUrl(url, userId);
+        Editor editor = editorRepository.findEditorByUrl(url, id);
 
         if(errors.hasErrors()) {
             model.addAttribute(account);
@@ -105,14 +102,14 @@ public class EditorController {
 
         editorService.updateWrite(editorForm, editor);
 
-        return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/view/" + editorForm.getUrl();
+        return "redirect:/blog/" + id + "/view/" + editor.getEncodeUrl(url);
     }
 
-    @PostMapping("/{userId}/{url}/delete")
-    public String deleteEditor(@CurrentAccount Account account, @PathVariable String url, @PathVariable String userId) {
-        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+    @PostMapping("/{id}/{url}/delete")
+    public String deleteEditor(@CurrentAccount Account account, @PathVariable String url, @PathVariable Long id) {
+        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         editorService.deleteEditor(account, editor);
 
-        return "redirect:/blog/" + account.getAccountPath(account.getUserId()) + "/post";
+        return "redirect:/blog/" + id + "/post";
     }
 }

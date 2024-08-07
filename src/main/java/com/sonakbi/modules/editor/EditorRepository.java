@@ -16,12 +16,12 @@ public interface EditorRepository extends JpaRepository<Editor, Long>, EditorRep
     boolean existsByUrl(String url);
 
     @EntityGraph(attributePaths = {"editorTags", "writer"})
-    @Query("select e from Editor e where e.url = :url and e.writer.userId = :userId")
-    Editor findEditorWithTagsByUrl(@Param("url") String url, @Param("userId") String userId);
+    @Query("select e from Editor e where e.url = :url and e.writer.id = :id")
+    Editor findEditorWithTagsByUrl(@Param("url") String url, @Param("id") Long id);
 
     @EntityGraph(attributePaths = {"writer"})
-    @Query("select e from Editor e where e.url = :url and e.writer.userId = :userId")
-    Editor findEditorByUrl(@Param("url") String url, @Param("userId") String userId);
+    @Query("select e from Editor e where e.url = :url and e.writer.id = :id")
+    Editor findEditorByUrl(@Param("url") String url, @Param("id") Long id);
 
     // @EntityGraph(value = "Editor.withTags", type = EntityGraph.EntityGraphType.LOAD)
     // List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure);

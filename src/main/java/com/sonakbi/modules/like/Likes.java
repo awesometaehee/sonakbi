@@ -20,3 +20,4 @@ public class Likes {
     @ManyToOne(fetch = FetchType.LAZY)
     private Editor editor;
 }
+

@@ -14,11 +14,11 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div>
                     <a class="text-dark underline"
-                       th:href="@{'/blog/' + ${editor.writer.userId} + '/post'}" th:text="${editor.writer.userId}"></a> ⋅
+                       th:href="@{'/blog/' + ${editor.writer.id} + '/post'}" th:text="${editor.writer.userId}"></a> ⋅
                     <span class="before-time text-muted" th:text="${editor.publishedTime}"></span>
                 </div>
                 <div class="d-flex" sec:authorize="isAuthenticated()" th:if="${editor.isWriter(#authentication.principal)}">
-                    <a class="btn text-muted" th:href="@{'/editor/' + ${editor.writer.userId} + '/' + ${editor.url} + '/update'}">수정</a>
+                    <a class="btn text-muted" th:href="@{'/editor/' + ${editor.writer.id} + '/' + ${editor.url} + '/update'}">수정</a>
                     <a class="btn text-muted" data-bs-toggle="modal" data-bs-target="#deleteModal">삭제</a>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                     <div class="ms-3">
                         <p class="fw-bold mb-2">
                             <a class="text-dark underline"
-                               th:href="@{'/blog/' + ${editor.writer.userId} + '/post'}" th:text="${editor.writer.userId}"></a>
+                               th:href="@{'/blog/' + ${editor.writer.id} + '/post'}" th:text="${editor.writer.userId}"></a>
                         </p>
                         <p class="fw-light" th:text="${editor.writer.shortDescription}">자기소개</p>
                     </div>
@@ -42,10 +42,22 @@
                 <hr />
             </div>
             <div style="margin-bottom:5rem">
-                <h6 class="mb-4"><span id="commentCount" th:text="${editor.commentCount}">0</span>개의 댓글</h6>
-                <textarea id="commentContent" class="form-control mb-4" name="content" style="height:90px" placeholder="댓글을 작성하세요"></textarea>
-                <div class="d-flex justify-content-end">
-                    <button type="button" id="createComment" class="btn btn-dark" style="width:120px">작성하기</button>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6><span id="commentCount" th:text="${editor.commentCount}">0</span>개의 댓글</h6>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-primary" id="likeBtn" th:onclick="like()">
+                            <span id="likeCount" class="mx-1" th:text="${editor.likeCount}"></span>
+                        </button>
+                    </div>
+                </div>
+                <div sec:authorize="!isAuthenticated()">
+                    로그인 후 사용할 수 있습니다.
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <textarea id="commentContent" class="form-control mb-4" name="content" style="height:90px" placeholder="댓글을 작성하세요"></textarea>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="createComment" class="btn btn-dark" style="width:120px">작성하기</button>
+                    </div>
                 </div>
             </div>
             <div id="commentTable">
@@ -56,7 +68,7 @@
                             <div class="ms-2">
                                 <p class="fw-bold fs-7">
                                     <a class="text-dark underline"
-                                       th:href="@{'/blog/' + ${comment.account.userId} + '/post'}" th:text="${comment.account.userId}"></a>
+                                       th:href="@{'/blog/' + ${comment.account.id} + '/post'}" th:text="${comment.account.userId}"></a>
                                 </p>
                                 <p class="text-muted fs-8 before-time" th:text="${comment.createdAt}">1시간 전</p>
                                 <div class="comment-id" th:text="${comment.id}" hidden="hidden"></div>
@@ -100,7 +112,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-bs-dismiss="modal">닫기</button>
-                <form method="post" th:action="@{'/editor/' + ${editor.writer.userId} + '/' + ${editor.url} + '/delete'}">
+                <form method="post" th:action="@{'/editor/' + ${editor.writer.id} + '/' + ${editor.url} + '/delete'}">
                     <button type="submit" class="btn btn-dark">삭제</button>
                 </form>
             </div>
@@ -123,6 +135,8 @@
             initialValue: $mainText,
             viewer: true
         })
+
+        isLiked();
 
         $('.div-reply').hide();
 
@@ -156,7 +170,7 @@
 
     function createComment(e) {
         const content = $('#commentContent').val();
-        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]] + "/create";
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/create";
         let commentNumber;
 
         $.ajax({
@@ -215,7 +229,7 @@
         const cId = $(ct).find('.comment-id').html();
         const commentTxt = $(ct).find('.comment-text');
         const updateContent = ta.val();
-        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]] + "/" + cId + "/update";
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/update";
 
         $.ajax({
             type : 'post',
@@ -231,7 +245,7 @@
     function deleteComment(e) {
         const ct = e.target.closest('.comment-table');
         const cId = $(ct).find('.comment-id').html();
-        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.userId}]] + "/" + cId + "/delete";
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/delete";
         let commentNumber;
 
         $.ajax({
@@ -244,6 +258,44 @@
             commentNumber = Number($('#commentCount').html());
             commentNumber--;
             $('#commentCount').html(commentNumber);
+        })
+    }
+
+    function isLiked() {
+        const url = "/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/isLiked";
+
+        $.ajax({
+            type : 'get',
+            url : url,
+            contentType: "application/json; charset=utf-8",
+        }).done(function(isLiked, status) {
+            const btn = $('#likeBtn');
+            if(isLiked) {
+                btn.find('.fa-thumbs-o-up').remove();
+                btn.prepend("<i class='fa fa-thumbs-up' aria-hidden='true'></i>");
+            } else {
+                btn.find('.fa-thumbs-up').remove();
+                btn.prepend("<i class='fa fa-thumbs-o-up' aria-hidden='true'></i>");
+            }
+
+        })
+    }
+
+    function like() {
+        const url = "/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/like";
+        let likeNumber = Number($('#likeCount').html());
+
+        $.ajax({
+            type : 'post',
+            url : url,
+            contentType: "application/json; charset=utf-8",
+        }).done(function(data, status) {
+            if(status == 'success') {
+                isLiked();
+                $('#likeCount').html(data);
+            } else {
+                alert('Failed');
+            }
         })
     }
 </script>

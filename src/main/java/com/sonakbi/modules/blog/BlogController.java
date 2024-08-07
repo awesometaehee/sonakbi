@@ -8,6 +8,7 @@ import com.sonakbi.modules.comment.CommentForm;
 import com.sonakbi.modules.comment.CommentService;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorService;
+import com.sonakbi.modules.like.LikesRepository;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -21,53 +22,56 @@ import static com.sonakbi.modules.blog.BlogController.BLOG_URL;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(BLOG_URL + "/{userId}")
+@RequestMapping(BLOG_URL + "/{id}")
 public class BlogController {
 
     private final EditorService editorService;
     private final AccountService accountService;
     private final TagRepository tagRepository;
     private final CommentService commentService;
+    private final LikesRepository likesRepository;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
 
     @GetMapping("/post")
-    public String myPostForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
+    public String myPostForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
         model.addAttribute(account);
-        Account accountInfo = accountService.getAccountInfo(userId);
+        Account accountInfo = accountService.getAccountInfo(id);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo); // true = 본 계정 false = 방문자
 
         model.addAttribute("accountInfo", accountInfo);
         model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount));
-        model.addAttribute("tagList", tagRepository.findTagCountByUserId(userId, checkEqualAccount));
+        model.addAttribute("tagList", tagRepository.findTagCountById(id, checkEqualAccount));
 
         return BLOG + "/post";
     }
 
     @GetMapping("/series")
-    public String mySeriesForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
+    public String mySeriesForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
         model.addAttribute(account);
-        model.addAttribute("accountInfo", accountService.getAccountInfo(userId));
+        model.addAttribute("accountInfo", accountService.getAccountInfo(id));
 
         return BLOG + "/series";
     }
 
     @GetMapping("/about")
-    public String myAboutForm(@CurrentAccount Account account, @PathVariable String userId, Model model) {
+    public String myAboutForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
         model.addAttribute(account);
-        model.addAttribute("accountInfo", accountService.getAccountInfo(userId));
+        model.addAttribute("accountInfo", accountService.getAccountInfo(id));
 
         return BLOG + "/about";
     }
 
     @GetMapping("/view/{url}")
     public String viewForm(@CurrentAccount Account account, Model model,
-                           @PathVariable String userId, @PathVariable String url) {
+                           @PathVariable Long id, @PathVariable String url) {
 
-        Editor editor = editorService.getEditor(url, accountService.getAccountInfo(userId));
+        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         List<Comment> commentList = commentService.getComments(editor);
-        model.addAttribute(account);
+        if(account != null) {
+            model.addAttribute(account);
+        }
         model.addAttribute(editor);
         model.addAttribute(commentList);
 

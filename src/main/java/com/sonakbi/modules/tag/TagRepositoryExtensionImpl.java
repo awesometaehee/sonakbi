@@ -20,14 +20,14 @@ public class TagRepositoryExtensionImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
-    public List<TagCountDto> findTagCountByUserId(String userId, boolean disclosure) {
+    public List<TagCountDto> findTagCountById(Long id, boolean disclosure) {
         QTag tag = QTag.tag;
         QEditorTag editorTag = QEditorTag.editorTag;
         QEditor editor = QEditor.editor;
         QAccount account = QAccount.account;
 
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(account.userId.eq(userId));
+        builder.and(account.id.eq(id));
         if(!disclosure) {
             builder.and(editor.disclosure.ne(disclosure));
         }

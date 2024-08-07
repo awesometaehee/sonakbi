@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.editor.form.EditorForm;
 import com.sonakbi.modules.editorTag.EditorTagRepository;
+import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.tag.Tag;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class EditorService {
     private final ObjectMapper objectMapper;
     private final EditorTagRepository editorTagRepository;
 
-    public void createNewWrite(Account account, EditorForm editorForm) throws JsonProcessingException {
+    public Editor createNewWrite(Account account, EditorForm editorForm) throws JsonProcessingException {
         Editor editor = modelMapper.map(editorForm, Editor.class);
         editor.setWrite(account);
 
@@ -39,7 +40,7 @@ public class EditorService {
         for(Tag tag : tags) {
             editor.addTags(tag);
         }
-        editorRepository.save(editor);
+        return editorRepository.save(editor);
     }
 
     public void updateWrite(EditorForm editorForm, Editor editor) throws JsonProcessingException {
@@ -78,16 +79,11 @@ public class EditorService {
         return tagSet;
     }
 
-    public Editor getEditor(String url, Account writer) {
-        Editor editor = editorRepository.findEditorWithTagsByUrl(url, writer.getUserId());
-        checkIfExistingEditor(url, editor);
-        return editor;
-    }
+    public Editor getEditor(String url, Account userAccount, Account writer) {
+        Editor editor = editorRepository.findEditorWithTagsByUrl(url, writer.getId());
+        editor.checkIfExistingEditor(url, userAccount);
 
-    private static void checkIfExistingEditor(String url, Editor editor) {
-        if(editor == null) {
-            throw new IllegalArgumentException(url + "에 해당하는 글이 없습니다.");
-        }
+        return editor;
     }
 
     public List<Editor> getEditorList(Account writer, boolean disclosure) {

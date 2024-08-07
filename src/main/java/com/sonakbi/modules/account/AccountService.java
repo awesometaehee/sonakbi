@@ -71,10 +71,10 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(account);
     }
 
-    public Account getAccountInfo(String userId) {
-        if(!accountRepository.existsByUserId(userId)) {
-            throw new IllegalArgumentException(userId + "에 해당하는 아이디가 없습니다.");
+    public Account getAccountInfo(Long id) {
+        if(!accountRepository.existsById(id)) {
+            throw new IllegalArgumentException("해당 블로그가 없습니다.");
         }
-        return accountRepository.findByUserId(userId);
+        return accountRepository.findById(id).orElseThrow();
     }
 }

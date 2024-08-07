@@ -12,8 +12,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Entity
 @Getter @Setter
@@ -64,8 +67,10 @@ public class Editor {
 
     private LocalDateTime publishedTime;
 
-    @OneToMany
-    private List<Likes> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Likes> likes = new HashSet<>();
+
+    private int likeCount;
 
     /**
      * List : 순서 보장
@@ -130,5 +135,27 @@ public class Editor {
 
     public boolean checkIfExistingWriter(Editor editor, Account account) {
         return editor.getWriter().equals(account);
+    }
+
+    public boolean checkDisclosureAndCompareWriter(Account account) {
+        return this.disclosure && account.checkEqualAccount(account, writer);
+    }
+
+    public void addLike() { this.likeCount++; }
+
+    public void removeLike() { this.likeCount--; }
+
+    public String getEncodeUrl(String path) {
+        return URLEncoder.encode(path, UTF_8);
+    }
+
+    public void checkIfExistingEditor(String url, Account account) {
+        if(this.getUrl() == null) {
+            throw new IllegalArgumentException(url + "에 해당하는 글이 없습니다.");
+        }
+
+        if(!this.isDisclosure() && !this.getWriter().equals(account)) {
+            throw new IllegalArgumentException(url + "는 비공개 포스트입니다.");
+        }
     }
 }

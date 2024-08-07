@@ -8,5 +8,5 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface TagRepositoryExtension {
 
-    List<TagCountDto> findTagCountByUserId(String userId, boolean disclosure);
+    List<TagCountDto> findTagCountById(Long id, boolean disclosure);
 }
