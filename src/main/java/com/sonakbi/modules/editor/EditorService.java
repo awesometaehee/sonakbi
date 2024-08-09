@@ -11,6 +11,7 @@ import com.sonakbi.modules.tag.Tag;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,29 +32,54 @@ public class EditorService {
 
     public Editor createNewWrite(Account account, EditorForm editorForm) throws JsonProcessingException {
         Editor editor = modelMapper.map(editorForm, Editor.class);
+
+        // 동일한 url을 가질 경우 랜덤 string을 붙여서 저장
+        Editor editorUrl = editorRepository.findEditorByUrl(editorForm.getUrl(), account.getId());
+        if(editorUrl != null) {
+            String random = RandomString.make(5);
+            editor.setUrl(editor.getUrl() + "-" + random);
+        }
         editor.setWrite(account);
 
-        String jsonString = editorForm.getTags();
-        List<Tag> tagList = objectMapper.readValue(jsonString, new TypeReference<List<Tag>>() {});
-        String getTagValueToString = getTagValueToString(tagList);
-        Set<Tag> tags = parseTags(getTagValueToString);
-        for(Tag tag : tags) {
-            editor.addTags(tag);
+        if(!editorForm.getTags().isEmpty()) {
+            String jsonString = editorForm.getTags();
+            List<Tag> tagList = objectMapper.readValue(jsonString, new TypeReference<List<Tag>>() {});
+            String getTagValueToString = getTagValueToString(tagList);
+            Set<Tag> tags = parseTags(getTagValueToString);
+            for(Tag tag : tags) {
+                editor.addTags(tag);
+            }
         }
         return editorRepository.save(editor);
     }
 
-    public void updateWrite(EditorForm editorForm, Editor editor) throws JsonProcessingException {
-        modelMapper.map(editorForm, editor);
-
-        String jsonString = editorForm.getTags();
-        List<Tag> tagList = objectMapper.readValue(jsonString, new TypeReference<List<Tag>>() {});
-        String getTagValueToString = getTagValueToString(tagList);
-        Set<Tag> tags = parseTags(getTagValueToString);
-        editor.removeAllTags(); // 태그 전체 삭제 후 다시 추가
-        for(Tag tag : tags) {
-            editor.addTags(tag);
+    public Editor updateWrite(EditorForm editorForm, Editor editor) throws JsonProcessingException {
+        // 동일한 url을 가질 경우 랜덤 string을 붙여서 저장
+        String editorUrl = editorForm.getUrl();
+        if(!editorUrl.equals(editor.getUrl())) {
+            if(editorRepository.existsByUrl(editorUrl)) {
+                String random = RandomString.make(5);
+                editorUrl = editorForm.getUrl() + "-" + random;
+            }
         }
+
+        modelMapper.map(editorForm, editor);
+        editor.setUrl(editorUrl);
+
+        if(!editorForm.getTags().isEmpty()) {
+            String jsonString = editorForm.getTags();
+            List<Tag> tagList = objectMapper.readValue(jsonString, new TypeReference<List<Tag>>() {});
+            String getTagValueToString = getTagValueToString(tagList);
+            Set<Tag> tags = parseTags(getTagValueToString);
+            editor.removeAllTags(); // 태그 전체 삭제 후 다시 추가
+            for(Tag tag : tags) {
+                editor.addTags(tag);
+            }
+        } else {
+            editor.removeAllTags();
+        }
+
+        return editor;
     }
 
     public String getTagValueToString(List<Tag> tags) {

@@ -49,7 +49,7 @@ public class Editor {
     @JoinColumn(name = "account_id")
     private Account writer;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String url;
 
     @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL, orphanRemoval = true)

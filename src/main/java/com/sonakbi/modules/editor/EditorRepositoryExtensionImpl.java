@@ -29,6 +29,7 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
         QLikes likes = QLikes.likes;
 
         BooleanBuilder builder = new BooleanBuilder();
+        builder.and(account.id.eq(writer.getId()));
         if(!disclosure) {
             builder.and(editor.disclosure.ne(disclosure));
         }

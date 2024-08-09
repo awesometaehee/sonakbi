@@ -42,10 +42,12 @@ public class EditorController {
     public static final String EDITOR_URL = "/editor";
     private static final String EDITOR = "editor";
 
+    /*
     @InitBinder("editorForm")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(editorValidator);
     }
+    */
 
     @GetMapping("/write")
     public String writeForm(@CurrentAccount Account account, Model model) {
@@ -58,7 +60,7 @@ public class EditorController {
     }
 
     @PostMapping("/write")
-    public String writeFormSubmit(@CurrentAccount Account account, @Valid EditorForm editorForm, Errors errors, Model model)
+    public String writeFormSubmit(@CurrentAccount Account account, EditorForm editorForm, Errors errors, Model model)
             throws JsonProcessingException {
         if(errors.hasErrors()) {
             model.addAttribute(account);
@@ -68,7 +70,7 @@ public class EditorController {
 
         Editor newEditor = editorService.createNewWrite(account, editorForm);
 
-        return "redirect:/blog/" + account.getId() + "/view/" + newEditor.getEncodeUrl(editorForm.getUrl());
+        return "redirect:/blog/" + account.getId() + "/view/" + newEditor.getEncodeUrl(newEditor.getUrl());
     }
 
     @GetMapping("/{id}/{url}/update")
@@ -100,9 +102,9 @@ public class EditorController {
             return EDITOR + "/update-write";
         }
 
-        editorService.updateWrite(editorForm, editor);
+        Editor editorReturn = editorService.updateWrite(editorForm, editor);
 
-        return "redirect:/blog/" + id + "/view/" + editor.getEncodeUrl(url);
+        return "redirect:/blog/" + id + "/view/" + editor.getEncodeUrl(editorReturn.getUrl());
     }
 
     @PostMapping("/{id}/{url}/delete")
