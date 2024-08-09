@@ -62,8 +62,8 @@ public class Editor {
 
     private boolean disclosure = true;
 
-    @ManyToMany
-    private List<Series> series;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Series series;
 
     private LocalDateTime publishedTime;
 
@@ -123,6 +123,10 @@ public class Editor {
             editorTag.setEditor(null);
             editorTag.setTag(null);
         }
+    }
+
+    public void addSeries(Series series) {
+        this.series = series;
     }
 
     public void addComment() {

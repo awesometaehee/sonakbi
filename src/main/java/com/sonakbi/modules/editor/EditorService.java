@@ -7,6 +7,7 @@ import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.editor.form.EditorForm;
 import com.sonakbi.modules.editorTag.EditorTagRepository;
 import com.sonakbi.modules.like.Likes;
+import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.tag.Tag;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -122,5 +123,9 @@ public class EditorService {
         }
 
         editorRepository.delete(editor);
+    }
+
+    public void addSeries(Editor editor, Series series) {
+        editor.addSeries(series);
     }
 }

@@ -1,10 +1,12 @@
 package com.sonakbi.modules.series;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.sonakbi.modules.editor.Editor;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
@@ -18,4 +20,7 @@ public class Series {
 
     @Column(unique = true, nullable = false)
     private String title;
+
+    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Editor> editor;
 }

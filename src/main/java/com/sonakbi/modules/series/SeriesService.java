@@ -1,5 +1,7 @@
 package com.sonakbi.modules.series;
 
+import com.sonakbi.modules.editor.Editor;
+import com.sonakbi.modules.editor.EditorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,10 +13,12 @@ public class SeriesService {
 
     private final SeriesRepository seriesRepository;
 
-    public void addSeries(String series) {
-        Series seriesObj = seriesRepository.findByTitle(series);
-        if(seriesObj == null) {
-            seriesRepository.save(Series.builder().title(series).build());
+    public Series findCreateNew(String title) {
+        Series series = seriesRepository.findByTitle(title);
+        if(series == null) {
+            series = seriesRepository.save(Series.builder().title(title).build());
         }
+
+        return series;
     }
 }

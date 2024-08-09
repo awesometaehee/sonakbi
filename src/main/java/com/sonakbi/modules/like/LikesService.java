@@ -24,8 +24,8 @@ public class LikesService {
             editor.removeLike();
         } else {
             Likes newLike = Likes.builder().editor(editor).account(account).build();
-            newLike.setAccount(account);
-            newLike.setEditor(editor);
+            // newLike.setAccount(account);
+            // newLike.setEditor(editor);
             likesRepository.save(newLike);
             editor.addLike();
         }

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>sonakbi</title>
     <!--<link rel="stylesheet" th:href="@{/css/tailwind-out.css}" />-->
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:300,400,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
@@ -27,6 +27,13 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
+
+        .nanum-myeongjo-regular {
+            font-family: "Nanum Myeongjo", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
 
         body, html {
             width: 100%;
@@ -216,12 +223,31 @@
             align-items: center;
             cursor: pointer;
         }
+
+        .series-list {
+            height:16.5rem;
+            overflow-y:auto;
+            background-color: #fff;
+        }
+
+        .series-list li {
+            padding:0.6rem 0.8rem;
+            font-size:0.8rem;
+            background-color: #fff;
+            color:#000;
+        }
+
+        .series-list li.active {
+            background-color: #007bff;
+            color:#fff;
+        }
+
     </style>
 </head>
 
 <nav th:fragment="main-nav" id="mainNav" class="navbar navbar-expand-sm px-4 border border-bottom">
     <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
-        <h4 class="text-black mb-0">ihatethislovesong.</h4>
+        <h4 class="nanum-myeongjo-regular text-black mb-0">조용히완전히영원히.</h4>
     </a>
     <div class="collapse navbar-collapse">
         <div class="me-auto"></div>
@@ -425,9 +451,7 @@
                         </div>
                         <div class="blank-line"></div>
                         <div class="mb-2">
-                            <input th:if="${mode == 'new'}" class="tagify-outside w-100 outline-none" type="text" name="tags" th:field="*{tags}"
-                                   id="tags" placeholder="태그를 입력하세요" />
-                            <input th:if="${mode == 'mod'}" class="tagify-outside w-100 outline-none" type="text" name="tags" th:field="*{tags}"
+                            <input class="tagify-outside w-100 outline-none" type="text" name="tags" th:field="*{tags}"
                                    id="tags" placeholder="태그를 입력하세요" />
                         </div>
                         <div id="editor"></div>
@@ -471,40 +495,85 @@
                                         <input type="text" id="thumbnailImage" hidden th:field="*{thumbnail}" />
                                     </div>
                                     <div>
-                                        <h5>안녕하세요</h5>
+                                        <h5 id="modalTitle"></h5>
                                         <textarea type="text" class="form-control" id="description" th:field="*{description}"
                                                   style="height:110px; font-size:14px;" placeholder="당신의 포스트를 짧게 소개해보세요." required></textarea>
                                     </div>
                                 </section>
                                 <div class="vertical-line"></div>
-                                <section class="d-flex flex-column justify-content-between" style="flex:1 1 0%">
-                                    <div>
-                                        <div class="mb-4">
-                                            <h5>공개 설정</h5>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="disclosure" th:field="*{disclosure}">
-                                                <label class="form-check-label" for="disclosure">포스팅 공개</label>
+                                <section id="rightSection" style="flex:1 1 0%">
+                                    <div class="d-flex flex-column justify-content-between h-100">
+                                        <div>
+                                            <div class="mb-4">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5 class="mb-0">공개 설정</h5>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" role="switch" id="disclosure" th:field="*{disclosure}">
+                                                        <label class="form-check-label" for="disclosure">포스팅 공개</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-4">
+                                                <h5>URL 설정</h5>
+                                                <div class="d-flex w-100 rounded border" style="padding:0.7rem; background-color:#fff; align-items:center; font-size:14px">
+                                                    <span>/</span>
+                                                    <input id="url" class="ol-none w-100" type="text" th:field="*{url}" />
+                                                </div>
+                                                <small class="form-text text-danger" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></small>
+                                            </div>
+                                            <div class="mb-4">
+                                                <h5>시리즈 설정</h5>
+                                                <button type="button" id="seriesOpenBtn" class="btn btn-dark btn-block w-100 text-align-center" style="height:48px">
+                                                    <i class="fa fa-list" aria-hidden="true"></i> 시리즈 설정하기
+                                                </button>
+                                                <div id="seriesForm">
+                                                    <div class="input-group">
+                                                        <input type="text" id="series" class="form-control fs-7" th:field="*{series}" readonly />
+                                                        <div class="input-group-append">
+                                                            <button id="seriesSettingBtn" class="btn btn-dark" type="button">
+                                                                <i class="fa fa-cog" aria-hidden="true"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-end mt-2">
+                                                        <button type="button" id="seriesResetBtn" class="btn btn-sm p-0">시리즈에서 제거</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="mb-4">
-                                            <h5>URL 설정</h5>
-                                            <div class="d-flex w-100 rounded border" style="padding:0.7rem; background-color:#fff; align-items:center; font-size:14px">
-                                                <span>/</span>
-                                                <input id="url" class="ol-none w-100" type="text" th:field="*{url}" />
-                                            </div>
-                                            <small class="form-text text-danger" th:if="${#fields.hasErrors('url')}" th:errors="*{url}"></small>
-                                        </div>
-                                        <div class="mb-4">
-                                            <h5>시리즈 설정</h5>
-                                            <button class="btn btn-dark btn-block w-100 text-align-center" style="height:48px">
-                                                <i class="fa fa-list" aria-hidden="true"></i> 시리즈 설정하기
-                                            </button>
+                                        <div class="d-flex justify-content-between">
+                                            <a class="btn btn-light me-1" data-bs-dismiss="modal" aria-label="Close" style="width:150px">취소</a>
+                                            <button th:if="${mode == 'new'}" type="submit" id="publishedBtn" class="btn btn-dark" style="width:150px">출간하기</button>
+                                            <button th:if="${mode == 'mod'}" type="submit" id="publishedBtn" class="btn btn-dark" style="width:150px">수정하기</button>
                                         </div>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <a class="btn btn-light" data-bs-dismiss="modal" aria-label="Close" style="width:150px">취소</a>
-                                        <button th:if="${mode == 'new'}" type="submit" id="publishedBtn" class="btn btn-dark" style="width:150px">출간하기</button>
-                                        <button th:if="${mode == 'mod'}" type="submit" id="publishedBtn" class="btn btn-dark" style="width:150px">수정하기</button>
+                                </section>
+                                <section id="seriesSection" style="flex:1 1 0%">
+                                    <h5>시리즈 설정</h5>
+                                    <div class="d-flex flex-column" style="flex:1 1 0%;">
+                                        <div class="mb-3">
+                                            <div class="p-3" style="background-color: #e5e8ec">
+                                                <div class="d-flex w-100 rounded border" style="padding:0.4rem; background-color:#fff; align-items:center; font-size:12px">
+                                                    <span>/</span>
+                                                    <input id="seriesInput" class="ol-none w-100" type="text" placeholder="새로운 시리즈를 추가하세요." />
+                                                </div>
+                                                <div id="seriesBtnGroup" class="mt-2">
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="button" id="seriesAddCancelBtn" class="btn btn-sm me-2">취소</button>
+                                                        <button type="button" id="seriesAddBtn" class="btn btn-sm btn-dark">시리즈 추가</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <ul class="mb-0 series-list">
+                                                <li class="border-bottom" th:each="series : ${editor.series}">
+                                                    <span th:text="${series.title}"></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <button type="button" id="seriesSelectCancelBtn" class="btn me-2">취소</button>
+                                            <button type="button" id="seriesSelectBtn" class="btn btn-dark">선택하기</button>
+                                        </div>
                                     </div>
                                 </section>
                             </div>
@@ -523,6 +592,11 @@
         let input = document.querySelector("#tags");
         new Tagify(input);
         // ******************************************
+
+        $('#publishedModal').on('shown.bs.modal', function() {
+            const $editTitle = $('#editTitle').val();
+            $('#modalTitle').text($editTitle);
+        })
 
         const $newThumbnailImage = $('#newThumbnailImage');
         const $currentThumbnailImage = $('#currentThumbnailImage');
@@ -589,7 +663,97 @@
                 reader.readAsDataURL(e.target.files[0]);
             }
         }
+
+        $('#seriesSection').hide();
+        $('#seriesBtnGroup').hide();
+        $('#seriesForm').hide();
+
+        $('#seriesOpenBtn').on('click', function() {
+            $('#rightSection').hide();
+            $('#seriesSection').show();
+            $('.series-list li').siblings().removeClass('active');
+        })
+
+        $('#seriesInput').on('input', function() {
+            let inputValue = $(this).val();
+
+            if(inputValue.length === 0) {
+                $('#seriesBtnGroup').hide();
+            }
+
+            if(inputValue.length > 0) {
+                $('#seriesBtnGroup').show();
+            }
+        })
+
+        $('#seriesAddBtn').on('click', function() {
+            const seriesName = $('#seriesInput').val();
+            addSeries(seriesName);
+        })
+
+        $('#seriesAddCancelBtn').on('click', function() {
+            $('#seriesBtnGroup').hide();
+        })
+
+        $(document).on('click', '.series-list li', function() {
+            $('.series-list li').removeClass('active');
+            $(this).addClass('active');
+        })
+
+        $('#seriesSelectCancelBtn').on('click', function() {
+            $('#rightSection').show();
+            $('#seriesSection').hide();
+        })
+
+        $(document).on('click', '#seriesSelectBtn', function() {
+            const $seriesText = $('.series-list li.active').text().trim();
+
+            $('#rightSection').show();
+            $('#seriesSection').hide();
+            $('#seriesOpenBtn').hide();
+            $('#seriesForm').show();
+            $('#series').val($seriesText);
+        })
+
+        $('#seriesResetBtn').on('click', function() {
+            $('#series').val();
+            $('#seriesOpenBtn').show();
+            $('#seriesForm').hide();
+        })
+
+        $('#seriesSettingBtn').on('click', function() {
+            $('#rightSection').hide();
+            $('#seriesSection').show();
+        })
     })
+
+    function addSeries(seriesName) {
+        const url = "/" + [[${account.id}]] + "/" + "[[${editor.url}]]" + "/series/add";
+        let arr = [];
+
+        $('.series-list li').each(function(idx, el) {
+            const $el = $(el).find('span').text();
+            arr.push($el);
+        })
+
+        let isFound = arr.some(x => x === seriesName);
+
+        if(!isFound) {
+            $.ajax({
+                type : 'post',
+                url : url,
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify({"title" : seriesName})
+            }).done(function(data, status) {
+                let temp = '<li class="border-bottom">';
+                temp += '<span>' + data + '</span></li>';
+                $('.series-list').append(temp);
+                $('#seriesInput').val('');
+            })
+        } else {
+            alert("존재하는 시리즈입니다.");
+        }
+    }
 </script>
 
 </html>
