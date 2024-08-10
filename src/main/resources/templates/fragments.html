@@ -565,7 +565,7 @@
                                                 </div>
                                             </div>
                                             <ul class="mb-0 series-list">
-                                                <li class="border-bottom" th:each="series : ${editor.series}">
+                                                <li class="border-bottom" th:each="series : ${seriesList}">
                                                     <span th:text="${series.title}"></span>
                                                 </li>
                                             </ul>
@@ -664,6 +664,7 @@
             }
         }
 
+        let $series = $('#series');
         $('#seriesSection').hide();
         $('#seriesBtnGroup').hide();
         $('#seriesForm').hide();
@@ -712,11 +713,11 @@
             $('#seriesSection').hide();
             $('#seriesOpenBtn').hide();
             $('#seriesForm').show();
-            $('#series').val($seriesText);
+            $series.val($seriesText);
         })
 
         $('#seriesResetBtn').on('click', function() {
-            $('#series').val();
+            $series.val();
             $('#seriesOpenBtn').show();
             $('#seriesForm').hide();
         })
@@ -725,6 +726,11 @@
             $('#rightSection').hide();
             $('#seriesSection').show();
         })
+
+        if($series.val() != '' || $series.val() != null) {
+            $('#seriesOpenBtn').hide();
+            $('#seriesForm').show();
+        }
     })
 
     function addSeries(seriesName) {

@@ -2,6 +2,7 @@ package com.sonakbi.modules.account;
 
 
 import com.sonakbi.modules.comment.Comment;
+import com.sonakbi.modules.series.Series;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,6 +48,9 @@ public class Account {
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Series> series = new ArrayList<>();
 
     public String getProfileImage() {
         return profileImage == null ? "/images/account-icon.png" : profileImage;

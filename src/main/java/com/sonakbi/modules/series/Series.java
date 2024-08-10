@@ -1,5 +1,6 @@
 package com.sonakbi.modules.series;
 
+import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.editor.Editor;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,4 +24,7 @@ public class Series {
 
     @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Editor> editor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Account account;
 }

@@ -9,6 +9,8 @@ import com.sonakbi.modules.account.CurrentAccount;
 import com.sonakbi.modules.editor.form.EditorForm;
 import com.sonakbi.modules.editor.validator.EditorValidator;
 import com.sonakbi.modules.editorTag.EditorTag;
+import com.sonakbi.modules.series.Series;
+import com.sonakbi.modules.series.SeriesRepository;
 import com.sonakbi.modules.series.SeriesService;
 import com.sonakbi.modules.tag.Tag;
 import com.sonakbi.modules.tag.TagService;
@@ -38,6 +40,8 @@ public class EditorController {
     private final EditorValidator editorValidator;
     private final AccountService accountService;
     private final EditorRepository editorRepository;
+    private final SeriesRepository seriesRepository;
+    private final SeriesService seriesService;
 
     public static final String EDITOR_URL = "/editor";
     private static final String EDITOR = "editor";
@@ -55,6 +59,7 @@ public class EditorController {
         editorForm.setDisclosure(true);
         model.addAttribute(account);
         model.addAttribute("editorForm", editorForm);
+        model.addAttribute("seriesList", seriesRepository.findSeriesWithWriterById(account.getId()));
 
         return EDITOR + "/write";
     }
@@ -68,7 +73,8 @@ public class EditorController {
             return EDITOR + "/write";
         }
 
-        Editor newEditor = editorService.createNewWrite(account, editorForm);
+        Series series = seriesService.findCreateNew(editorForm.getSeries(), account);
+        Editor newEditor = editorService.createNewWrite(account, editorForm, series);
 
         return "redirect:/blog/" + account.getId() + "/view/" + newEditor.getEncodeUrl(newEditor.getUrl());
     }
@@ -82,10 +88,12 @@ public class EditorController {
         List<Tag> tagList = editorTags.stream().map(EditorTag::getTag).toList();
         String joinString = editorService.getTagValueToString(tagList);
         editorForm.setTags(joinString);
+        editorForm.setSeries(editor.getSeries().getTitle());
 
         model.addAttribute(account);
         model.addAttribute(editor);
         model.addAttribute(editorForm);
+        model.addAttribute("seriesList", seriesRepository.findSeriesWithWriterById(account.getId()));
 
         return EDITOR + "/update-write";
     }
@@ -101,8 +109,8 @@ public class EditorController {
             model.addAttribute(editorForm);
             return EDITOR + "/update-write";
         }
-
-        Editor editorReturn = editorService.updateWrite(editorForm, editor);
+        Series series =  seriesService.findCreateNew(editorForm.getSeries(), account);
+        Editor editorReturn = editorService.updateWrite(editorForm, editor, series);
 
         return "redirect:/blog/" + id + "/view/" + editor.getEncodeUrl(editorReturn.getUrl());
     }

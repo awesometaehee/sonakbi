@@ -31,7 +31,7 @@ public class EditorService {
     private final ObjectMapper objectMapper;
     private final EditorTagRepository editorTagRepository;
 
-    public Editor createNewWrite(Account account, EditorForm editorForm) throws JsonProcessingException {
+    public Editor createNewWrite(Account account, EditorForm editorForm, Series series) throws JsonProcessingException {
         Editor editor = modelMapper.map(editorForm, Editor.class);
 
         // 동일한 url을 가질 경우 랜덤 string을 붙여서 저장
@@ -41,6 +41,7 @@ public class EditorService {
             editor.setUrl(editor.getUrl() + "-" + random);
         }
         editor.setWrite(account);
+        editor.addSeries(series);
 
         if(!editorForm.getTags().isEmpty()) {
             String jsonString = editorForm.getTags();
@@ -54,7 +55,7 @@ public class EditorService {
         return editorRepository.save(editor);
     }
 
-    public Editor updateWrite(EditorForm editorForm, Editor editor) throws JsonProcessingException {
+    public Editor updateWrite(EditorForm editorForm, Editor editor, Series series) throws JsonProcessingException {
         // 동일한 url을 가질 경우 랜덤 string을 붙여서 저장
         String editorUrl = editorForm.getUrl();
         if(!editorUrl.equals(editor.getUrl())) {
@@ -65,6 +66,7 @@ public class EditorService {
         }
 
         modelMapper.map(editorForm, editor);
+        editor.addSeries(series);
         editor.setUrl(editorUrl);
 
         if(!editorForm.getTags().isEmpty()) {

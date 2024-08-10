@@ -9,6 +9,8 @@ import com.sonakbi.modules.comment.CommentService;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorService;
 import com.sonakbi.modules.like.LikesRepository;
+import com.sonakbi.modules.series.SeriesRepository;
+import com.sonakbi.modules.series.SeriesService;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -29,7 +31,8 @@ public class BlogController {
     private final AccountService accountService;
     private final TagRepository tagRepository;
     private final CommentService commentService;
-    private final LikesRepository likesRepository;
+    private final SeriesService seriesService;
+    private final SeriesRepository seriesRepository;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -50,7 +53,11 @@ public class BlogController {
     @GetMapping("/series")
     public String mySeriesForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
         model.addAttribute(account);
-        model.addAttribute("accountInfo", accountService.getAccountInfo(id));
+        Account accountInfo = accountService.getAccountInfo(id);
+        model.addAttribute("accountInfo", accountInfo);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+
+        model.addAttribute("seriesList", seriesRepository.findSeriesWithEditorCount(accountInfo.getId(), checkEqualAccount));
 
         return BLOG + "/series";
     }

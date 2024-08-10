@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface EditorRepository extends JpaRepository<Editor, Long>, EditorRepositoryExtension {
     boolean existsByUrl(String url);
 
-    @EntityGraph(attributePaths = {"editorTags", "writer", "series"})
+    @EntityGraph(attributePaths = {"editorTags", "writer"})
     @Query("select distinct e from Editor e where e.url = :url and e.writer.id = :id")
     Editor findEditorWithTagsByUrl(@Param("url") String url, @Param("id") Long id);
 
