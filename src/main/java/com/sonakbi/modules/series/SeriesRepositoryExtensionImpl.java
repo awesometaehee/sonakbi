@@ -26,11 +26,14 @@ public class SeriesRepositoryExtensionImpl extends QuerydslRepositorySupport imp
 
         // BooleanBuilder builder = new BooleanBuilder();
 
-        return queryFactory.select(Projections.constructor(SeriesDto.class, series.id, series.title, editor.count(), account.id))
+        return queryFactory.select(Projections.constructor(
+                SeriesDto.class, series.id, series.title, series.thumbnailImage, editor.count(), account.id
+                ))
                 .from(series)
                 .leftJoin(series.account, account)
                 .leftJoin(series.editor, editor)
-                .groupBy(series.id, series.title, account.id)
+                .groupBy(series.id, series.title, series.thumbnailImage, account.id)
+                .orderBy(series.id.desc())
                 .fetch();
     }
 }

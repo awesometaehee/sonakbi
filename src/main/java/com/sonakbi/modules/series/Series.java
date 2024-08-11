@@ -22,6 +22,9 @@ public class Series {
     @Column(unique = true, nullable = false)
     private String title;
 
+    @Lob @Basic(fetch = FetchType.EAGER)
+    private String thumbnailImage;
+
     @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Editor> editor;
 

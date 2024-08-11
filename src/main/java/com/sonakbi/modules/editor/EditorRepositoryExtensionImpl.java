@@ -7,6 +7,7 @@ import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.QAccount;
 import com.sonakbi.modules.editorTag.QEditorTag;
 import com.sonakbi.modules.like.QLikes;
+import com.sonakbi.modules.series.QSeries;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
@@ -38,6 +39,23 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
                 .leftJoin(editor.editorTags, editorTag)
                 .leftJoin(editor.writer, account)
                 .leftJoin(editor.likes, likes)
+                .orderBy(editor.publishedTime.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Editor> findSeriesById(Long seriesId, boolean disclosure) {
+        QSeries series = QSeries.series;
+        QEditor editor = QEditor.editor;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(series.id.eq(seriesId));
+        if(!disclosure) {
+            builder.and(editor.disclosure.ne(disclosure));
+        }
+
+        return from(editor).where(builder)
+                .leftJoin(editor.series, series).fetchJoin()
                 .orderBy(editor.publishedTime.desc())
                 .fetch();
     }

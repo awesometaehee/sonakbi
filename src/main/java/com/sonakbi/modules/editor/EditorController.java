@@ -88,7 +88,10 @@ public class EditorController {
         List<Tag> tagList = editorTags.stream().map(EditorTag::getTag).toList();
         String joinString = editorService.getTagValueToString(tagList);
         editorForm.setTags(joinString);
-        editorForm.setSeries(editor.getSeries().getTitle());
+
+        if(editor.getSeries() != null) {
+            editorForm.setSeries(editor.getSeries().getTitle());
+        }
 
         model.addAttribute(account);
         model.addAttribute(editor);

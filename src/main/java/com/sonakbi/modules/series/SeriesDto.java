@@ -13,6 +13,8 @@ public class SeriesDto {
 
     private String title;
 
+    private String thumbnailImage;
+
     private long count;
 
     private Long accountId;

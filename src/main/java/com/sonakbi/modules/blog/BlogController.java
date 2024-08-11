@@ -7,8 +7,10 @@ import com.sonakbi.modules.comment.Comment;
 import com.sonakbi.modules.comment.CommentForm;
 import com.sonakbi.modules.comment.CommentService;
 import com.sonakbi.modules.editor.Editor;
+import com.sonakbi.modules.editor.EditorRepository;
 import com.sonakbi.modules.editor.EditorService;
 import com.sonakbi.modules.like.LikesRepository;
+import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.series.SeriesRepository;
 import com.sonakbi.modules.series.SeriesService;
 import com.sonakbi.modules.tag.TagRepository;
@@ -31,8 +33,8 @@ public class BlogController {
     private final AccountService accountService;
     private final TagRepository tagRepository;
     private final CommentService commentService;
-    private final SeriesService seriesService;
     private final SeriesRepository seriesRepository;
+    private final EditorRepository editorRepository;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -60,6 +62,20 @@ public class BlogController {
         model.addAttribute("seriesList", seriesRepository.findSeriesWithEditorCount(accountInfo.getId(), checkEqualAccount));
 
         return BLOG + "/series";
+    }
+
+    @GetMapping("/series/{seriesId}")
+    public String seriesListForm(@CurrentAccount Account account, @PathVariable Long id, @PathVariable Long seriesId, Model model) {
+        model.addAttribute(account);
+        Account accountInfo = accountService.getAccountInfo(id);
+        model.addAttribute("accountInfo", accountInfo);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+
+        List<Editor> postList = editorRepository.findSeriesById(seriesId, checkEqualAccount);
+        model.addAttribute("postList", postList);
+        model.addAttribute(seriesRepository.findById(seriesId).orElseThrow());
+
+        return BLOG + "/series-list";
     }
 
     @GetMapping("/about")
