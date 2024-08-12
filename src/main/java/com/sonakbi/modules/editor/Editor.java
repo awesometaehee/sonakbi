@@ -56,9 +56,8 @@ public class Editor {
     @JsonIgnoreProperties("editor")
     private Set<EditorTag> editorTags = new HashSet<>();
 
-    @Lob
-    @Basic(fetch = FetchType.EAGER)
-    private String thumbnail;
+    @Lob @Basic(fetch = FetchType.EAGER)
+    private String thumbnail = null;
 
     private boolean disclosure = true;
 
@@ -100,7 +99,7 @@ public class Editor {
     }
 
     public boolean useThumbnail() {
-        return !this.getThumbnail().isEmpty();
+        return !(this.thumbnail == null);
     }
 
     public void addTags(Tag tag) {
@@ -126,7 +125,13 @@ public class Editor {
     }
 
     public void addSeries(Series series) {
-        this.series = series;
+        if(series != null) {
+            this.series = series;
+        }
+    }
+
+    public String getSeriesTitle() {
+        return this.series.getTitle();
     }
 
     public void addComment() {

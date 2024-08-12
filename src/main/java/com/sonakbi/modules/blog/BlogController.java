@@ -89,14 +89,17 @@ public class BlogController {
     @GetMapping("/view/{url}")
     public String viewForm(@CurrentAccount Account account, Model model,
                            @PathVariable Long id, @PathVariable String url) {
+        Account accountInfo = accountService.getAccountInfo(id);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
 
         Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
+        List<Editor> editorList = editorRepository.findSeriesById(editor.getSeries().getId(), checkEqualAccount);
         List<Comment> commentList = commentService.getComments(editor);
-        if(account != null) {
-            model.addAttribute(account);
-        }
+
+        model.addAttribute(account);
         model.addAttribute(editor);
-        model.addAttribute(commentList);
+        model.addAttribute("editorList", editorList);
+        model.addAttribute("commentList", commentList);
 
         return BLOG + "/view";
     }

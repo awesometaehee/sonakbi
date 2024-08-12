@@ -67,13 +67,15 @@ public class EditorController {
     @PostMapping("/write")
     public String writeFormSubmit(@CurrentAccount Account account, EditorForm editorForm, Errors errors, Model model)
             throws JsonProcessingException {
+        String seriesName = editorForm.getSeries();
+
         if(errors.hasErrors()) {
             model.addAttribute(account);
             model.addAttribute(editorForm);
             return EDITOR + "/write";
         }
 
-        Series series = seriesService.findCreateNew(editorForm.getSeries(), account);
+        Series series = seriesService.findCreateNew(seriesName, account);
         Editor newEditor = editorService.createNewWrite(account, editorForm, series);
 
         return "redirect:/blog/" + account.getId() + "/view/" + newEditor.getEncodeUrl(newEditor.getUrl());

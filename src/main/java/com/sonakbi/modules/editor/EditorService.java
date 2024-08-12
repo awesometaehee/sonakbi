@@ -40,6 +40,11 @@ public class EditorService {
             String random = RandomString.make(5);
             editor.setUrl(editor.getUrl() + "-" + random);
         }
+
+        if(editorForm.getThumbnail().isEmpty()) {
+            editor.setThumbnail(null);
+        }
+
         editor.setWrite(account);
         editor.addSeries(series);
 
@@ -68,6 +73,10 @@ public class EditorService {
         modelMapper.map(editorForm, editor);
         editor.addSeries(series);
         editor.setUrl(editorUrl);
+
+        if(editorForm.getThumbnail().isEmpty()) {
+            editor.setThumbnail(null);
+        }
 
         if(!editorForm.getTags().isEmpty()) {
             String jsonString = editorForm.getTags();

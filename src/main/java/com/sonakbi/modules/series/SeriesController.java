@@ -22,9 +22,16 @@ public class SeriesController {
     private final AccountService accountService;
     private final SeriesService seriesService;
 
-    @PostMapping("/{id}/{url}/series/add")
+    @PostMapping("/series/create")
     @ResponseBody
-    public ResponseEntity addSeries(@CurrentAccount Account account, @RequestBody SeriesForm seriesForm, @PathVariable String url, @PathVariable Long id) {
+    public ResponseEntity createSeries(@CurrentAccount Account account, @RequestBody SeriesForm seriesForm) {
+        Series series = seriesService.findCreateNew(seriesForm.getTitle(), account);
+        return ResponseEntity.ok(series.getTitle());
+    }
+
+    @PostMapping("/{id}/{url}/series/update")
+    @ResponseBody
+    public ResponseEntity updateSeries(@CurrentAccount Account account, @RequestBody SeriesForm seriesForm, @PathVariable String url, @PathVariable Long id) {
         Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         Series series = seriesService.findCreateNew(seriesForm.getTitle(), account);
         editorService.addSeries(editor, series);

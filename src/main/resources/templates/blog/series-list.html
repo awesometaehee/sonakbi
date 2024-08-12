@@ -18,23 +18,31 @@
                     </select>
                 </div>
                 <div style="margin-top:80px">
-                    <div th:each="post : ${postList}">
-                        <h4>
-                            <span></span>
-                            <a class="text-dark" th:text="${post.title}"></a>
+                    <div class="mb-5" th:each="post, postStat : ${postList}">
+                        <h4 class="mb-3">
+                            <a class="text-dark underline" th:href="@{'/blog/' + ${account.id} + '/view/' + ${post.url}}">
+                                <span class="fs-2 text-muted fst-italic"><span th:text="${postStat.count}"></span>.</span>
+                                <span th:text="${post.title}"></span>
+                            </a>
                         </h4>
-                        <section class="d-flex">
-                            <!-- TODO 섬네일에 값이 왜 들어가지??? -->
-                            <div class="d-flex justify-content-center align-items-center"
-                                 th:if="${post.thumbnail == null}" style="width:12rem; height:6.25rem; background-color:#fff">
-                                <i class="fa fa-picture-o mb-3 fs-3" aria-hidden="true"></i>
-                            </div>
-                            <a th:if="${post.thumbnail != null}" class="d-block me-2" style="width:12rem; height:6.25rem; object-fit: cover;">
-                                <img th:src="${post.thumbnail}" alt="thumbnail" />
+                        <section class="d-flex" style="height:6.25rem">
+                            <a class="text-dark" th:if="${#strings.isEmpty(post.thumbnail)}" th:href="@{'/blog/' + ${account.id} + '/view/' + ${post.url}}">
+                                <div class="d-flex justify-content-center align-items-center" style="width:12rem; height:6.25rem; background-color:#e5e9f0">
+                                    <i class="fa fa-picture-o fs-3" aria-hidden="true"></i>
+                                </div>
+                            </a>
+                            <a th:if="${!#strings.isEmpty(post.thumbnail)}" class="d-block" th:href="@{'/blog/' + ${account.id} + '/view/' + ${post.url}}"
+                               style="width:12rem; height:6.25rem; object-fit: cover;">
+                                <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" />
                             </a>
                             <div class="post-info">
-                                <p th:text="${post.description}"></p>
-                                <p th:text="${post.publishedTime}"></p>
+                                <div th:if="${!#strings.isEmpty(post.description)}">
+                                    <p th:text="${post.description}"></p>
+                                </div>
+                                <div th:if="${#strings.isEmpty(post.description)}">
+                                    <p th:utext="${post.mainText}"></p>
+                                </div>
+                                <p class="before-time fs-7 fw-light" th:text="${post.publishedTime}"></p>
                             </div>
                         </section>
                     </div>
@@ -44,4 +52,5 @@
     </div>
 </div>
 </body>
+<script th:replace="fragments :: change-time-ago"></script>
 </html>

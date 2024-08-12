@@ -51,6 +51,16 @@ table th {
     font-weight: lighter;
 }
 
+ol {
+    padding-left:1.3rem !important;
+    margin-bottom:0 !important;
+}
+
+ol li::marker {
+    font-style: italic;
+    color:#80858d;
+}
+
 a.underline:hover {
     text-decoration: underline !important;
 }
@@ -254,4 +264,37 @@ p {
     -webkit-box-pack: justify;
     justify-content: space-between;
     height: 100%;
+    margin-left:1.5rem;
+}
+
+.series-chapter {
+    background-color: #f0f3f5;
+    padding: 2.25rem;
+    border-radius: 0.3rem;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+
+.series-chapter ol li.active a {
+    color:#20c997 !important;
+}
+
+.bookmark {
+    position:absolute;
+    width:60px;
+    height:25px;
+    z-index:-1;
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.bookmark.red {
+    background-color: #ff8686;
+    top:17px;
+    right:-38px;
+}
+
+.bookmark.yellow {
+    background-color: #ffdb7c;
+    top:57px;
+    right:-38px;
 }

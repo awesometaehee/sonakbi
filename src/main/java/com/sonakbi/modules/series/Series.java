@@ -3,6 +3,7 @@ package com.sonakbi.modules.series;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.editor.Editor;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.HashSet;
@@ -20,6 +21,7 @@ public class Series {
     private Long id;
 
     @Column(unique = true, nullable = false)
+    @NotBlank
     private String title;
 
     @Lob @Basic(fetch = FetchType.EAGER)

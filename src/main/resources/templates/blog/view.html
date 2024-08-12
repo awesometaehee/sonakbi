@@ -27,6 +27,18 @@
                     <a th:text="${editorTag.tag.value}"></a>
                 </span>
             </div>
+            <div class="position-relative mb-4">
+                <div class="bookmark red"></div>
+                <div class="bookmark yellow"></div>
+                <div class="series-chapter" th:if="${editorList.size > 0}">
+                    <h4 class="mb-3 text-muted" th:text="${editor.getSeriesTitle}"></h4>
+                    <ol>
+                       <li class="mb-2" th:classappend="${ed.title == editor.title} ? active" th:each="ed, edStat : ${editorList}">
+                           <a class="text-dark underline" th:href="@{'/blog/' + ${account.id} + '/view/' + ${ed.url}}" th:text="${ed.title}"></a>
+                       </li>
+                    </ol>
+                </div>
+            </div>
             <div id="viewer"></div>
             <div style="margin-top:16rem; margin-bottom:6rem;">
                 <div class="d-flex align-items-center mb-5">

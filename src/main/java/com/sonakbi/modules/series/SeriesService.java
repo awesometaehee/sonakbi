@@ -16,7 +16,7 @@ public class SeriesService {
 
     public Series findCreateNew(String title, Account account) {
         Series series = seriesRepository.findByTitle(title);
-        if(series == null) {
+        if(series == null && !title.isEmpty()) {
             series = seriesRepository.save(Series.builder().title(title).account(account).build());
         }
 

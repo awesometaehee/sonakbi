@@ -216,7 +216,7 @@
     </script>
 </div>
 
-<div class="d-grid" th:fragment="write-form (mode, action)">
+<div class="d-grid" style="padding-top:58px" th:fragment="write-form (mode, action)">
     <form class="needs-validation d-grid" th:action="@{${action}}" method="post" th:object="${editorForm}" novalidate>
         <div >
             <div class="d-grid w-100 h-100">
@@ -337,7 +337,8 @@
                                                 <div id="seriesBtnGroup" class="mt-2">
                                                     <div class="d-flex justify-content-end">
                                                         <button type="button" id="seriesAddCancelBtn" class="btn btn-sm me-2">취소</button>
-                                                        <button type="button" id="seriesAddBtn" class="btn btn-sm btn-dark">시리즈 추가</button>
+                                                        <button th:if="${mode == 'new'}" type="button" id="seriesNewBtn" class="btn btn-sm btn-dark">시리즈 추가</button>
+                                                        <button th:if="${mode == 'mod'}" type="button" id="seriesModBtn" class="btn btn-sm btn-dark">시리즈 추가</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -464,9 +465,22 @@
             }
         })
 
-        $('#seriesAddBtn').on('click', function() {
+        $('#seriesNewBtn').on('click', function() {
             const seriesName = $('#seriesInput').val();
-            addSeries(seriesName);
+            if(seriesName !== '') {
+                createSeries(seriesName);
+            } else {
+                alert('시리즈를 입력하세요.');
+            }
+        })
+
+        $('#seriesModBtn').on('click', function() {
+            const seriesName = $('#seriesInput').val();
+            if(seriesName !== '') {
+                updateSeries(seriesName);
+            } else {
+                alert('시리즈를 입력하세요.');
+            }
         })
 
         $('#seriesAddCancelBtn').on('click', function() {
@@ -504,14 +518,42 @@
             $('#seriesSection').show();
         })
 
-        if($series.val() != '' || $series.val() != null) {
+        if($series.val() != '') {
             $('#seriesOpenBtn').hide();
             $('#seriesForm').show();
         }
     })
 
-    function addSeries(seriesName) {
-        const url = "/" + [[${account.id}]] + "/" + "[[${editor.url}]]" + "/series/add";
+    function createSeries(seriesName) {
+        const url = "/series/create";
+        let arr = [];
+
+        $('.series-list li').each(function(idx, el) {
+            const $el = $(el).find('span').text();
+            arr.push($el);
+        })
+
+        let isFound = arr.some(x => x === seriesName);
+
+        if(!isFound) {
+            $.ajax({
+                type : 'post',
+                url : url,
+                contentType: "application/json; charset=utf-8",
+                data : JSON.stringify({"title" : seriesName})
+            }).done(function(data, status) {
+                let temp = '<li class="border-bottom">';
+                temp += '<span>' + data + '</span></li>';
+                $('.series-list').append(temp);
+                $('#seriesInput').val('');
+            })
+        } else {
+            alert("존재하는 시리즈입니다.");
+        }
+    }
+
+    function updateSeries(seriesName) {
+        const url = "/" + [[${account.id}]] + "/" + "[[${editorForm.url}]]" + "/series/update";
         let arr = [];
 
         $('.series-list li').each(function(idx, el) {
