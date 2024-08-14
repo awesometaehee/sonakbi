@@ -1,5 +1,6 @@
 package com.sonakbi.modules.account;
 
+import com.sonakbi.modules.account.form.AboutForm;
 import com.sonakbi.modules.account.form.ProfileForm;
 import com.sonakbi.modules.account.form.SignUpForm;
 import jakarta.servlet.http.HttpServletRequest;
@@ -76,5 +77,10 @@ public class AccountService implements UserDetailsService {
             throw new IllegalArgumentException("해당 블로그가 없습니다.");
         }
         return accountRepository.findById(id).orElseThrow();
+    }
+
+    public void updateAbout(Account account, AboutForm aboutForm) {
+        modelMapper.map(aboutForm, account);
+        accountRepository.save(account);
     }
 }

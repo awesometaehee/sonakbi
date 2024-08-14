@@ -3,18 +3,62 @@
 <head th:replace="fragments :: head"></head>
 <body>
 <div class="w-100 h-100 d-grid">
-<div th:replace="fragments :: main-nav"></div>
-<div class="container">
-    <div class="w-50 mx-auto">
-        <div th:replace="fragments :: about"></div>
-
-        <hr />
-
-        <div class="py-5">
-            <div th:replace="fragments :: blog-menu (curMenu='about')"></div>
+    <div th:replace="fragments :: main-nav"></div>
+    <div class="container">
+        <div class="w-768 mx-auto">
+            <div th:replace="fragments :: about"></div>
+            <hr />
+            <div class="py-5">
+                <div th:replace="fragments :: blog-menu (curMenu='about')"></div>
+                <div class="position-relative">
+                    <div th:if="${message}" class="alert alert-info alert-dismissible fade show mt-3 w-auto" role="alert">
+                        <p th:text="${message}"></p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div id="divNoAbout" class="mt-5" th:if="${#strings.isEmpty(account.aboutDescription)}">
+                        <div class="d-flex flex-column align-items-center">
+                            <div style="width:200px; margin-bottom:30px">
+                                <img class="w-100" th:src="@{/images/no-post-icon.png}" alt="no-about" />
+                            </div>
+                            <div class="mb-3">소개가 작성되지 않았습니다.</div>
+                            <button type="button" id="aboutBtn" class="btn btn-dark">작성하기</button>
+                        </div>
+                    </div>
+                    <div id="divAbout" class="mt-5" th:if="${!#strings.isEmpty(account.aboutDescription)}">
+                        <div class="mb-3" th:text="${account.aboutDescription}"></div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" id="updateAboutBtn" class="btn btn-dark">수정하기</button>
+                        </div>
+                    </div>
+                    <div id="divAboutWrite" class="mt-5">
+                        <form th:action="@{'/blog/' + ${account.id} + '/about'}" method="post" th:object="${aboutForm}">
+                            <textarea type="text" class="form-control mb-3" th:field="*{aboutDescription}"></textarea>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-dark">작성하기</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-</div>
+<script type="application/javascript">
+    $(function() {
+        $('#divAboutWrite').hide();
+
+        $('#aboutBtn').on('click', function() {
+            $('#divAboutWrite').show();
+            $('#divAbout').hide();
+            $('#divNoAbout').hide();
+        })
+
+        $('#updateAboutBtn').on('click', function() {
+            $('#divAboutWrite').show();
+            $('#divAbout').hide();
+            $('#divNoAbout').hide();
+        })
+    })
+</script>
 </body>
 </html>

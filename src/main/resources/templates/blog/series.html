@@ -5,7 +5,7 @@
 <div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
     <div class="container">
-        <div class="w-50 mx-auto">
+        <div class="w-768 mx-auto">
             <div th:replace="fragments :: about"></div>
             <hr />
             <div class="py-5">
@@ -32,7 +32,7 @@
                             </a>
                         </div>
                         <h5 class="fs-6">
-                            <a th:href="@{'/' + ${series.accountId} + '/series/' + ${series.seriesId}}"
+                            <a th:href="@{'/blog/' + ${series.accountId} + '/series/' + ${series.seriesId}}"
                                class="text-dark" th:text="${series.title}"></a>
                         </h5>
                         <div class="fs-7">

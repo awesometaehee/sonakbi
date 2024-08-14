@@ -3,6 +3,7 @@ package com.sonakbi.modules.blog;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
+import com.sonakbi.modules.account.form.AboutForm;
 import com.sonakbi.modules.comment.Comment;
 import com.sonakbi.modules.comment.CommentForm;
 import com.sonakbi.modules.comment.CommentService;
@@ -15,11 +16,15 @@ import com.sonakbi.modules.series.SeriesRepository;
 import com.sonakbi.modules.series.SeriesService;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.sonakbi.modules.blog.BlogController.BLOG_URL;
@@ -35,6 +40,7 @@ public class BlogController {
     private final CommentService commentService;
     private final SeriesRepository seriesRepository;
     private final EditorRepository editorRepository;
+    private final ModelMapper modelMapper;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -82,8 +88,21 @@ public class BlogController {
     public String myAboutForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
         model.addAttribute(account);
         model.addAttribute("accountInfo", accountService.getAccountInfo(id));
+        model.addAttribute("aboutForm", modelMapper.map(account, AboutForm.class));
 
         return BLOG + "/about";
+    }
+
+    @PostMapping("/about")
+    public String myAboutFormSubmit(@CurrentAccount Account account, AboutForm aboutForm, Errors errors, Model model, RedirectAttributes attributes) {
+        if(errors.hasErrors()) {
+            model.addAttribute(account);
+            return BLOG + "/about";
+        }
+
+        accountService.updateAbout(account, aboutForm);
+        attributes.addFlashAttribute("message", "소개를 작성했습니다.");
+        return "redirect:/" + BLOG + "/" + account.getId() + "/about";
     }
 
     @GetMapping("/view/{url}")
@@ -91,14 +110,33 @@ public class BlogController {
                            @PathVariable Long id, @PathVariable String url) {
         Account accountInfo = accountService.getAccountInfo(id);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+        List<Editor> editorList = new ArrayList<>();
+        Editor prevEditor = new Editor();
+        Editor nextEditor = new Editor();
 
         Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
-        List<Editor> editorList = editorRepository.findSeriesById(editor.getSeries().getId(), checkEqualAccount);
+        if(editor.getSeries() != null) {
+            editorList = editorRepository.findSeriesById(editor.getSeries().getId(), checkEqualAccount);
+            for(int i = 1; i<editorList.size(); i++) {
+                if(editorList.get(i).getUrl().equals(url)) {
+                    prevEditor = editorList.get(i - 1);
+                }
+            }
+
+            for(int i = 0; i<editorList.size() - 1; i++) {
+                if(editorList.get(i).getUrl().equals(url)) {
+                    nextEditor = editorList.get(i + 1);
+                }
+            }
+        }
+
         List<Comment> commentList = commentService.getComments(editor);
 
         model.addAttribute(account);
         model.addAttribute(editor);
         model.addAttribute("editorList", editorList);
+        model.addAttribute("prevPost", prevEditor);
+        model.addAttribute("nextPost", nextEditor);
         model.addAttribute("commentList", commentList);
 
         return BLOG + "/view";

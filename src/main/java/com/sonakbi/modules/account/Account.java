@@ -1,6 +1,5 @@
 package com.sonakbi.modules.account;
 
-
 import com.sonakbi.modules.comment.Comment;
 import com.sonakbi.modules.series.Series;
 import jakarta.persistence.*;
@@ -45,6 +44,8 @@ public class Account {
     private LocalDateTime joinedAt;
 
     private String authority;
+
+    private String aboutDescription;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();

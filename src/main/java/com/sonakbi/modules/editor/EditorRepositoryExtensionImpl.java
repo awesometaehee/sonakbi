@@ -2,6 +2,10 @@ package com.sonakbi.modules.editor;
 
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.QAccount;

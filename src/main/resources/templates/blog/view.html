@@ -7,7 +7,7 @@
 <div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
     <div class="container" >
-        <div class="w-50 mx-auto">
+        <div class="w-768 mx-auto">
             <div style="margin-top:130px; margin-bottom:40px">
                 <h1 th:text="${editor.title}"></h1>
             </div>
@@ -27,20 +27,28 @@
                     <a th:text="${editorTag.tag.value}"></a>
                 </span>
             </div>
-            <div class="position-relative mb-4">
+            <div class="series-chapter position-relative mb-4" th:if="${editorList.size > 0}">
                 <div class="bookmark red"></div>
                 <div class="bookmark yellow"></div>
-                <div class="series-chapter" th:if="${editorList.size > 0}">
+                <section>
                     <h4 class="mb-3 text-muted" th:text="${editor.getSeriesTitle}"></h4>
-                    <ol>
+                    <ol class="series-ol show">
                        <li class="mb-2" th:classappend="${ed.title == editor.title} ? active" th:each="ed, edStat : ${editorList}">
                            <a class="text-dark underline" th:href="@{'/blog/' + ${account.id} + '/view/' + ${ed.url}}" th:text="${ed.title}"></a>
+                           <input id="seriesHiddenIdx" type="hidden" th:value="${edStat.index + 1}">
                        </li>
                     </ol>
-                </div>
+                    <div class="d-flex align-items-center justify-content-between" style="margin-top:3rem">
+                        <span class="series-accordian rotate">숨기기</span>
+                        <div>
+                            <a th:href="@{'/blog/' + ${account.id} + '/view/' + ${prevPost.url}}" class="btn btn-sm" th:classappend="${#strings.isEmpty(prevPost.url)} ? disabled">prev</a>
+                            <a th:href="@{'/blog/' + ${account.id} + '/view/' + ${nextPost.url}}" class="btn btn-sm" th:classappend="${#strings.isEmpty(nextPost.url)} ? disabled">next</a>
+                        </div>
+                    </div>
+                </section>
             </div>
             <div id="viewer"></div>
-            <div style="margin-top:16rem; margin-bottom:6rem;">
+            <div style="margin-top:16rem;">
                 <div class="d-flex align-items-center mb-5">
                     <img class="round" style="width: 150px; height:150px" th:src="${editor.writer.profileImage}" alt="profile-image" />
                     <div class="ms-3">
@@ -52,6 +60,24 @@
                     </div>
                 </div>
                 <hr />
+            </div>
+            <div class="d-flex justify-content-between align-items-center" style="margin-bottom:6rem">
+                <div class="post-move">
+                    <a th:if="${!#strings.isEmpty(prevPost.url)}" th:href="@{'/blog/' + ${account.id} + '/view/' + ${prevPost.url}}">
+                        <div class="post-prev">
+                            <p class="fs-8 mb-1">👈 이전 포스트</p>
+                            <p th:text="${prevPost.title}"></p>
+                        </div>
+                    </a>
+                </div>
+                <div class="post-move ms-3">
+                    <a th:if="${!#strings.isEmpty(nextPost.url)}" th:href="@{'/blog/' + ${account.id} + '/view/' + ${nextPost.url}}">
+                        <div class="post-next">
+                            <p class="fs-8 mb-1">👉 다음 포스트</p>
+                            <p th:text="${nextPost.title}"></p>
+                        </div>
+                    </a>
+                </div>
             </div>
             <div style="margin-bottom:5rem">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -178,6 +204,20 @@
         $(document).on('click', '.delete-comment', function(e) {
             deleteComment(e);
         })
+
+        $(document).on('click', '.series-accordian', function() {
+            if($('.series-ol').hasClass('show')) {
+                $('.series-ol').removeClass('show');
+                $('.series-accordian').removeClass('rotate');
+                $('.series-accordian').text('목록보기');
+            } else {
+                $('.series-ol').addClass('show');
+                $('.series-accordian').addClass('rotate');
+                $('.series-accordian').text('숨기기');
+            }
+        })
+
+        $('#seriesIdx').text($('#seriesHiddenIdx').val());
     })
 
     function createComment(e) {
