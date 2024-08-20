@@ -19,4 +19,7 @@ public interface SeriesRepository extends JpaRepository<Series, Long>, SeriesRep
     @EntityGraph(attributePaths = {"account"})
     @Query("select s from Series s where s.account.id = :id")
     List<Series> findSeriesWithWriterById(@Param("id") Long id);
+
+    @Query("select s from Series s join s.editor e where e.id = :id")
+    Series findSeriesByEditorId(@Param("id") Long id);
 }

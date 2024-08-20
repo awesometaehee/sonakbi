@@ -217,7 +217,7 @@
 </div>
 
 <div class="d-grid" style="padding-top:58px" th:fragment="write-form (mode, action)">
-    <form class="needs-validation d-grid" th:action="@{${action}}" method="post" th:object="${editorForm}" novalidate>
+    <form id="writeForm" class="needs-validation d-grid" th:action="@{${action}}" method="post" th:object="${editorForm}" novalidate>
         <div >
             <div class="d-grid w-100 h-100">
                 <div class="d-grid" style="grid-template-rows: 1fr 70px;">
@@ -371,9 +371,22 @@
         new Tagify(input);
         // ******************************************
 
-        $('#publishedModal').on('shown.bs.modal', function() {
+        $('#publishedModal').on('show.bs.modal', function(evt) {
+            let isEmpty = $('#editTitle').val() == '';
+            if(isEmpty) {
+                alert('제목을 입력하세요.');
+                evt.preventDefault();
+            }
+
             const $editTitle = $('#editTitle').val();
             $('#modalTitle').text($editTitle);
+        })
+
+        // form 에서 enter submit event 막기
+        document.getElementById('writeForm').addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+            }
         })
 
         const $newThumbnailImage = $('#newThumbnailImage');

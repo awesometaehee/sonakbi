@@ -375,3 +375,22 @@ p {
     flex-direction: column;
     align-items:flex-end;
 }
+
+.form-control-lg {
+    font-size:2rem !important;
+}
+
+#dragContainer {
+    padding:1.5rem;
+    background-color: #e5e9f0;
+}
+
+#dragContainer .drag-item {
+    padding:1rem;
+    background-color: #fff;
+    cursor:grab;
+}
+
+#dragContainer .drag-item:last-child {
+    margin-bottom:0 !important;
+}

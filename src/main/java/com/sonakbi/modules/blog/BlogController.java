@@ -72,16 +72,30 @@ public class BlogController {
 
     @GetMapping("/series/{seriesId}")
     public String seriesListForm(@CurrentAccount Account account, @PathVariable Long id, @PathVariable Long seriesId, Model model) {
-        model.addAttribute(account);
         Account accountInfo = accountService.getAccountInfo(id);
-        model.addAttribute("accountInfo", accountInfo);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
-
         List<Editor> postList = editorRepository.findSeriesById(seriesId, checkEqualAccount);
+
+        model.addAttribute(account);
+        model.addAttribute("accountInfo", accountInfo);
         model.addAttribute("postList", postList);
         model.addAttribute(seriesRepository.findById(seriesId).orElseThrow());
 
         return BLOG + "/series-list";
+    }
+
+    @GetMapping("/series/{seriesId}/update")
+    public String seriesListUpdate(@CurrentAccount Account account, @PathVariable Long id, @PathVariable Long seriesId, Model model) {
+        Account accountInfo = accountService.getAccountInfo(id);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+        List<Editor> postList = editorRepository.findSeriesById(seriesId, checkEqualAccount);
+
+        model.addAttribute(account);
+        model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("postList", postList);
+        model.addAttribute(seriesRepository.findById(seriesId).orElseThrow());
+
+        return BLOG + "/update-series-list";
     }
 
     @GetMapping("/about")
@@ -117,12 +131,14 @@ public class BlogController {
         Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         if(editor.getSeries() != null) {
             editorList = editorRepository.findSeriesById(editor.getSeries().getId(), checkEqualAccount);
+            // 이전 포스트
             for(int i = 1; i<editorList.size(); i++) {
                 if(editorList.get(i).getUrl().equals(url)) {
                     prevEditor = editorList.get(i - 1);
                 }
             }
 
+            // 다음 포스트
             for(int i = 0; i<editorList.size() - 1; i++) {
                 if(editorList.get(i).getUrl().equals(url)) {
                     nextEditor = editorList.get(i + 1);
@@ -133,6 +149,7 @@ public class BlogController {
         List<Comment> commentList = commentService.getComments(editor);
 
         model.addAttribute(account);
+        model.addAttribute("accountInfo", accountInfo);
         model.addAttribute(editor);
         model.addAttribute("editorList", editorList);
         model.addAttribute("prevPost", prevEditor);

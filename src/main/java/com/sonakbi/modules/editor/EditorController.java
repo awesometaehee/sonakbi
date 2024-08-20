@@ -120,11 +120,12 @@ public class EditorController {
         return "redirect:/blog/" + id + "/view/" + editor.getEncodeUrl(editorReturn.getUrl());
     }
 
-    @PostMapping("/{id}/{url}/delete")
-    public String deleteEditor(@CurrentAccount Account account, @PathVariable String url, @PathVariable Long id) {
-        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
+    @PostMapping("/delete/{id}")
+    public String deleteEditor(@CurrentAccount Account account, @PathVariable Long id) {
+        // Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
+        Editor editor = editorRepository.findById(id).orElseThrow();
         editorService.deleteEditor(account, editor);
 
-        return "redirect:/blog/" + id + "/post";
+        return "redirect:/blog/" + account.getId() + "/post";
     }
 }

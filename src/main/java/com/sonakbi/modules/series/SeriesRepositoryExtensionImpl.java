@@ -24,12 +24,17 @@ public class SeriesRepositoryExtensionImpl extends QuerydslRepositorySupport imp
         QAccount account = QAccount.account;
         QEditor editor = QEditor.editor;
 
-        // BooleanBuilder builder = new BooleanBuilder();
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(account.id.eq(id));
+        if(!disclosure) {
+            builder.and(editor.disclosure.ne(disclosure));
+        }
 
         return queryFactory.select(Projections.constructor(
                 SeriesDto.class, series.id, series.title, series.thumbnailImage, editor.count(), account.id
                 ))
                 .from(series)
+                .where(builder)
                 .leftJoin(series.account, account)
                 .leftJoin(series.editor, editor)
                 .groupBy(series.id, series.title, series.thumbnailImage, account.id)

@@ -81,6 +81,8 @@ public class Editor {
 
     private int commentCount;
 
+    private int orderId;
+
     public void setWrite(Account account) {
         this.writer = account;
         this.publishedTime = LocalDateTime.now();
@@ -124,9 +126,20 @@ public class Editor {
         }
     }
 
-    public void addSeries(Series series) {
+    public void addSeries(Series series, boolean isNew) {
         if(series != null) {
             this.series = series;
+            if(series.getEditor() == null) {
+                this.orderId = 1;
+            } else {
+                if(isNew) {
+                    this.orderId = series.getEditor().size() + 1;
+                }
+            }
+
+            if(series.getEditor() != null) {
+                series.getEditor().add(this);
+            }
         }
     }
 

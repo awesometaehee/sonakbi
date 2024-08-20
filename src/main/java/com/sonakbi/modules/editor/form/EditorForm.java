@@ -2,11 +2,15 @@ package com.sonakbi.modules.editor.form;
 
 import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.tag.Tag;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 
 import java.util.List;
 import java.util.Set;

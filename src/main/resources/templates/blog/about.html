@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments :: head"></head>
 <body>
 <div class="w-100 h-100 d-grid">
@@ -15,18 +17,19 @@
                         <p th:text="${message}"></p>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    <div id="divNoAbout" class="mt-5" th:if="${#strings.isEmpty(account.aboutDescription)}">
+                    <div id="divNoAbout" class="mt-5" th:if="${#strings.isEmpty(accountInfo.aboutDescription)}">
                         <div class="d-flex flex-column align-items-center">
                             <div style="width:200px; margin-bottom:30px">
                                 <img class="w-100" th:src="@{/images/no-post-icon.png}" alt="no-about" />
                             </div>
                             <div class="mb-3">소개가 작성되지 않았습니다.</div>
-                            <button type="button" id="aboutBtn" class="btn btn-dark">작성하기</button>
+                            <button sec:authorize="isAuthenticated()" th:if="${accountInfo.isWriter(#authentication.principal)}"
+                                    type="button" id="aboutBtn" class="btn btn-dark">작성하기</button>
                         </div>
                     </div>
-                    <div id="divAbout" class="mt-5" th:if="${!#strings.isEmpty(account.aboutDescription)}">
-                        <div class="mb-3" th:text="${account.aboutDescription}"></div>
-                        <div class="d-flex justify-content-end">
+                    <div id="divAbout" class="mt-5" th:if="${!#strings.isEmpty(accountInfo.aboutDescription)}">
+                        <div class="mb-3" th:text="${accountInfo.aboutDescription}"></div>
+                        <div class="d-flex justify-content-end" sec:authorize="isAuthenticated()" th:if="${accountInfo.isWriter(#authentication.principal)}">
                             <button type="button" id="updateAboutBtn" class="btn btn-dark">수정하기</button>
                         </div>
                     </div>

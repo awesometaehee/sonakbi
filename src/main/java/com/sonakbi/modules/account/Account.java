@@ -64,4 +64,8 @@ public class Account {
     public boolean checkEqualAccount(Account userAccount, Account postAccount) {
         return userAccount.equals(postAccount);
     }
+
+    public boolean isWriter(UserAccount account) {
+        return this.userId.equals(account.getUsername());
+    }
 }

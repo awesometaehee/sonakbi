@@ -31,7 +31,9 @@
                 <div class="bookmark red"></div>
                 <div class="bookmark yellow"></div>
                 <section>
-                    <h4 class="mb-3 text-muted" th:text="${editor.getSeriesTitle}"></h4>
+                    <h4 class="mb-3">
+                        <a class="text-muted underline" th:href="@{'/blog/' + ${account.id} + '/series/' + ${editor.series.id}}" th:text="${editor.getSeriesTitle}"></a>
+                    </h4>
                     <ol class="series-ol show">
                        <li class="mb-2" th:classappend="${ed.title == editor.title} ? active" th:each="ed, edStat : ${editorList}">
                            <a class="text-dark underline" th:href="@{'/blog/' + ${account.id} + '/view/' + ${ed.url}}" th:text="${ed.title}"></a>
@@ -150,7 +152,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-bs-dismiss="modal">닫기</button>
-                <form method="post" th:action="@{'/editor/' + ${editor.writer.id} + '/' + ${editor.url} + '/delete'}">
+                <form method="post" th:action="@{'/editor/delete/' + ${editor.id}}">
                     <button type="submit" class="btn btn-dark">삭제</button>
                 </form>
             </div>

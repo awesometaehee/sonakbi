@@ -60,7 +60,7 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
 
         return from(editor).where(builder)
                 .leftJoin(editor.series, series).fetchJoin()
-                .orderBy(editor.publishedTime.desc())
+                .orderBy(editor.orderId.asc())
                 .fetch();
     }
 }

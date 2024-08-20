@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="w-100 h-100 d-grid">
+    <div th:replace="fragments :: main-nav"></div>
+    <div class="container">
+        <div class="w-768 mx-auto">
+            <div style="margin-top:120px">
+                <label class="series-label">시리즈</label>
+                <input type="text" class="form-control form-control-lg" th:value="${series.title}" style="margin-top:1.5rem;" />
+            </div>
+            <div th:if="${postList.size == 0}">시리즈가 없습니다.</div>
+            <div id="dragContainer" style="margin-top:80px" th:if="${postList.size > 0}">
+                <div class="mb-5 drag-item" th:each="post, postStat : ${postList}">
+                    <h4 class="mb-3">
+                        <p class="text-dark underline">
+                            <span class="fs-2 text-muted fst-italic"><span th:text="${postStat.count}"></span>.</span>
+                            <span th:text="${post.title}"></span>
+                        </p>
+                    </h4>
+                    <section class="d-flex" style="height:6.25rem">
+                        <div class="text-dark" th:if="${#strings.isEmpty(post.thumbnail)}">
+                            <div class="d-flex justify-content-center align-items-center" style="width:12rem; height:6.25rem; background-color:#e5e9f0">
+                                <i class="fa fa-picture-o fs-3" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div th:if="${!#strings.isEmpty(post.thumbnail)}" class="d-block" style="width:12rem; height:6.25rem; object-fit: cover;">
+                            <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" />
+                        </div>
+                        <div class="post-info">
+                            <div th:if="${!#strings.isEmpty(post.description)}">
+                                <p th:text="${post.description}"></p>
+                            </div>
+                            <div th:if="${#strings.isEmpty(post.description)}">
+                                <p th:utext="${post.mainText}"></p>
+                            </div>
+                            <p class="before-time fs-7 fw-light" th:text="${post.publishedTime}"></p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/node_modules/sortablejs/Sortable.min.js"></script>
+<script th:replace="fragments :: change-time-ago"></script>
+<script type="application/javascript">
+    $(function() {
+        const dragContainer = document.getElementById('dragContainer');
+
+        new Sortable(dragContainer, {
+            animation : 150,
+        })
+    })
+</script>
+</html>

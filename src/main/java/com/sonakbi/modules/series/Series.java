@@ -32,4 +32,8 @@ public class Series {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
+
+    public void removeEditor(Editor editor) {
+        this.getEditor().remove(editor);
+    }
 }

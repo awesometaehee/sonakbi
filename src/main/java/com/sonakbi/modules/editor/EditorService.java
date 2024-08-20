@@ -8,6 +8,7 @@ import com.sonakbi.modules.editor.form.EditorForm;
 import com.sonakbi.modules.editorTag.EditorTagRepository;
 import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.series.Series;
+import com.sonakbi.modules.series.SeriesRepository;
 import com.sonakbi.modules.tag.Tag;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,11 @@ import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -30,6 +33,7 @@ public class EditorService {
     private final TagRepository tagRepository;
     private final ObjectMapper objectMapper;
     private final EditorTagRepository editorTagRepository;
+    private final SeriesRepository seriesRepository;
 
     public Editor createNewWrite(Account account, EditorForm editorForm, Series series) throws JsonProcessingException {
         Editor editor = modelMapper.map(editorForm, Editor.class);
@@ -46,7 +50,7 @@ public class EditorService {
         }
 
         editor.setWrite(account);
-        editor.addSeries(series);
+        editor.addSeries(series, true);
 
         if(!editorForm.getTags().isEmpty()) {
             String jsonString = editorForm.getTags();
@@ -71,7 +75,7 @@ public class EditorService {
         }
 
         modelMapper.map(editorForm, editor);
-        editor.addSeries(series);
+        editor.addSeries(series, true);
         editor.setUrl(editorUrl);
 
         if(editorForm.getThumbnail().isEmpty()) {
@@ -133,10 +137,31 @@ public class EditorService {
             throw new IllegalArgumentException(account.getUserId() + "는 삭제할 수 없습니다.");
         }
 
-        editorRepository.delete(editor);
+        // 시리즈 조회
+        Series series = editor.getSeries();
+
+        if(series != null) {
+            // 시리즈에서 게시글 삭제
+            series.removeEditor(editor);
+            editorRepository.delete(editor);
+
+            // 삭제된 게시글 이후의 게시글을 가져와서 순번 재정렬
+            List<Editor> editorsInSeries = editorRepository.findAllBySeriesOrderByOrderIdAsc(series);
+            int seq = 1;
+            for(Editor e : editorsInSeries) {
+                e.setOrderId(seq);
+                seq++;
+            }
+
+            // 변경된 순번을 저장
+            editorRepository.saveAll(editorsInSeries);
+        } else {
+            // 시리즈에 속하지 않은 경우 그냥 삭제
+            editorRepository.delete(editor);
+        }
     }
 
     public void addSeries(Editor editor, Series series) {
-        editor.addSeries(series);
+        editor.addSeries(series, false);
     }
 }
