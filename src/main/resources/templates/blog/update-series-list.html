@@ -8,7 +8,11 @@
         <div class="w-768 mx-auto">
             <div style="margin-top:120px">
                 <label class="series-label">시리즈</label>
-                <input type="text" class="form-control form-control-lg" th:value="${series.title}" style="margin-top:1.5rem;" />
+                <input id="updateTitle" type="text" class="form-control form-control-lg" th:value="${series.title}" style="margin-top:1.5rem;" />
+            </div>
+            <div class="mt-2 d-flex justify-content-end">
+                <button id="updateSeriesListBtn" class="btn btn-dark" th:accountId="${account.id}" th:seriesId="${series.id}"
+                        th:onclick="updateSeries(this.getAttribute('accountId'), this.getAttribute('seriesId'))">적용</button>
             </div>
             <div th:if="${postList.size == 0}">시리즈가 없습니다.</div>
             <div id="dragContainer" style="margin-top:80px" th:if="${postList.size > 0}">
@@ -36,6 +40,7 @@
                                 <p th:utext="${post.mainText}"></p>
                             </div>
                             <p class="before-time fs-7 fw-light" th:text="${post.publishedTime}"></p>
+                            <input class="hidden-order-id" type="text" hidden="hidden" th:value="${post.id}" />
                         </div>
                     </section>
                 </div>
@@ -46,13 +51,54 @@
 </body>
 <script src="/node_modules/sortablejs/Sortable.min.js"></script>
 <script th:replace="fragments :: change-time-ago"></script>
+<script th:replace="fragments :: ajax-csrf-header"></script>
 <script type="application/javascript">
+    let updateOrder = [];
+    let updateTitleOnChange = false;
+
     $(function() {
         const dragContainer = document.getElementById('dragContainer');
-
         new Sortable(dragContainer, {
             animation : 150,
+            onEnd : function(evt) {
+                let itemEl = evt.to.children;
+                updateOrder = Array.from(itemEl).map((item, index) => {
+                    let postId = $(item).find('.hidden-order-id').val();
+                    return {
+                        id : postId,
+                        orderId : index + 1
+                    }
+                })
+            }
+        })
+
+        $('#updateTitle').change(function() {
+            updateTitleOnChange = true;
         })
     })
+
+    function updateSeries(accountId, seriesId) {
+        const url = '/blog/' + accountId + '/series/' + seriesId + '/update';
+        let $updateTitleValue = $('#updateTitle').val();
+
+        if(updateTitleOnChange) {
+            let jsonParam = {
+                title : $updateTitleValue,
+                updateOrder : updateOrder
+            }
+
+            $.ajax({
+                type : 'post',
+                contentType: "application/json; charset=utf-8",
+                url : url,
+                data : JSON.stringify(jsonParam),
+            }).done(function(data, status) {
+                alert(data);
+                location.reload();
+            })
+        } else {
+            alert('변경 사항이 없습니다.');
+        }
+    }
 </script>
 </html>

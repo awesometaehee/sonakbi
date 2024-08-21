@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SeriesService {
 
     private final SeriesRepository seriesRepository;
+    private final EditorRepository editorRepository;
 
     public Series findCreateNew(String title, Account account) {
         Series series = seriesRepository.findByTitle(title);
@@ -21,5 +22,18 @@ public class SeriesService {
         }
 
         return series;
+    }
+
+    public void updateSeriesList(SeriesUpdateDto seriesUpdateDto, Long seriesId) {
+        Series series = seriesRepository.findById(seriesId).orElseThrow();
+        series.setTitle(seriesUpdateDto.getTitle());
+
+        if(!seriesUpdateDto.getUpdateOrder().isEmpty()) {
+            for(SeriesUpdateListDto update : seriesUpdateDto.getUpdateOrder()) {
+                Editor editor = editorRepository.findById(update.getId()).orElseThrow();
+                editor.setOrderId(update.getOrderId());
+                editorRepository.save(editor);
+            }
+        }
     }
 }

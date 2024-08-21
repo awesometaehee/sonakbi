@@ -11,13 +11,12 @@ import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorRepository;
 import com.sonakbi.modules.editor.EditorService;
 import com.sonakbi.modules.like.LikesRepository;
-import com.sonakbi.modules.series.Series;
-import com.sonakbi.modules.series.SeriesRepository;
-import com.sonakbi.modules.series.SeriesService;
+import com.sonakbi.modules.series.*;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -41,6 +40,7 @@ public class BlogController {
     private final SeriesRepository seriesRepository;
     private final EditorRepository editorRepository;
     private final ModelMapper modelMapper;
+    private final SeriesService seriesService;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -96,6 +96,21 @@ public class BlogController {
         model.addAttribute(seriesRepository.findById(seriesId).orElseThrow());
 
         return BLOG + "/update-series-list";
+    }
+
+    @PostMapping("/series/{seriesId}/update")
+    @ResponseBody
+    public ResponseEntity seriesListUpdateSubmit(@CurrentAccount Account account, @RequestBody SeriesUpdateDto seriesUpdateDto,
+                                                 @PathVariable Long id, @PathVariable Long seriesId, Errors errors, Model model) {
+        Account accountInfo = accountService.getAccountInfo(id);
+        if(errors.hasErrors()) {
+            model.addAttribute(account);
+            model.addAttribute("accountInfo", accountInfo);
+            return ResponseEntity.badRequest().build();
+        }
+
+        seriesService.updateSeriesList(seriesUpdateDto, seriesId);
+        return ResponseEntity.ok("시리즈가 변경되었습니다.");
     }
 
     @GetMapping("/about")
