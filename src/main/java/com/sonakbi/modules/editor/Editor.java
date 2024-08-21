@@ -8,6 +8,7 @@ import com.sonakbi.modules.editorTag.EditorTag;
 import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.tag.Tag;
+import com.sonakbi.modules.util.Chrono;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -65,6 +66,10 @@ public class Editor {
     private Series series;
 
     private LocalDateTime publishedTime;
+
+    public String chronoPublishTime() {
+        return Chrono.timesAgo(this.publishedTime);
+    }
 
     @OneToMany(mappedBy = "editor", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Likes> likes = new HashSet<>();

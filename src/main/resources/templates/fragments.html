@@ -19,6 +19,7 @@
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
     <script src="/node_modules/@yaireo/tagify/dist/tagify.js"></script>
+    <script src="/node_modules/htmx.org/dist/htmx.min.js"></script>
 
 </head>
 
@@ -593,5 +594,36 @@
         }
     }
 </script>
+
+<div id="postList" th:fragment="post-list">
+    <div class="mb-5" th:each="post, postStat : ${postList}">
+        <h4 class="mb-3">
+            <a class="text-dark underline" th:href="@{'/blog/' + ${accountInfo.id} + '/view/' + ${post.url}}">
+                <span class="fs-2 text-muted fst-italic"><span th:text="${postStat.count}"></span>.</span>
+                <span th:text="${post.title}"></span>
+            </a>
+        </h4>
+        <section class="d-flex" style="height:6.25rem">
+            <a class="text-dark" th:if="${#strings.isEmpty(post.thumbnail)}" th:href="@{'/blog/' + ${accountInfo.id} + '/view/' + ${post.url}}">
+                <div class="d-flex justify-content-center align-items-center" style="width:12rem; height:6.25rem; background-color:#e5e9f0">
+                    <i class="fa fa-picture-o fs-3" aria-hidden="true"></i>
+                </div>
+            </a>
+            <a th:if="${!#strings.isEmpty(post.thumbnail)}" class="d-block" th:href="@{'/blog/' + ${account.id} + '/view/' + ${post.url}}"
+               style="width:12rem; height:6.25rem; object-fit: cover;">
+                <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" />
+            </a>
+            <div class="post-info">
+                <div th:if="${!#strings.isEmpty(post.description)}">
+                    <p th:text="${post.description}"></p>
+                </div>
+                <div th:if="${#strings.isEmpty(post.description)}">
+                    <p th:utext="${post.mainText}"></p>
+                </div>
+                <p class="fs-7 fw-light" th:text="${post.chronoPublishTime()}"></p>
+            </div>
+        </section>
+    </div>
+</div>
 
 </html>

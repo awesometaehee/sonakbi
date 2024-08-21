@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.sonakbi.modules.blog.BlogController.BLOG_URL;
@@ -82,6 +83,25 @@ public class BlogController {
         model.addAttribute(seriesRepository.findById(seriesId).orElseThrow());
 
         return BLOG + "/series-list";
+    }
+
+    @GetMapping("/series/{seriesId}/sort")
+    public String seriesListSort(@CurrentAccount Account account, @PathVariable Long id, @PathVariable Long seriesId, @RequestParam String sort, Model model) {
+        Account accountInfo = accountService.getAccountInfo(id);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+        List<Editor> postList = editorRepository.findSeriesById(seriesId, checkEqualAccount);
+
+        if("desc".equals(sort)) {
+            postList.sort(Comparator.comparing(Editor::getOrderId).reversed());
+        } else {
+            postList.sort(Comparator.comparing(Editor::getOrderId));
+        }
+
+        model.addAttribute(account);
+        model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("postList", postList);
+        model.addAttribute(seriesRepository.findById(seriesId).orElseThrow());
+        return "fragments :: post-list";
     }
 
     @GetMapping("/series/{seriesId}/update")

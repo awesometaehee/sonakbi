@@ -17,41 +17,16 @@
                            class="btn btn-sm text-muted">수정</a>
                         <a class="btn btn-sm text-muted" data-bs-toggle="modal" data-bs-target="#deleteModal">삭제</a>
                     </div>
-                    <select class="form-select mt-2" style="width:120px">
-                        <option value="desc">오름차순</option>
-                        <option value="asc">내림차순</option>
+                    <select name="sort" th:attr="hx-get='/blog/' + ${account.id} + '/series/' + ${series.id} + '/sort'"
+                            hx-trigger="change" hx-target="#postList" hx-swap="outerHTML"
+                            class="form-select mt-2" style="width:120px">
+                        <option value="asc">오름차순</option>
+                        <option value="desc">내림차순</option>
                     </select>
                 </div>
                 <div th:if="${postList.size == 0}">시리즈가 없습니다.</div>
                 <div style="margin-top:80px" th:if="${postList.size > 0}">
-                    <div class="mb-5" th:each="post, postStat : ${postList}">
-                        <h4 class="mb-3">
-                            <a class="text-dark underline" th:href="@{'/blog/' + ${accountInfo.id} + '/view/' + ${post.url}}">
-                                <span class="fs-2 text-muted fst-italic"><span th:text="${postStat.count}"></span>.</span>
-                                <span th:text="${post.title}"></span>
-                            </a>
-                        </h4>
-                        <section class="d-flex" style="height:6.25rem">
-                            <a class="text-dark" th:if="${#strings.isEmpty(post.thumbnail)}" th:href="@{'/blog/' + ${accountInfo.id} + '/view/' + ${post.url}}">
-                                <div class="d-flex justify-content-center align-items-center" style="width:12rem; height:6.25rem; background-color:#e5e9f0">
-                                    <i class="fa fa-picture-o fs-3" aria-hidden="true"></i>
-                                </div>
-                            </a>
-                            <a th:if="${!#strings.isEmpty(post.thumbnail)}" class="d-block" th:href="@{'/blog/' + ${account.id} + '/view/' + ${post.url}}"
-                               style="width:12rem; height:6.25rem; object-fit: cover;">
-                                <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" />
-                            </a>
-                            <div class="post-info">
-                                <div th:if="${!#strings.isEmpty(post.description)}">
-                                    <p th:text="${post.description}"></p>
-                                </div>
-                                <div th:if="${#strings.isEmpty(post.description)}">
-                                    <p th:utext="${post.mainText}"></p>
-                                </div>
-                                <p class="before-time fs-7 fw-light" th:text="${post.publishedTime}"></p>
-                            </div>
-                        </section>
-                    </div>
+                    <div th:replace="fragments :: post-list"></div>
                 </div>
             </div>
         </div>

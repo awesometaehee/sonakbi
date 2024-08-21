@@ -13,6 +13,7 @@
     "bootstrap": "^5.3.3",
     "cropper": "^4.1.0",
     "font-awesome": "^4.7.0",
+    "htmx.org": "^1.9.12",
     "jquery": "^3.7.1",
     "jquery-cropper": "^1.0.1",
     "moment": "^2.30.1",
