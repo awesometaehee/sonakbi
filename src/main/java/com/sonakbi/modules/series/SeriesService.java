@@ -36,4 +36,9 @@ public class SeriesService {
             }
         }
     }
+
+    public void seriesListDelete(Long seriesId) {
+        Series series = seriesRepository.findById(seriesId).orElseThrow();
+        seriesRepository.delete(series);
+    }
 }

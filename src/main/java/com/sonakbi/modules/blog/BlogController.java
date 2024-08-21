@@ -60,11 +60,11 @@ public class BlogController {
 
     @GetMapping("/series")
     public String mySeriesForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
-        model.addAttribute(account);
         Account accountInfo = accountService.getAccountInfo(id);
-        model.addAttribute("accountInfo", accountInfo);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
 
+        model.addAttribute(account);
+        model.addAttribute("accountInfo", accountInfo);
         model.addAttribute("seriesList", seriesRepository.findSeriesWithEditorCount(accountInfo.getId(), checkEqualAccount));
 
         return BLOG + "/series";
@@ -111,6 +111,20 @@ public class BlogController {
 
         seriesService.updateSeriesList(seriesUpdateDto, seriesId);
         return ResponseEntity.ok("시리즈가 변경되었습니다.");
+    }
+
+    @PostMapping("/series/{seriesId}/delete")
+    public String seriesListDelete(@CurrentAccount Account account, @PathVariable Long id, @PathVariable Long seriesId, Model model) {
+        Account accountInfo = accountService.getAccountInfo(id);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+
+        seriesService.seriesListDelete(seriesId);
+
+        model.addAttribute(account);
+        model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("seriesList", seriesRepository.findSeriesWithEditorCount(accountInfo.getId(), checkEqualAccount));
+
+        return BLOG + "/series";
     }
 
     @GetMapping("/about")

@@ -12,10 +12,10 @@
             </div>
             <div>
                 <div class="d-flex flex-column align-items-end">
-                    <div th:if="${accountInfo.isWriter(#authentication.principal)}">
+                    <div class="d-flex" th:if="${accountInfo.isWriter(#authentication.principal)}">
                         <a th:href="@{'/blog/' + ${account.id} + '/series/' + ${series.id} + '/update'}"
                            class="btn btn-sm text-muted">수정</a>
-                        <a class="btn btn-sm text-muted">삭제</a>
+                        <a class="btn btn-sm text-muted" data-bs-toggle="modal" data-bs-target="#deleteModal">삭제</a>
                     </div>
                     <select class="form-select mt-2" style="width:120px">
                         <option value="desc">오름차순</option>
@@ -57,6 +57,27 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">시리즈 삭제</h5>
+            </div>
+            <div class="modal-body">
+                <p class="fw-light">시리즈를 삭제하겠습니까?</p>
+                <p class="fw-light">시리즈 안에 들어있는 게시글은 삭제되지 않습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-bs-dismiss="modal">닫기</button>
+                <form th:action="@{'/blog/' + ${account.id} + '/series/' + ${series.id} + '/delete'}" method="post">
+                    <button type="submit" class="btn btn-dark">삭제</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 <script th:replace="fragments :: change-time-ago"></script>
 </html>
