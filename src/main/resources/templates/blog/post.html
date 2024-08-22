@@ -11,47 +11,59 @@
             <div class="py-5">
                 <div th:replace="fragments :: blog-menu (curMenu='post')"></div>
             </div>
+            <div class="d-flex justify-content-end" th:if="${total > 0}">
+                <form th:attr="hx-get='/blog/' + ${account.id} + '/post/search'"
+                      hx-trigger="keyup change delay:300ms"
+                      hx-target="#postListWrap">
+                    <input id="postSearchInput" type="text"
+                           name="keyword" class="form-control fs-7"
+                           placeholder="검색어를 입력하세요." style="width:200px" />
+                </form>
+            </div>
             <div class="position-relative">
-                <div th:if="${postList.size == 0}">포스트가 없습니다.</div>
-                <div th:if="${postList.size > 0}">
+                <div th:if="${total == 0}">포스트가 없습니다.</div>
+                <div th:if="${total > 0}">
                     <aside class="tag-list">
                         <div class="border-bottom pb-3 mb-3">태그 목록</div>
                         <ul class="fs-7">
                             <li>
                                 <a class="text-dark" th:href="@{'/blog/' + ${account.id} + '/post'}">전체보기</a>
-                                <span>(<span th:text="${postList.size}">0</span>)</span>
+                                <span>(<span th:text="${total}">0</span>)</span>
                             </li>
                             <li th:each="tag : ${tagList}">
-                                <a class="text-dark" th:text="${tag.value}" th:href="@{'/blog/' + ${account.id} + '/post'}">태그</a>
+                                <!-- TODO classappend 설정 작업 필요 -->
+                                <a class="text-dark" th:href="@{/blog/{id}/post(id=${account.id}, tag=${tag.value})}" th:text="${tag.value}">태그</a>
                                 <span>(<span th:text="${tag.count}">0</span>)</span>
                             </li>
                         </ul>
                     </aside>
-                    <div th:if="${post.isWriterAndDisclosure(#authentication.principal, post.disclosure)}" class="py-5 border-bottom" th:each="post : ${postList}">
-                        <div class="mb-4" th:if="${post.useThumbnail()}">
-                            <a class="d-block" th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}" style="width:100%; height:400px">
-                                <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" style="object-fit:cover" />
+                    <div id="postListWrap">
+                        <div th:if="${post.isWriterAndDisclosure(#authentication.principal, post.disclosure)}" class="py-5 border-bottom" th:each="post : ${postList}">
+                            <div class="mb-4" th:if="${post.useThumbnail()}">
+                                <a class="d-block" th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}" style="width:100%; height:400px">
+                                    <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" style="object-fit:cover" />
+                                </a>
+                            </div>
+                            <a class="d-inline-block text-dark" th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}">
+                                <h4 class="mb-4" th:text="${post.title}"></h4>
                             </a>
-                        </div>
-                        <a class="d-inline-block text-dark" th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}">
-                            <h4 class="mb-4" th:text="${post.title}"></h4>
-                        </a>
-                        <p class="mb-3" th:text="${post.description}"></p>
-                        <div class="mb-3">
-                            <span class="badge rounded-pill bg-dark me-2" th:each="editorTag : ${post.editorTags}">
-                                <a th:text="${editorTag.tag.value}"></a>
-                            </span>
-                        </div>
-                        <div>
-                            <span class="before-time fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
-                            <span class="fs-7 text-muted">댓글 <span th:text="${post.commentCount}">0</span>개</span> ⋅
-                            <span class="fs-7 text-muted">♥ <span th:text="${post.likes.size}">0</span></span>
-                            <span th:if="${!post.disclosure}">
-                                ⋅
-                                <span class="fs-7 badge bg-dark">
-                                    <i class="fa fa-lock pe-1" aria-hidden="true"></i> 비공개
+                            <p class="mb-3" th:text="${post.description}"></p>
+                            <div class="mb-3">
+                                <span class="badge rounded-pill bg-dark me-2" th:each="editorTag : ${post.editorTags}">
+                                    <a th:text="${editorTag.tag.value}"></a>
                                 </span>
-                            </span>
+                            </div>
+                            <div>
+                                <span class="fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
+                                <span class="fs-7 text-muted">댓글 <span th:text="${post.commentCount}">0</span>개</span> ⋅
+                                <span class="fs-7 text-muted">♥ <span th:text="${post.likes.size}">0</span></span>
+                                <span th:if="${!post.disclosure}">
+                                    ⋅
+                                    <span class="fs-7 badge bg-dark">
+                                        <i class="fa fa-lock pe-1" aria-hidden="true"></i> 비공개
+                                    </span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -60,5 +72,4 @@
     </div>
 </div>
 </body>
-<script th:replace="fragments :: change-time-ago"></script>
 </html>

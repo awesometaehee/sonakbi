@@ -128,8 +128,9 @@ public class EditorService {
         return editor;
     }
 
-    public List<Editor> getEditorList(Account writer, boolean disclosure) {
-        return editorRepository.findEditorByWriterOrderByPublishedTimeDesc(writer, disclosure);
+    public List<Editor> getEditorList(Account writer, boolean disclosure, String tagValue) {
+        Tag tag = tagRepository.findByValue(tagValue);
+        return editorRepository.findEditorByWriterOrderByPublishedTimeDesc(writer, disclosure, tag);
     }
 
     public void deleteEditor(Account account, Editor editor) {
@@ -162,6 +163,10 @@ public class EditorService {
     }
 
     public void addSeries(Editor editor, Series series) {
-        editor.addSeries(series, false);
+        editor.addSeries(series, true);
+    }
+
+    public List<Editor> getSeachEditorList(Account writer, boolean disclosure, String keyword) {
+        return editorRepository.findByKeywordContainingIgnoreCase(writer, disclosure, keyword);
     }
 }

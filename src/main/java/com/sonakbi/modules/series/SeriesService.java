@@ -39,6 +39,11 @@ public class SeriesService {
 
     public void seriesListDelete(Long seriesId) {
         Series series = seriesRepository.findById(seriesId).orElseThrow();
+
+        for(Editor editor : series.getEditor()) {
+            editor.setSeries(null);
+        }
+
         seriesRepository.delete(series);
     }
 }

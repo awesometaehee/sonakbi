@@ -67,7 +67,7 @@ public class Editor {
 
     private LocalDateTime publishedTime;
 
-    public String chronoPublishTime() {
+    public String getPublishedTime() {
         return Chrono.timesAgo(this.publishedTime);
     }
 
@@ -184,5 +184,9 @@ public class Editor {
         if(!this.isDisclosure() && !this.getWriter().equals(account)) {
             throw new IllegalArgumentException(url + "는 비공개 포스트입니다.");
         }
+    }
+
+    public void createSeries(Series series) {
+
     }
 }

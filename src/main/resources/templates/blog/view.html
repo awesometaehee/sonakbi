@@ -15,7 +15,7 @@
                 <div>
                     <a class="text-dark underline"
                        th:href="@{'/blog/' + ${editor.writer.id} + '/post'}" th:text="${editor.writer.userId}"></a> ⋅
-                    <span class="before-time text-muted" th:text="${editor.publishedTime}"></span>
+                    <span class="text-muted" th:text="${editor.publishedTime}"></span>
                 </div>
                 <div class="d-flex" sec:authorize="isAuthenticated()" th:if="${editor.isWriter(#authentication.principal)}">
                     <a class="btn text-muted" th:href="@{'/editor/' + ${editor.writer.id} + '/' + ${editor.url} + '/update'}">수정</a>
@@ -110,7 +110,7 @@
                                     <a class="text-dark underline"
                                        th:href="@{'/blog/' + ${comment.account.id} + '/post'}" th:text="${comment.account.userId}"></a>
                                 </p>
-                                <p class="text-muted fs-8 before-time" th:text="${comment.createdAt}">1시간 전</p>
+                                <p class="text-muted fs-8" th:text="${comment.createdAt}">1시간 전</p>
                                 <div class="comment-id" th:text="${comment.id}" hidden="hidden"></div>
                             </div>
                         </div>
@@ -164,7 +164,6 @@
 <script src="https://uicdn.toast.com/tui-editor/dist/toastui-editor-viewer.min.js"></script>
 
 <script th:replace="fragments :: ajax-csrf-header"></script>
-<script th:replace="fragments :: change-time-ago"></script>
 
 <script type="application/javascript" th:inline="javascript">
     $(function() {
@@ -245,7 +244,7 @@
                 temp += '<p class="fw-bold fs-7">';
                 temp += '<a class="text-dark underline" href="/blog/' + data.userId + '/post">' + data.userId + '</a>';
                 temp += '</p>';
-                temp += '<p class="text-muted fs-8 before-time">' + data.createdAt + '</p>';
+                temp += '<p class="text-muted fs-8">' + data.createdAt + '</p>';
                 temp += '<div class="comment-id" hidden="hidden">' + data.commentId + '</div>';
                 temp += '</div>';
                 temp += '</div>';
@@ -287,7 +286,7 @@
         const cId = $(ct).find('.comment-id').html();
         const commentTxt = $(ct).find('.comment-text');
         const updateContent = ta.val();
-        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/update";
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/" + cId + "/update";
 
         $.ajax({
             type : 'post',
@@ -303,7 +302,7 @@
     function deleteComment(e) {
         const ct = e.target.closest('.comment-table');
         const cId = $(ct).find('.comment-id').html();
-        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/delete";
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/" + cId + "/delete";
         let commentNumber;
 
         $.ajax({

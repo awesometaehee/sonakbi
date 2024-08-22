@@ -23,7 +23,9 @@ public interface EditorRepository extends JpaRepository<Editor, Long>, EditorRep
     @Query("select e from Editor e where e.url = :url and e.writer.id = :id")
     Editor findEditorByUrl(@Param("url") String url, @Param("id") Long id);
 
-    Editor findEditorByUrl(String url);
+    @EntityGraph(attributePaths = {"writer"})
+    @Query("select count(*) from Editor e where e.writer.id = :id")
+    Integer countEditorById(@Param("id") Long id);
 
     List<Editor> findAllBySeriesOrderByOrderIdAsc(Series series);
 

@@ -12,6 +12,7 @@ import com.sonakbi.modules.account.QAccount;
 import com.sonakbi.modules.editorTag.QEditorTag;
 import com.sonakbi.modules.like.QLikes;
 import com.sonakbi.modules.series.QSeries;
+import com.sonakbi.modules.tag.Tag;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure) {
+    public List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure, Tag tag) {
 
         QEditor editor = QEditor.editor;
         QEditorTag editorTag = QEditorTag.editorTag;
@@ -35,8 +36,13 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
 
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(account.id.eq(writer.getId()));
+
         if(!disclosure) {
             builder.and(editor.disclosure.ne(disclosure));
+        }
+
+        if(tag != null) {
+            builder.and(editorTag.tag.eq(tag));
         }
 
         return from(editor).where(builder)
@@ -61,6 +67,29 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
         return from(editor).where(builder)
                 .leftJoin(editor.series, series).fetchJoin()
                 .orderBy(editor.orderId.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<Editor> findByKeywordContainingIgnoreCase(Account writer, boolean disclosure, String keyword) {
+        QEditor editor = QEditor.editor;
+        QEditorTag editorTag = QEditorTag.editorTag;
+        QAccount account = QAccount.account;
+        QLikes likes = QLikes.likes;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(account.id.eq(writer.getId()));
+        builder.and(editor.title.containsIgnoreCase(keyword));
+
+        if(!disclosure) {
+            builder.and(editor.disclosure.ne(disclosure));
+        }
+
+        return from(editor).where(builder)
+                .leftJoin(editor.editorTags, editorTag)
+                .leftJoin(editor.writer, account)
+                .leftJoin(editor.likes, likes)
+                .orderBy(editor.publishedTime.desc())
                 .fetch();
     }
 }

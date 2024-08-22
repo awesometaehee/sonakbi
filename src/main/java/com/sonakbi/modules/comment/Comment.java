@@ -21,6 +21,10 @@ public class Comment {
 
     private LocalDateTime createdAt;
 
+    public String getCreatedAt() {
+        return Chrono.timesAgo(this.createdAt);
+    }
+
     @ManyToOne(fetch = FetchType.LAZY) // 연관 Entity를 꼭 필요할 때만 로드하도록 LAZY를 권장
     private Editor editor;
 

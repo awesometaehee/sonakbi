@@ -29,12 +29,11 @@ public class SeriesController {
         return ResponseEntity.ok(series.getTitle());
     }
 
-    @PostMapping("/{id}/{url}/series/update")
+    @PostMapping("/series/update")
     @ResponseBody
-    public ResponseEntity updateSeries(@CurrentAccount Account account, @RequestBody SeriesForm seriesForm, @PathVariable String url, @PathVariable Long id) {
-        Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
+    public ResponseEntity updateSeries(@CurrentAccount Account account, @RequestBody SeriesForm seriesForm) {
+        // Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
         Series series = seriesService.findCreateNew(seriesForm.getTitle(), account);
-        editorService.addSeries(editor, series);
         return ResponseEntity.ok(series.getTitle());
     }
 }

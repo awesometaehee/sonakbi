@@ -27,7 +27,7 @@ public class Series {
     @Lob @Basic(fetch = FetchType.EAGER)
     private String thumbnailImage;
 
-    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "series", cascade = CascadeType.PERSIST, orphanRemoval = false)
     private List<Editor> editor;
 
     @ManyToOne(fetch = FetchType.LAZY)

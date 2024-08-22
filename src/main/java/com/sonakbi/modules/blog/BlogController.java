@@ -47,16 +47,31 @@ public class BlogController {
     public static final String BLOG = "blog";
 
     @GetMapping("/post")
-    public String myPostForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
-        model.addAttribute(account);
+    public String myPostForm(@CurrentAccount Account account, @PathVariable Long id,
+                             @RequestParam(value = "tag", required = false) String tagValue, Model model) {
         Account accountInfo = accountService.getAccountInfo(id);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo); // true = 본 계정 false = 방문자
+        int total = editorRepository.countEditorById(id);
 
+        model.addAttribute(account);
         model.addAttribute("accountInfo", accountInfo);
-        model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount));
+        model.addAttribute("total", total);
+        model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount, tagValue));
         model.addAttribute("tagList", tagRepository.findTagCountById(id, checkEqualAccount));
 
         return BLOG + "/post";
+    }
+
+    @GetMapping("/post/search")
+    public String myPostSearch(@CurrentAccount Account account, @PathVariable Long id,
+                               @RequestParam(value = "keyword", required = false) String keyword, Model model) {
+
+        Account accountInfo = accountService.getAccountInfo(id);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+        List<Editor> postList = editorService.getSeachEditorList(accountInfo, checkEqualAccount, keyword);
+
+        model.addAttribute("postList", postList);
+        return BLOG + "/post :: #postListWrap";
     }
 
     @GetMapping("/series")
