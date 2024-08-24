@@ -10,6 +10,7 @@ import com.sonakbi.modules.comment.CommentService;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorRepository;
 import com.sonakbi.modules.editor.EditorService;
+import com.sonakbi.modules.follow.FollowService;
 import com.sonakbi.modules.like.LikesRepository;
 import com.sonakbi.modules.series.*;
 import com.sonakbi.modules.tag.TagRepository;
@@ -42,6 +43,7 @@ public class BlogController {
     private final EditorRepository editorRepository;
     private final ModelMapper modelMapper;
     private final SeriesService seriesService;
+    private final FollowService followService;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -51,10 +53,12 @@ public class BlogController {
                              @RequestParam(value = "tag", required = false) String tagValue, Model model) {
         Account accountInfo = accountService.getAccountInfo(id);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo); // true = 본 계정 false = 방문자
+        boolean isFollowing = followService.isFollowing(account, accountInfo);
         int total = editorRepository.countEditorById(id);
 
         model.addAttribute(account);
         model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("isFollowing", isFollowing);
         model.addAttribute("total", total);
         model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount, tagValue));
         model.addAttribute("tagList", tagRepository.findTagCountById(id, checkEqualAccount));

@@ -1,6 +1,7 @@
 package com.sonakbi.modules.account;
 
 import com.sonakbi.modules.comment.Comment;
+import com.sonakbi.modules.follow.Follow;
 import com.sonakbi.modules.series.Series;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -46,6 +48,12 @@ public class Account {
     private String authority;
 
     private String aboutDescription;
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST)
+    private Set<Follow> following;
+
+    @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST)
+    private Set<Follow> followers;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
