@@ -73,40 +73,6 @@
     </div>
 </div>
 <script th:replace="fragments :: ajax-csrf-header"></script>
-<script type="application/javascript" th:inline="javascript">
-    function follow(accountId, accountInfoId) {
-        let url = '/' + accountId + '/follow/' + accountInfoId;
-        const btnTxt = $('.btn-follow').text().trim();
-
-        if(btnTxt === '팔로우') {
-            const url = '/' + accountId + '/follow/' + accountInfoId;
-            ajaxFollow(url, btnTxt);
-        } else {
-            const url = '/' + accountId + '/unfollow/' + accountInfoId;
-            ajaxFollow(url, btnTxt);
-        }
-    }
-
-    function ajaxFollow(url, btnTxt) {
-        $.ajax({
-            url : url,
-            type : 'post',
-            success : function(response) {
-                if(btnTxt === '팔로우') {
-                    $('.btn-follow').text('언팔로우');
-                    $('.btn-follow').removeClass('btn-outline-dark');
-                    $('.btn-follow').addClass('btn-dark');
-                } else {
-                    $('.btn-follow').text('팔로우');
-                    $('.btn-follow').removeClass('btn-dark');
-                    $('.btn-follow').addClass('btn-outline-dark');
-                }
-            },
-            error : function(xhr) {
-                alert("오류가 발생했습니다: " + xhr.statusText);
-            }
-        })
-    }
-</script>
+<script th:replace="fragments :: ajax-follow"></script>
 </body>
 </html>

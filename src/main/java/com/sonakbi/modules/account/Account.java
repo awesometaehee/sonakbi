@@ -49,10 +49,10 @@ public class Account {
 
     private String aboutDescription;
 
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Follow> following;
 
-    @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Follow> followers;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -75,5 +75,13 @@ public class Account {
 
     public boolean isWriter(UserAccount account) {
         return this.userId.equals(account.getUsername());
+    }
+
+    public int getFollowerCount() {
+        return 1;
+    }
+
+    public int getFollowingCount() {
+        return 2;
     }
 }

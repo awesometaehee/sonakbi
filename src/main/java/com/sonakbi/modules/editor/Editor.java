@@ -185,8 +185,4 @@ public class Editor {
             throw new IllegalArgumentException(url + "는 비공개 포스트입니다.");
         }
     }
-
-    public void createSeries(Series series) {
-
-    }
 }

@@ -8,6 +8,7 @@
         <div class="w-768 mx-auto">
             <div th:replace="fragments :: about"></div>
             <hr />
+            <div th:replace="fragments :: follow"></div>
             <div class="py-5">
                 <div th:replace="fragments :: blog-menu (curMenu='series')"></div>
             </div>
@@ -47,5 +48,7 @@
         </div>
     </div>
 </div>
+<script th:replace="fragments :: ajax-csrf-header"></script>
+<script th:replace="fragments :: ajax-follow"></script>
 </body>
 </html>

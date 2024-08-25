@@ -1,6 +1,7 @@
 package com.sonakbi.modules.blog;
 
 import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.account.AccountRepository;
 import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
 import com.sonakbi.modules.account.form.AboutForm;
@@ -10,6 +11,7 @@ import com.sonakbi.modules.comment.CommentService;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorRepository;
 import com.sonakbi.modules.editor.EditorService;
+import com.sonakbi.modules.follow.FollowRepository;
 import com.sonakbi.modules.follow.FollowService;
 import com.sonakbi.modules.like.LikesRepository;
 import com.sonakbi.modules.series.*;
@@ -44,6 +46,7 @@ public class BlogController {
     private final ModelMapper modelMapper;
     private final SeriesService seriesService;
     private final FollowService followService;
+    private final FollowRepository followRepository;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -55,10 +58,14 @@ public class BlogController {
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo); // true = 본 계정 false = 방문자
         boolean isFollowing = followService.isFollowing(account, accountInfo);
         int total = editorRepository.countEditorById(id);
+        int followerCount = followRepository.countFollowerByAccountId(accountInfo.getId());
+        int followingCount = followRepository.countFollowingByAccountId(accountInfo.getId());
 
         model.addAttribute(account);
         model.addAttribute("accountInfo", accountInfo);
         model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
         model.addAttribute("total", total);
         model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount, tagValue));
         model.addAttribute("tagList", tagRepository.findTagCountById(id, checkEqualAccount));
@@ -82,9 +89,15 @@ public class BlogController {
     public String mySeriesForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
         Account accountInfo = accountService.getAccountInfo(id);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo);
+        boolean isFollowing = followService.isFollowing(account, accountInfo);
+        int followerCount = followRepository.countFollowerByAccountId(accountInfo.getId());
+        int followingCount = followRepository.countFollowingByAccountId(accountInfo.getId());
 
         model.addAttribute(account);
         model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
         model.addAttribute("seriesList", seriesRepository.findSeriesWithEditorCount(accountInfo.getId(), checkEqualAccount));
 
         return BLOG + "/series";
@@ -168,8 +181,16 @@ public class BlogController {
 
     @GetMapping("/about")
     public String myAboutForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
+        Account accountInfo = accountService.getAccountInfo(id);
+        boolean isFollowing = followService.isFollowing(account, accountInfo);
+        int followerCount = followRepository.countFollowerByAccountId(accountInfo.getId());
+        int followingCount = followRepository.countFollowingByAccountId(accountInfo.getId());
+
         model.addAttribute(account);
-        model.addAttribute("accountInfo", accountService.getAccountInfo(id));
+        model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
         model.addAttribute("aboutForm", modelMapper.map(account, AboutForm.class));
 
         return BLOG + "/about";
