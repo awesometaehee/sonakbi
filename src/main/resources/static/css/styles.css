@@ -394,3 +394,33 @@ p {
 #dragContainer .drag-item:last-child {
     margin-bottom:0 !important;
 }
+
+.toc {
+    position:fixed;
+    width:300px;
+    right:120px;
+    top:335px;
+    padding-left:.7rem;
+    border-left:3px solid #e5e6e7;
+    color:#868E96;
+    font-weight:300;
+    font-size:.9rem;
+    line-height: 1.6;
+}
+
+.toc-title {
+    margin-bottom:0 !important;
+    cursor: pointer;
+}
+
+.toc-item {
+    padding-left:.4rem;
+    cursor: pointer;
+}
+
+.toc-title.selected,
+.toc-item.selected {
+    color:#000;
+    transition:.2s ease;
+    font-size:.96rem;
+}

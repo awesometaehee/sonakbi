@@ -7,7 +7,10 @@
 <div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
     <div class="container" >
-        <div class="w-768 mx-auto">
+        <div class="w-768 mx-auto position-relative">
+            <aside class="toc">
+                <div class="toc-list"></div>
+            </aside>
             <div style="margin-top:130px; margin-bottom:40px">
                 <h1 th:text="${editor.title}"></h1>
             </div>
@@ -219,6 +222,58 @@
         })
 
         $('#seriesIdx').text($('#seriesHiddenIdx').val());
+
+        // ToC (Table of Contents)
+        const view = document.getElementById('viewer');
+        const titleTags = view.querySelectorAll('h1, h2');
+        const toc = document.querySelector('.toc-list');
+
+        titleTags.forEach(tag => {
+            if(tag.matches('h1')) {
+                const ul = document.createElement('ul');
+                ul.classList.add('toc-title');
+                ul.textContent = tag.textContent;
+                toc.appendChild(ul);
+            } else {
+                const li = document.createElement('li');
+                li.classList.add('toc-item');
+                li.textContent = tag.textContent;
+                toc.firstElementChild.appendChild(li);
+            }
+        })
+
+        const tocItem = document.querySelectorAll('.toc-title, .toc-item');
+        tocItem.forEach((item, index) => {
+            item.dataset.index = index;
+        })
+
+        titleTags.forEach((tag, index) => {
+            tag.dataset.index = index;
+        })
+
+        toc.addEventListener('click', function(e) {
+            if(e.target.matches('.toc-title') || e.target.matches('.toc-item')) {
+                titleTags[e.target.dataset.index].scrollIntoView({ behavior: "smooth", block: "center"});
+            }
+        })
+
+        let selectedIndex = 0;
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    tocItem[selectedIndex].classList.remove('selected');
+                    selectedIndex = entry.target.dataset.index;
+                    tocItem[selectedIndex].classList.add('selected');
+                } else if(entry.boundingClientRect > 100) {
+                    tocItem[selectedIndex].classList.remove('selected');
+                    selectedIndex = Number(entry.target.dataset.index) - 1;
+                    tocItem[selectedIndex].classList.add('selected');
+                }
+            })
+        })
+
+        titleTags.forEach(tag => observer.observe(tag));
+
     })
 
     function createComment(e) {
@@ -356,6 +411,5 @@
         })
     }
 </script>
-
 </body>
 </html>
