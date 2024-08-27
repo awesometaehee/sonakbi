@@ -24,5 +24,4 @@ public class Follow {
     public boolean isFollowing(Account currentUser, Account targetUser) {
         return this.follower.equals(currentUser) && this.following.equals(targetUser);
     }
-
 }

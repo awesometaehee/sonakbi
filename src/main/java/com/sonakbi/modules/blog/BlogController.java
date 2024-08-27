@@ -1,24 +1,22 @@
 package com.sonakbi.modules.blog;
 
 import com.sonakbi.modules.account.Account;
-import com.sonakbi.modules.account.AccountRepository;
+import com.sonakbi.modules.account.AccountFollowDto;
 import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
 import com.sonakbi.modules.account.form.AboutForm;
 import com.sonakbi.modules.comment.Comment;
-import com.sonakbi.modules.comment.CommentForm;
 import com.sonakbi.modules.comment.CommentService;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorRepository;
 import com.sonakbi.modules.editor.EditorService;
+import com.sonakbi.modules.follow.Follow;
 import com.sonakbi.modules.follow.FollowRepository;
 import com.sonakbi.modules.follow.FollowService;
-import com.sonakbi.modules.like.LikesRepository;
 import com.sonakbi.modules.series.*;
 import com.sonakbi.modules.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -197,7 +195,8 @@ public class BlogController {
     }
 
     @PostMapping("/about")
-    public String myAboutFormSubmit(@CurrentAccount Account account, AboutForm aboutForm, Errors errors, Model model, RedirectAttributes attributes) {
+    public String myAboutFormSubmit(@CurrentAccount Account account, AboutForm aboutForm
+            , Errors errors, Model model, RedirectAttributes attributes) {
         if(errors.hasErrors()) {
             model.addAttribute(account);
             return BLOG + "/about";
@@ -246,6 +245,28 @@ public class BlogController {
         model.addAttribute("commentList", commentList);
 
         return BLOG + "/view";
+    }
+
+    @GetMapping("/{follow}")
+    public String followView(@CurrentAccount Account account, @PathVariable Long id, Model model, @PathVariable String follow) {
+        Account accountInfo = accountService.getAccountInfo(id);
+        List<AccountFollowDto> follows;
+        String followType;
+
+        if(follow.equals("follower")) {
+            follows = followService.getFollowerList(account.getId(), accountInfo.getId());
+            followType = "follower";
+        } else {
+            follows = followService.getFollowingList(account.getId(), accountInfo.getId());
+            followType = "following";
+        }
+
+        model.addAttribute(account);
+        model.addAttribute("accountInfo", accountInfo);
+        model.addAttribute("follows", follows);
+        model.addAttribute("followType", followType);
+
+        return BLOG + "/follow-list";
     }
 
 }

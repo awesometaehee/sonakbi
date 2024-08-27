@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="w-100 h-100 d-grid">
+    <div th:replace="fragments :: main-nav"></div>
+    <div class="container" >
+        <div class="w-768 mx-auto">
+            <div style="margin-top:120px">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="me-2">
+                        <a th:href="@{'/blog/' + ${accountInfo.id} + '/post'}">
+                            <img class="round" style="width:32px; height:32px"
+                             th:src="${accountInfo.profileImage}" alt="profile" />
+                        </a>
+                    </div>
+                    <span class="fs-5">
+                        <span class="px-2"> > </span>
+                        <span th:if="${#strings.equals(followType, 'follower')}">팔로워</span>
+                        <span th:if="${#strings.equals(followType, 'following')}">팔로잉</span>
+                    </span>
+                </div>
+                <div class="fs-4 mb-3">
+                    <p th:if="${#strings.equals(followType, 'follower')}">
+                        <span class="fs-3 fw-bold pe-1" th:text="${follows.size()}">0</span>명의 팔로워
+                    </p>
+                    <p th:if="${#strings.equals(followType, 'following')}">
+                        <span class="fs-3 fw-bold pe-1" th:text="${follows.size()}">0</span>명의 팔로잉
+                    </p>
+                </div>
+                <div>
+                    <div th:each="result : ${follows}" class="d-flex justify-content-between mb-3">
+                        <div class="d-flex align-items-center" th:if="${#strings.equals(followType, 'follower')}">
+                            <a th:href="@{'/blog/' + ${result.id} + '/post'}">
+                                <img class="round" style="width:40px; height:40px" th:src="${result.profileImage}" alt="profile" />
+                            </a>
+                            <div class="ms-4">
+                                <a class="text-dark underline" th:href="@{'/blog/' + ${result.id} + '/post'}">
+                                    <p class="fs-7 mb-1" th:text="${result.userId}"></p>
+                                </a>
+                                <p class="fs-7 fw-light" th:text="${result.shortDescription}"></p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center" th:if="${#strings.equals(followType, 'following')}">
+                            <a th:href="@{'/blog/' + ${result.id} + '/post'}">
+                                <img class="round" style="width:40px; height:40px" th:src="${result.profileImage}" alt="profile" />
+                            </a>
+                            <div class="ms-4">
+                                <a class="text-dark underline" th:href="@{'/blog/' + ${result.id} + '/post'}">
+                                    <p class="fs-7 mb-1" th:text="${result.userId}"></p>
+                                </a>
+                                <p class="fs-7 fw-light" th:text="${result.shortDescription}"></p>
+                            </div>
+                        </div>
+                        <div th:if="${!result.isFollowAccount(account.id)}">
+                            <button class="btn btn-sm btn-outline-dark btn-follow"
+                                    th:if="${!result.isFollowing}"
+                                    th:accountId="${account.id}" th:accountInfoId="${result.id}"
+                                    th:onclick="follow(this, this.getAttribute('accountId'), this.getAttribute('accountInfoId'))">
+                                팔로우
+                            </button>
+                            <button class="btn btn-sm btn-dark btn-follow"
+                                    th:if="${result.isFollowing}"
+                                    th:accountId="${account.id}" th:accountInfoId="${result.id}"
+                                    th:onclick="follow(this, this.getAttribute('accountId'), this.getAttribute('accountInfoId'))">
+                                언팔로우
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:replace="fragments :: ajax-csrf-header"></script>
+<script th:replace="fragments :: ajax-follow"></script>
+</body>
+</html>

@@ -85,27 +85,32 @@
     </div>
 </div>
 
-<div th:fragment="follow">
+<div th:fragment="follow-count">
     <div class="d-flex justify-content-end mb-3">
         <div class="me-2">
-            <a class="text-dark fw-light"><span th:text="${followerCount}" class="fw-bold">0</span> 팔로워</a>
+            <a th:href="@{'/blog/' + ${accountInfo.id} + '/follower'}"
+               class="text-dark fw-light"><span th:text="${followerCount}" class="fw-bold">0</span> 팔로워</a>
         </div>
         <div>
-            <a class="text-dark fw-light"><span th:text="${followingCount}" class="fw-bold">0</span> 팔로잉</a>
+            <a th:href="@{'/blog/' + ${accountInfo.id} + '/following'}"
+               class="text-dark fw-light"><span th:text="${followingCount}" class="fw-bold">0</span> 팔로잉</a>
         </div>
     </div>
+</div>
+
+<div th:fragment="follow">
     <div th:if="${!accountInfo.isWriter(#authentication.principal)}">
-        <div id="followWrap" class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end">
             <button class="btn btn-sm btn-outline-dark btn-follow"
                     th:if="${!isFollowing}"
                     th:accountId="${account.id}" th:accountInfoId="${accountInfo.id}"
-                    th:onclick="follow(this.getAttribute('accountId'), this.getAttribute('accountInfoId'))">
+                    th:onclick="follow(this, this.getAttribute('accountId'), this.getAttribute('accountInfoId'))">
                 팔로우
             </button>
             <button class="btn btn-sm btn-dark btn-follow"
                     th:if="${isFollowing}"
                     th:accountId="${account.id}" th:accountInfoId="${accountInfo.id}"
-                    th:onclick="follow(this.getAttribute('accountId'), this.getAttribute('accountInfoId'))">
+                    th:onclick="follow(this, this.getAttribute('accountId'), this.getAttribute('accountInfoId'))">
                 언팔로우
             </button>
         </div>
@@ -113,32 +118,31 @@
 </div>
 
 <script type="application/javascript" th:fragment="ajax-follow" th:inline="javascript">
-    function follow(accountId, accountInfoId) {
+    function follow(e, accountId, accountInfoId) {
         let url = '/' + accountId + '/follow/' + accountInfoId;
-        const btnTxt = $('.btn-follow').text().trim();
 
-        if(btnTxt === '팔로우') {
+        if($(e).text().trim() === '팔로우') {
             const url = '/' + accountId + '/follow/' + accountInfoId;
-            ajaxFollow(url, btnTxt);
+            ajaxFollow(url, $(e));
         } else {
             const url = '/' + accountId + '/unfollow/' + accountInfoId;
-            ajaxFollow(url, btnTxt);
+            ajaxFollow(url, $(e));
         }
     }
 
-    function ajaxFollow(url, btnTxt) {
+    function ajaxFollow(url, target) {
         $.ajax({
             url : url,
             type : 'post',
             success : function(response) {
-                if(btnTxt === '팔로우') {
-                    $('.btn-follow').text('언팔로우');
-                    $('.btn-follow').removeClass('btn-outline-dark');
-                    $('.btn-follow').addClass('btn-dark');
+                if(target.text().trim() === '팔로우') {
+                    target.text('언팔로우');
+                    target.removeClass('btn-outline-dark');
+                    target.addClass('btn-dark');
                 } else {
-                    $('.btn-follow').text('팔로우');
-                    $('.btn-follow').removeClass('btn-dark');
-                    $('.btn-follow').addClass('btn-outline-dark');
+                    target.text('팔로우');
+                    target.removeClass('btn-dark');
+                    target.addClass('btn-outline-dark');
                 }
             },
             error : function(xhr) {
