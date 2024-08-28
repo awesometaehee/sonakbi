@@ -106,7 +106,7 @@
             <div id="commentTable">
                 <div class="comment-table py-4 border-bottom" th:each="comment : ${commentList}">
                     <div class="d-flex justify-content-between">
-                        <div class="d-flex align-items-center mb-4">
+                        <div class="d-flex align-items-center">
                             <img class="round" style="width: 50px; height:50px" th:src="${comment.account.profileImage}" alt="profile-image" />
                             <div class="ms-2">
                                 <p class="fw-bold fs-7">
@@ -122,8 +122,8 @@
                             <button class="delete-comment btn text-muted fs-7">삭제</button>
                         </div>
                     </div>
-                    <div class="comment-content mb-4">
-                        <p class="comment-text mb-4" th:text="${comment.content}">댓글 내용</p>
+                    <div class="comment-content">
+                        <p class="comment-text pb-4 pt-4" th:text="${comment.content}">댓글 내용</p>
                         <div class="div-reply">
                             <textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>
                             <div class="d-flex justify-content-end">
@@ -133,9 +133,57 @@
                         </div>
                     </div>
                     <div>
-                        <div class="comment-reply">
+                        <div class="comment-reply fs-7">
                             <i class="fa fa-plus-square-o" aria-hidden="true"></i>
-                            <span class="ms-2">답글 달기</span>
+                            <span class="ms-2" th:if="${comment.childrenComment.size == 0}">답글 달기</span>
+                            <span class="ms-2" th:if="${comment.childrenComment.size > 0}"><span th:text="${comment.childrenComment.size}"></span>개의 답글</span>
+                        </div>
+                        <div class="p-4 reply-wrap">
+                            <div class="reply-div">
+                                <div class="mb-4 border-bottom" th:each="reply, replyStat : ${comment.childrenComment}">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <input type="hidden" name="parentId" th:value="${reply.id}" />
+                                            <img class="round" style="width: 50px; height:50px" th:src="${reply.account.profileImage}" alt="profile-image" />
+                                            <div class="ms-2">
+                                                <p class="fw-bold fs-7">
+                                                    <a class="text-dark underline"
+                                                       th:href="@{'/blog/' + ${reply.account.id} + '/post'}" th:text="${reply.account.userId}"></a>
+                                                </p>
+                                                <p class="text-muted fs-8" th:text="${reply.createdAt}">1시간 전</p>
+                                            </div>
+                                        </div>
+                                        <div th:if="${reply.account.userId == #authentication.name}">
+                                            <button class="update-comment-open btn text-muted fs-7">수정</button>
+                                            <button class="delete-comment btn text-muted fs-7">삭제</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="pt-4 pb-4" th:text="${reply.content}"></p>
+                                        <div class="div-reply">
+                                            <textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>
+                                            <div class="d-flex justify-content-end">
+                                                <button class="comment-cancel btn btn-light btn-sm me-2">취소</button>
+                                                <button class="comment-update btn btn-dark btn-sm">댓글 수정</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${comment.childrenComment.size == 0}">
+                                <form class="reply-form">
+                                    <input type="hidden" name="parentId" th:value="${comment.id}" />
+                                    <textarea class="form-control mb-2" name="content" style="height:90px"></textarea>
+                                    <div class="d-flex justify-content-end">
+                                        <button class="reply-cancel btn btn-light btn-sm me-2">취소</button>
+                                        <button type="submit" class="reply-save btn btn-dark btn-sm">댓글 작성</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="show-reply" th:if="${comment.childrenComment.size > 0}">
+                                <button class="btn btn-dark w-100" th:commentId="${comment.id}"
+                                        th:onclick="showReplyForm(this, this.getAttribute('commentId'))">댓글 작성</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -179,8 +227,6 @@
         })
 
         isLiked();
-
-        $('.div-reply').hide();
 
         $(document).on('click', '.update-comment-open', function(e) {
             const ct = e.target.closest('.comment-table');
@@ -274,7 +320,145 @@
 
         titleTags.forEach(tag => observer.observe(tag));
 
+        // 답글 기능
+        $(document).on('click', '.comment-reply', function(e) {
+            const replyWrap = e.currentTarget.nextElementSibling;
+            $(replyWrap).toggle();
+
+            /*
+            const icon = e.currentTarget.children[0];
+            const text = e.currentTarget.children[1];
+
+            if(text.textContent === '답글 달기') {
+                text.textContent = '숨기기';
+                icon.classList.remove('fa-plus-square-o');
+                icon.classList.add('fa-minus-square-o');
+            } else {
+                text.textContent = '답글 달기';
+                icon.classList.add('fa-plus-square-o');
+                icon.classList.remove('fa-minus-square-o');
+            }
+            */
+
+            const replyForm = $(replyWrap).find('.reply-form');
+            const replyDiv = $(replyWrap).find('.reply-div');
+            replyForm.on('submit', function(e) {
+                e.preventDefault();
+
+                const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/create";
+                const parentId = $(this).find('input[name="parentId"]').val();
+                const content = $(this).find('textarea[name="content"]').val();
+                const $this = $(this);
+
+                $.ajax({
+                    type : 'post',
+                    contentType: "application/json; charset=utf-8",
+                    url : url,
+                    context : $this,
+                    data : JSON.stringify({'content' : content, 'parentId' : parentId}),
+                }).done(function(data, status) {
+                    let temp = '<div class="mb-4 border-bottom">';
+                    temp += '<div class="d-flex justify-content-between">';
+                    temp += '<div class="d-flex align-items-center">';
+                    temp += '<input type="hidden" name="parentId" value=' + data.commentId + '/>';
+                    temp += '<img class="round" style="width: 50px; height:50px" src="' + data.profileImage + '" alt="profile-image"/>';
+                    temp += '<div class="ms-2">';
+                    temp += '<p class="fw-bold fs-7">';
+                    temp += '<a class="text-dark underline" href="/blog/' + data.userId + '/post">' + data.userId + '</a>';
+                    temp += '</p>';
+                    temp += '<p class="text-muted fs-8">' + data.createdAt + '</p>';
+                    temp += '</div>';
+                    temp += '</div>';
+                    temp += '<div>'
+                    temp += '<button class="update-comment-open btn text-muted fs-7">수정</button>';
+                    temp += '<button class="delete-comment btn text-muted fs-7">삭제</button>';
+                    temp += '</div>';
+                    temp += '</div>';
+                    temp += '<div>';
+                    temp += '<p class="pt-4 pb-4">' + data.content + '</p>';
+                    temp += '<div class="div-reply">';
+                    temp += '<textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>';
+                    temp += '<div class="d-flex justify-content-end">';
+                    temp += '<button class="comment-cancel btn btn-light btn-sm me-2">취소</button>';
+                    temp += '<button class="comment-update btn btn-dark btn-sm">댓글 수정</button>';
+                    temp += '</div>';
+                    temp += '</div>';
+                    temp += '</div>';
+                    temp += '</div>';
+
+                    replyDiv.append(temp);
+                    $this.find('textarea[name="content"]').val('');
+                })
+            })
+        })
     })
+
+    function showReplyForm(e, commentId) {
+        const parent = $(e)[0].parentElement;
+        $(e).hide();
+        let form = '<form class="reply-form">';
+        form += '<input type="hidden" name="parentId" value=' + commentId + ' />';
+        form += '<textarea class="form-control mb-2" name="content" style="height:90px"></textarea>';
+        form += '<div class="d-flex justify-content-end">';
+        form += '<button class="reply-cancel btn btn-light btn-sm me-2">취소</button>';
+        form += '<button type="submit" class="reply-save btn btn-dark btn-sm">댓글 작성</button>';
+        form += '</div>';
+        form += '</form>';
+
+        $(parent).append(form);
+        const replyForm = $(parent).find('.reply-form');
+        const replyDiv = $(parent).siblings('.reply-div');
+
+        replyForm.on('submit', function (evt) {
+            evt.preventDefault();
+
+            const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/create";
+            const parentId = $(this).find('input[name="parentId"]').val();
+            const content = $(this).find('textarea[name="content"]').val();
+            const $this = $(this);
+
+            $.ajax({
+                type: 'post',
+                contentType: "application/json; charset=utf-8",
+                url: url,
+                context : $this,
+                data: JSON.stringify({'content': content, 'parentId': parentId}),
+            }).done(function (data, status) {
+                let temp = '<div class="mb-4 border-bottom">';
+                temp += '<div class="d-flex justify-content-between">';
+                temp += '<div class="d-flex align-items-center">';
+                temp += '<input type="hidden" name="parentId" value=' + data.commentId + '/>';
+                temp += '<img class="round" style="width: 50px; height:50px" src="' + data.profileImage + '" alt="profile-image"/>';
+                temp += '<div class="ms-2">';
+                temp += '<p class="fw-bold fs-7">';
+                temp += '<a class="text-dark underline" href="/blog/' + data.userId + '/post">' + data.userId + '</a>';
+                temp += '</p>';
+                temp += '<p class="text-muted fs-8">' + data.createdAt + '</p>';
+                temp += '</div>';
+                temp += '</div>';
+                temp += '<div>'
+                temp += '<button class="update-comment-open btn text-muted fs-7">수정</button>';
+                temp += '<button class="delete-comment btn text-muted fs-7">삭제</button>';
+                temp += '</div>';
+                temp += '</div>';
+                temp += '<div>';
+                temp += '<p class="pt-4 pb-4">' + data.content + '</p>';
+                temp += '<div class="div-reply">';
+                temp += '<textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>';
+                temp += '<div class="d-flex justify-content-end">';
+                temp += '<button class="comment-cancel btn btn-light btn-sm me-2">취소</button>';
+                temp += '<button class="comment-update btn btn-dark btn-sm">댓글 수정</button>';
+                temp += '</div>';
+                temp += '</div>';
+                temp += '</div>';
+                temp += '</div>';
+                temp += '</div>';
+
+                replyDiv.append(temp);
+                $this.find('textarea[name="content"]').val('');
+            })
+        })
+    }
 
     function createComment(e) {
         const content = $('#commentContent').val();
@@ -293,7 +477,7 @@
 
                 let temp = '<div class="py-4 border-bottom comment-table temp">';
                 temp += '<div class="d-flex justify-content-between">';
-                temp += '<div class="d-flex align-items-center mb-4">';
+                temp += '<div class="d-flex align-items-center">';
                 temp += '<img class="round" style="width: 50px; height:50px" src="' + data.profileImage + '" alt="profile-image" />';
                 temp += '<div class="ms-2">';
                 temp += '<p class="fw-bold fs-7">';
@@ -308,13 +492,26 @@
                 temp += '<button class="delete-comment btn text-muted fs-7">삭제</button>';
                 temp += '</div>';
                 temp += '</div>';
-                temp += '<div class="comment-content mb-4"><p class="comment-text mb-4">' + data.content + '</p>';
+                temp += '<div class="comment-content"><p class="comment-text pb-4 pt-4">' + data.content + '</p>';
                 temp += '<div class="div-reply">';
                 temp += '<textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>';
                 temp += '<div class="d-flex justify-content-end">';
                 temp += '<button class="comment-cancel btn btn-light btn-sm me-2">취소</button><button class="comment-update btn btn-dark btn-sm">댓글 수정</button></div></div>';
                 temp += '<div>';
-                temp += '<div class="comment-reply"><i class="fa fa-plus-square-o" aria-hidden="true"></i><span class="ms-2">답글 달기</span></div>';
+                temp += '<div class="comment-reply fs-7"><i class="fa fa-plus-square-o" aria-hidden="true"></i><span class="ms-2">답글 달기</span></div>';
+                temp += '<div class="p-4 reply-wrap">';
+                temp += '<div class="reply-div">'
+                temp += '<form class="reply-form">';
+                temp += '<input type="hidden" name="parentId" value=' + data.commentId + '/>';
+                temp += '<textarea class="form-control mb-2" style="height:90px"></textarea>';
+                temp += '<div class="d-flex justify-content-end">';
+                temp += '<button class="reply-cancel btn btn-light btn-sm me-2">취소</button>';
+                temp += '<button type="submit" class="reply-save btn btn-dark btn-sm" onclick="replySumbit(this)">댓글 작성</button>';
+                temp += '</form>';
+                temp += '</div>';
+                temp += '</div>';
+                temp += '</div>';
+                temp += '</div>';
                 temp += '</div>';
                 temp += '</div>';
 

@@ -5,6 +5,7 @@ import com.sonakbi.modules.account.Account;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
@@ -19,4 +20,6 @@ public class CommentDto {
     private String profileImage;
 
     private String createdAt;
+
+    private List<Comment> childrenComment;
 }

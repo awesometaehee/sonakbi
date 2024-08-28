@@ -33,10 +33,12 @@ public class CommentController {
     public ResponseEntity<CommentDto> createComment(@CurrentAccount Account account, @RequestBody CommentForm commentForm,
                                                     @PathVariable String url, @PathVariable Long id) {
         String content = commentForm.getContent();
+        Long parentId = commentForm.getParentId();
         Editor editor = editorService.getEditor(url, account, accountService.getAccountInfo(id));
-        Comment comment = commentService.createComment(content, editor, account);
+        Comment comment = commentService.createComment(content, editor, account, parentId);
 
-        CommentDto commentDto = new CommentDto(content, comment.getId(), account.getUserId(), account.getProfileImage(), comment.getCreatedAt());
+        CommentDto commentDto = new CommentDto(content, comment.getId(), account.getUserId()
+                , account.getProfileImage(), comment.getCreatedAt(), comment.getChildrenComment());
 
         return ResponseEntity.ok(commentDto);
     }
@@ -54,7 +56,8 @@ public class CommentController {
         }
 
         commentService.updateComment(comment, content);
-        CommentDto commentDto = new CommentDto(content, comment.getId(), account.getUserId(), account.getProfileImage(), comment.getCreatedAt());
+        CommentDto commentDto = new CommentDto(content, comment.getId(), account.getUserId()
+                , account.getProfileImage(), comment.getCreatedAt(), comment.getChildrenComment());
 
         return ResponseEntity.ok(commentDto);
     }

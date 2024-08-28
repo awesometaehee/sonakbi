@@ -18,7 +18,7 @@ public class Chrono {
         }else if (gap < 60 * 24 * 10) {
             word = (gap/60/24) + "일 전";
         } else {
-            word = dayBefore.format(DateTimeFormatter.ofPattern("MM월 dd일"));
+            word = dayBefore.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"));
         }
         return word;
     }

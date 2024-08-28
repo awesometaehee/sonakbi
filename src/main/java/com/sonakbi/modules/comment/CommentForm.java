@@ -9,7 +9,10 @@ public class CommentForm {
 
     private String content;
 
-    public CommentForm(String content) {
+    private Long parentId;
+
+    public CommentForm(String content, Long parentId) {
         this.content = content;
+        this.parentId = parentId;
     }
 }

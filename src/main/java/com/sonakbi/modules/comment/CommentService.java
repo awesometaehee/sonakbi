@@ -16,7 +16,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public Comment createComment(String content, Editor editor, Account account) {
+    public Comment createComment(String content, Editor editor, Account account, Long parentId) {
         editor.addComment();
 
         Comment comment = new Comment();
@@ -24,6 +24,11 @@ public class CommentService {
         comment.setEditor(editor);
         comment.setContent(content);
         comment.setCreatedAt(LocalDateTime.now());
+
+        if(parentId != null) {
+            Comment parentComment = commentRepository.findById(parentId).orElseThrow();
+            comment.setParentComment(parentComment);
+        }
 
         return commentRepository.save(comment);
     }

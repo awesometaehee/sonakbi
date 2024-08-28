@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -30,4 +32,11 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parentComment;
+
+    @OneToMany(mappedBy = "parentComment", orphanRemoval = true)
+    private List<Comment> childrenComment = new ArrayList<>();
 }

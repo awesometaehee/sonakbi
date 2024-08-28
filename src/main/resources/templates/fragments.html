@@ -710,42 +710,4 @@
     </div>
 </div>
 
-<div id="commentTable" th:fragment="comment-list">
-    <div class="comment-table py-4 border-bottom" th:each="comment : ${commentList}">
-        <div class="d-flex justify-content-between">
-            <div class="d-flex align-items-center mb-4">
-                <img class="round" style="width: 50px; height:50px" th:src="${comment.account.profileImage}" alt="profile-image" />
-                <div class="ms-2">
-                    <p class="fw-bold fs-7">
-                        <a class="text-dark underline"
-                           th:href="@{'/blog/' + ${comment.account.id} + '/post'}" th:text="${comment.account.userId}"></a>
-                    </p>
-                    <p class="text-muted fs-8" th:text="${comment.createdAt}">1시간 전</p>
-                    <div class="comment-id" th:text="${comment.id}" hidden="hidden"></div>
-                </div>
-            </div>
-            <div th:if="${comment.account.userId == #authentication.name}">
-                <button class="update-comment-open btn text-muted fs-7">수정</button>
-                <button class="delete-comment btn text-muted fs-7">삭제</button>
-            </div>
-        </div>
-        <div class="comment-content mb-4">
-            <p class="comment-text mb-4" th:text="${comment.content}">댓글 내용</p>
-            <div class="div-reply">
-                <textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>
-                <div class="d-flex justify-content-end">
-                    <button class="comment-cancel btn btn-light btn-sm me-2">취소</button>
-                    <button class="comment-update btn btn-dark btn-sm">댓글 수정</button>
-                </div>
-            </div>
-        </div>
-        <div>
-            <div class="comment-reply">
-                <i class="fa fa-plus-square-o" aria-hidden="true"></i>
-                <span class="ms-2">답글 달기</span>
-            </div>
-        </div>
-    </div>
-</div>
-
 </html>
