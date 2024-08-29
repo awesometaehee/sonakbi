@@ -38,5 +38,6 @@ public class Comment {
     private Comment parentComment;
 
     @OneToMany(mappedBy = "parentComment", orphanRemoval = true)
+    @OrderBy("id asc")
     private List<Comment> childrenComment = new ArrayList<>();
 }

@@ -139,8 +139,8 @@
                             <span class="ms-2" th:if="${comment.childrenComment.size > 0}"><span th:text="${comment.childrenComment.size}"></span>개의 답글</span>
                         </div>
                         <div class="p-4 reply-wrap">
-                            <div class="reply-div">
-                                <div class="mb-4 border-bottom" th:each="reply, replyStat : ${comment.childrenComment}">
+                            <div class="reply-append">
+                                <div class="mb-4 border-bottom reply-div" th:each="reply, replyStat : ${comment.childrenComment}">
                                     <div class="d-flex justify-content-between">
                                         <div class="d-flex align-items-center">
                                             <input type="hidden" name="parentId" th:value="${reply.id}" />
@@ -154,17 +154,18 @@
                                             </div>
                                         </div>
                                         <div th:if="${reply.account.userId == #authentication.name}">
-                                            <button class="update-comment-open btn text-muted fs-7">수정</button>
+                                            <button class="update-reply-open btn text-muted fs-7">수정</button>
                                             <button class="delete-comment btn text-muted fs-7">삭제</button>
                                         </div>
                                     </div>
-                                    <div>
-                                        <p class="pt-4 pb-4" th:text="${reply.content}"></p>
-                                        <div class="div-reply">
+                                    <div class="comment-content">
+                                        <p class="pt-4 pb-4 comment-text" th:text="${reply.content}"></p>
+                                        <div class="div-reply mb-4">
+                                            <input type="hidden" name="replyId" th:value="${reply.id}" />
                                             <textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>
                                             <div class="d-flex justify-content-end">
-                                                <button class="comment-cancel btn btn-light btn-sm me-2">취소</button>
-                                                <button class="comment-update btn btn-dark btn-sm">댓글 수정</button>
+                                                <button class="reply-cancel btn btn-light btn-sm me-2">취소</button>
+                                                <button class="reply-update btn btn-dark btn-sm">댓글 수정</button>
                                             </div>
                                         </div>
                                     </div>
@@ -237,8 +238,23 @@
             dr.show();
         })
 
+        $(document).on('click', '.update-reply-open', function(e) {
+            const ct = e.target.closest('.reply-div');
+            const dr = $(ct).find('.div-reply');
+            const ta = $(dr).find('.comment-ta');
+            const ctxt = $(ct).find('.comment-text').html();
+            ta.val(ctxt);
+            dr.show();
+        })
+
         $('.comment-cancel').click(function(e) {
             const ct = e.target.closest('.comment-table');
+            const dr = $(ct).find('.div-reply');
+            dr.hide();
+        })
+
+        $('.reply-cancel').click(function(e) {
+            const ct = e.target.closest('.reply-div');
             const dr = $(ct).find('.div-reply');
             dr.hide();
         })
@@ -249,6 +265,10 @@
 
         $(document).on('click', '.comment-update', function(e) {
             updateComment(e);
+        })
+
+        $(document).on('click', '.reply-update', function(e) {
+            updateReply(e);
         })
 
         $(document).on('click', '.delete-comment', function(e) {
@@ -325,21 +345,6 @@
             const replyWrap = e.currentTarget.nextElementSibling;
             $(replyWrap).toggle();
 
-            /*
-            const icon = e.currentTarget.children[0];
-            const text = e.currentTarget.children[1];
-
-            if(text.textContent === '답글 달기') {
-                text.textContent = '숨기기';
-                icon.classList.remove('fa-plus-square-o');
-                icon.classList.add('fa-minus-square-o');
-            } else {
-                text.textContent = '답글 달기';
-                icon.classList.add('fa-plus-square-o');
-                icon.classList.remove('fa-minus-square-o');
-            }
-            */
-
             const replyForm = $(replyWrap).find('.reply-form');
             const replyDiv = $(replyWrap).find('.reply-div');
             replyForm.on('submit', function(e) {
@@ -370,17 +375,18 @@
                     temp += '</div>';
                     temp += '</div>';
                     temp += '<div>'
-                    temp += '<button class="update-comment-open btn text-muted fs-7">수정</button>';
+                    temp += '<button class="update-reply-open btn text-muted fs-7">수정</button>';
                     temp += '<button class="delete-comment btn text-muted fs-7">삭제</button>';
                     temp += '</div>';
                     temp += '</div>';
                     temp += '<div>';
                     temp += '<p class="pt-4 pb-4">' + data.content + '</p>';
-                    temp += '<div class="div-reply">';
+                    temp += '<div class="div-reply mb-4">';
+                    temp += '<input type="hidden" name="replyId" value=' + data.commentId + ' />';
                     temp += '<textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>';
                     temp += '<div class="d-flex justify-content-end">';
-                    temp += '<button class="comment-cancel btn btn-light btn-sm me-2">취소</button>';
-                    temp += '<button class="comment-update btn btn-dark btn-sm">댓글 수정</button>';
+                    temp += '<button class="reply-cancel btn btn-light btn-sm me-2">취소</button>';
+                    temp += '<button class="reply-update btn btn-dark btn-sm">댓글 수정</button>';
                     temp += '</div>';
                     temp += '</div>';
                     temp += '</div>';
@@ -407,7 +413,7 @@
 
         $(parent).append(form);
         const replyForm = $(parent).find('.reply-form');
-        const replyDiv = $(parent).siblings('.reply-div');
+        const replyDiv = $(parent).siblings('.reply-append');
 
         replyForm.on('submit', function (evt) {
             evt.preventDefault();
@@ -443,11 +449,12 @@
                 temp += '</div>';
                 temp += '<div>';
                 temp += '<p class="pt-4 pb-4">' + data.content + '</p>';
-                temp += '<div class="div-reply">';
+                temp += '<div class="div-reply mb-4">';
+                temp += '<input type="hidden" name="replyId" value=' + data.commentId + ' />';
                 temp += '<textarea class="comment-ta form-control mb-2" style="height:90px"></textarea>';
                 temp += '<div class="d-flex justify-content-end">';
-                temp += '<button class="comment-cancel btn btn-light btn-sm me-2">취소</button>';
-                temp += '<button class="comment-update btn btn-dark btn-sm">댓글 수정</button>';
+                temp += '<button class="reply-cancel btn btn-light btn-sm me-2">취소</button>';
+                temp += '<button class="reply-update btn btn-dark btn-sm">댓글 수정</button>';
                 temp += '</div>';
                 temp += '</div>';
                 temp += '</div>';
@@ -545,6 +552,28 @@
             contentType: "application/json; charset=utf-8",
             url : url,
             data : JSON.stringify({'content' : updateContent}),
+            dataType : 'text',
+        }).done(function(data, status) {
+            commentTxt.html(updateContent);
+            dr.hide();
+        })
+    }
+
+    function updateReply(e) {
+        const ct = e.target.closest('.reply-div');
+        const dr = $(ct).find('.div-reply');
+        const ta = $(dr).find('.comment-ta');
+        const cId = $(ct).find('input[name="replyId"]').val();
+        const commentTxt = $(ct).find('.comment-text');
+        const updateContent = ta.val();
+        const url = "/comment/" + [[${editor.url}]] + "/" + [[${editor.writer.id}]] + "/" + cId + "/update";
+
+        $.ajax({
+            type : 'post',
+            contentType: "application/json; charset=utf-8",
+            url : url,
+            data : JSON.stringify({'content' : updateContent}),
+            dataType: 'text',
         }).done(function(data, status) {
             commentTxt.html(updateContent);
             dr.hide();
