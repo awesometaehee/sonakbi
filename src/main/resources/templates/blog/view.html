@@ -7,10 +7,7 @@
 <div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
     <div class="container" >
-        <div class="w-768 mx-auto position-relative">
-            <aside class="toc">
-                <div class="toc-list"></div>
-            </aside>
+        <div class="w-768 mx-auto">
             <div style="margin-top:130px; margin-bottom:40px">
                 <h1 th:text="${editor.title}"></h1>
             </div>
@@ -29,6 +26,11 @@
                 <span class="badge rounded-pill bg-dark me-2" th:each="editorTag : ${editor.editorTags}">
                     <a th:text="${editorTag.tag.value}"></a>
                 </span>
+            </div>
+            <div class="toc-wrap position-relative">
+                <aside class="toc">
+                    <div class="toc-list"></div>
+                </aside>
             </div>
             <div class="series-chapter position-relative mb-4" th:if="${editorList.size > 0}">
                 <div class="bookmark red"></div>
@@ -339,6 +341,18 @@
         })
 
         titleTags.forEach(tag => observer.observe(tag));
+
+        // ToC 스크롤 시 fixed
+        $(window).on('scroll', function() {
+            const tocTop = $('.toc').offset().top;
+            const scrollY = $(window).scrollTop();
+            const height = $('.toc-list').height();
+            if(scrollY >= tocTop - height) {
+                $(toc).addClass('drop');
+            } else {
+                $(toc).removeClass('drop');
+            }
+        })
 
         // 답글 기능
         $(document).on('click', '.comment-reply', function(e) {

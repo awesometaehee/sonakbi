@@ -27,7 +27,7 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure, Tag tag) {
+    public List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure, Tag tag, Long lastId) {
 
         QEditor editor = QEditor.editor;
         QEditorTag editorTag = QEditorTag.editorTag;
@@ -36,6 +36,7 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
 
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(account.id.eq(writer.getId()));
+        builder.and(editor.id.lt(lastId));
 
         if(!disclosure) {
             builder.and(editor.disclosure.ne(disclosure));
@@ -49,7 +50,8 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
                 .leftJoin(editor.editorTags, editorTag)
                 .leftJoin(editor.writer, account)
                 .leftJoin(editor.likes, likes)
-                .orderBy(editor.publishedTime.desc())
+                .orderBy(editor.id.desc())
+                .limit(10)
                 .fetch();
     }
 
@@ -91,5 +93,24 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
                 .leftJoin(editor.likes, likes)
                 .orderBy(editor.publishedTime.desc())
                 .fetch();
+    }
+
+    @Override
+    public Editor findByLastId(Account writer, boolean disclosure) {
+        QEditor editor = QEditor.editor;
+        QAccount account = QAccount.account;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(account.id.eq(writer.getId()));
+
+        if(!disclosure) {
+            builder.and(editor.disclosure.ne(disclosure));
+        }
+
+        return from(editor).where(builder)
+                .leftJoin(editor.writer, account)
+                .orderBy(editor.id.desc())
+                .limit(1)
+                .fetchFirst();
     }
 }

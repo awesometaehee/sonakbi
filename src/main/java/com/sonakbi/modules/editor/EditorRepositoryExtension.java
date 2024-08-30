@@ -10,10 +10,12 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface EditorRepositoryExtension {
 
-    List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure, Tag tag);
+    List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure, Tag tag, Long lastId);
 
     List<Editor> findSeriesById(Long seriesId, boolean disclosure);
 
     List<Editor> findByKeywordContainingIgnoreCase(Account writer, boolean disclosure, String keyword);
+
+    Editor findByLastId(Account account, boolean disclosure);
 
 }

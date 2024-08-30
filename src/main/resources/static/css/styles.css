@@ -397,16 +397,24 @@ p {
 }
 
 .toc {
-    position:fixed;
+    position:absolute;
+    left:100%;
+}
+
+.toc-list {
     width:300px;
-    right:120px;
-    top:335px;
+    margin-left:5rem;
     padding-left:.7rem;
     border-left:3px solid #e5e6e7;
     color:#868E96;
     font-weight:300;
     font-size:.9rem;
     line-height: 1.6;
+}
+
+.toc-list.drop {
+    position: fixed;
+    top:112px;
 }
 
 .toc-title {

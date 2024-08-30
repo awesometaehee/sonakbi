@@ -17,6 +17,7 @@ import com.sonakbi.modules.tag.TagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,6 +65,25 @@ public class EditorController {
 
         return EDITOR + "/write";
     }
+
+    /*
+    @GetMapping("/test")
+    public String test(@CurrentAccount Account account) {
+        for(int i=0; i<100; i++) {
+            String random = RandomString.make(5);
+            Editor editor = new Editor();
+            editor.setUrl("test-" + random);
+            editor.setWrite(account);
+            editor.setTitle("title-" + random);
+            editor.setMainText("<div>test</div>");
+            editor.setDescription("test");
+            editor.setDisclosure(true);
+
+            editorRepository.save(editor);
+        }
+        return null;
+    }
+    */
 
     @PostMapping("/write")
     public String writeFormSubmit(@CurrentAccount Account account, EditorForm editorForm, Errors errors, Model model)

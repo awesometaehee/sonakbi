@@ -128,9 +128,9 @@ public class EditorService {
         return editor;
     }
 
-    public List<Editor> getEditorList(Account writer, boolean disclosure, String tagValue) {
+    public List<Editor> getEditorList(Account writer, boolean disclosure, String tagValue, Long lastId) {
         Tag tag = tagRepository.findByValue(tagValue);
-        return editorRepository.findEditorByWriterOrderByPublishedTimeDesc(writer, disclosure, tag);
+        return editorRepository.findEditorByWriterOrderByPublishedTimeDesc(writer, disclosure, tag, lastId);
     }
 
     public void deleteEditor(Account account, Editor editor) {

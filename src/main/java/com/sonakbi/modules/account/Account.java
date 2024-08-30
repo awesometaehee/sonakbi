@@ -1,5 +1,6 @@
 package com.sonakbi.modules.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sonakbi.modules.comment.Comment;
 import com.sonakbi.modules.follow.Follow;
 import com.sonakbi.modules.series.Series;
@@ -50,9 +51,11 @@ public class Account {
     private String aboutDescription;
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Follow> following;
 
     @OneToMany(mappedBy = "following", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Follow> followers;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)

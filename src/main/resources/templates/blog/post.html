@@ -40,7 +40,8 @@
                         </ul>
                     </aside>
                     <div id="postListWrap">
-                        <div th:if="${post.isWriterAndDisclosure(#authentication.principal, post.disclosure)}" class="py-5 border-bottom" th:each="post : ${postList}">
+                        <div th:if="${post.isWriterAndDisclosure(#authentication.principal, post.disclosure)}" class="py-5 border-bottom post-item" th:each="post : ${postList}">
+                            <input type="hidden" name="postId" th:value="${post.id}" />
                             <div class="mb-4" th:if="${post.useThumbnail()}">
                                 <a class="d-block" th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}" style="width:100%; height:400px">
                                     <img class="w-100 h-100" th:src="${post.thumbnail}" alt="thumbnail" style="object-fit:cover" />
@@ -58,7 +59,7 @@
                             <div>
                                 <span class="fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
                                 <span class="fs-7 text-muted">댓글 <span th:text="${post.commentCount}">0</span>개</span> ⋅
-                                <span class="fs-7 text-muted">♥ <span th:text="${post.likes.size}">0</span></span>
+                                <span class="fs-7 text-muted">♥ <span th:text="${post.likeCount}">0</span></span>
                                 <span th:if="${!post.disclosure}">
                                     ⋅
                                     <span class="fs-7 badge bg-dark">
@@ -75,5 +76,89 @@
 </div>
 <script th:replace="fragments :: ajax-csrf-header"></script>
 <script th:replace="fragments :: ajax-follow"></script>
+<script type="application/javascript" th:inline="javascript">
+    $(function() {
+        let lastId = $("#postListWrap .post-item:last-child input[name='postId']").val();
+        const $postListWrap = $('#postListWrap');
+        let IS_FETCHING = false;
+
+        function getList() {
+            IS_FETCHING = true;
+            const url = '/blog/' + [[${accountInfo.id}]] + '/post/' + lastId;
+
+            $.ajax({
+                type : 'get',
+                contentType: "application/json; charset=utf-8",
+                url : url,
+            }).done(function(data, status) {
+                const dataList = JSON.parse(data);
+                drawList(dataList);
+            })
+        }
+
+        function drawList(data) {
+            let listHtml = '';
+            data.forEach((item, index) => {
+                listHtml += '<div class="py-5 border-bottom post-item">';
+                listHtml += '<input type="hidden" name="postId" value="' + item.id + '" />';
+
+                if (item.thumbnail) {
+                    listHtml += '<div class="mb-4">';
+                    listHtml += '<a class="d-block" href="/blog/' + item.writer.id + '/view/' + item.url + '" style="width:100%; height:400px">';
+                    listHtml += '<img class="w-100 h-100" src="' + item.thumbnail + '" alt="thumbnail" style="object-fit:cover" />';
+                    listHtml += '</a>';
+                    listHtml += '</div>';
+                }
+
+                listHtml += '<a class="d-inline-block text-dark" href="/blog/' + item.writer.id + '/view/' + item.url + '">';
+                listHtml += '<h4 class="mb-4">' + item.title + '</h4>';
+                listHtml += '</a>';
+
+                listHtml += '<p class="mb-3">' + item.description + '</p>';
+
+                listHtml += '<div class="mb-3">';
+                item.editorTags.forEach(function(tag) {
+                    listHtml += '<span class="badge rounded-pill bg-dark me-2">';
+                    listHtml += '<a href="#">' + tag.value + '</a>';
+                    listHtml += '</span>';
+                });
+                listHtml += '</div>';
+
+                listHtml += '<div>';
+                listHtml += '<span class="fs-7 text-muted">' + item.publishedTime + '</span> ⋅ ';
+                listHtml += '<span class="fs-7 text-muted">댓글 <span>' + item.commentCount + '</span>개</span> ⋅ ';
+                listHtml += '<span class="fs-7 text-muted">♥ <span>' + item.likeCount + '</span></span>';
+
+                if (!item.disclosure) {
+                    listHtml += ' ⋅ <span class="fs-7 badge bg-dark">';
+                    listHtml += '<i class="fa fa-lock pe-1" aria-hidden="true"></i> 비공개</span>';
+                }
+
+                listHtml += '</div>';
+                listHtml += '</div>';
+
+                if (index === data.length - 1) {
+                    lastId = item.id;
+                }
+            })
+            IS_FETCHING = false;
+            $postListWrap.append(listHtml);
+        }
+
+        $(window).on('scroll', function () {
+            const SCROLLED_HEIGHT = $(window).scrollTop();
+            const WINDOW_HEIGHT = $(window).height();
+            const DOC_TOTAL_HEIGHT = $(document).height();
+            const IS_BOTTOM = (WINDOW_HEIGHT + SCROLLED_HEIGHT > DOC_TOTAL_HEIGHT - 200);
+
+            if (IS_BOTTOM && !IS_FETCHING) {
+                getList();
+            }
+        })
+
+        // TODO 스크롤 후 생성된 게시글로 이동 후 뒤로가기하면 다시 렌더링하기 때문에 클릭한 게시글이 안보임
+        // 추후 작업 필요
+    })
+</script>
 </body>
 </html>

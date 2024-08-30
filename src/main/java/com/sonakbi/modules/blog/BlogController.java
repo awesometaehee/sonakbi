@@ -1,5 +1,7 @@
 package com.sonakbi.modules.blog;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.AccountFollowDto;
 import com.sonakbi.modules.account.AccountService;
@@ -45,6 +47,7 @@ public class BlogController {
     private final SeriesService seriesService;
     private final FollowService followService;
     private final FollowRepository followRepository;
+    private final ObjectMapper objectMapper;
 
     public static final String BLOG_URL = "/blog";
     public static final String BLOG = "blog";
@@ -58,6 +61,7 @@ public class BlogController {
         int total = editorRepository.countEditorById(id);
         int followerCount = followRepository.countFollowerByAccountId(accountInfo.getId());
         int followingCount = followRepository.countFollowingByAccountId(accountInfo.getId());
+        Editor byLastId = editorRepository.findByLastId(accountInfo, checkEqualAccount);
 
         model.addAttribute(account);
         model.addAttribute("accountInfo", accountInfo);
@@ -65,11 +69,23 @@ public class BlogController {
         model.addAttribute("followerCount", followerCount);
         model.addAttribute("followingCount", followingCount);
         model.addAttribute("total", total);
-        model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount, tagValue));
+        model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount, tagValue, byLastId.getId()));
         model.addAttribute("tagList", tagRepository.findTagCountById(id, checkEqualAccount));
 
         return BLOG + "/post";
     }
+
+    @GetMapping("/post/{lastId}")
+    @ResponseBody
+    public ResponseEntity<?> getScrollPost(@CurrentAccount Account account, @PathVariable Long id
+                , @RequestParam(value = "tag", required = false) String tagValue, @PathVariable Long lastId) throws JsonProcessingException {
+        Account accountInfo = accountService.getAccountInfo(id);
+        boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo); // true = 본 계정 false = 방문자
+        List<Editor> postList = editorService.getEditorList(accountInfo, checkEqualAccount, tagValue, lastId);
+
+        return ResponseEntity.ok().body(objectMapper.writeValueAsString(postList));
+    }
+
 
     @GetMapping("/post/search")
     public String myPostSearch(@CurrentAccount Account account, @PathVariable Long id,

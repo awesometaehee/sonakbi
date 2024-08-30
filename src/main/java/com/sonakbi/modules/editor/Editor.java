@@ -1,6 +1,8 @@
 package com.sonakbi.modules.editor;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.UserAccount;
 import com.sonakbi.modules.comment.Comment;
@@ -63,6 +65,7 @@ public class Editor {
     private boolean disclosure = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Series series;
 
     private LocalDateTime publishedTime;
@@ -148,8 +151,9 @@ public class Editor {
         }
     }
 
+    @JsonProperty("seriesTitle")
     public String getSeriesTitle() {
-        return this.series.getTitle();
+        return series != null ? this.series.getTitle() : null;
     }
 
     public void addComment() {
