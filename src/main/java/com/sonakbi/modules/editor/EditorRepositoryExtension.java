@@ -3,6 +3,7 @@ package com.sonakbi.modules.editor;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.tag.Tag;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,5 +18,7 @@ public interface EditorRepositoryExtension {
     List<Editor> findByKeywordContainingIgnoreCase(Account writer, boolean disclosure, String keyword);
 
     Editor findByLastId(Account account, boolean disclosure);
+
+    List<EditorDto> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId);
 
 }

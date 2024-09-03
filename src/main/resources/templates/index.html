@@ -5,11 +5,114 @@
 <body>
 <div class="w-100 h-100 d-grid">
     <div th:replace="fragments :: main-nav"></div>
-    <div class="container" >
-        <div class="row">
-            <div class="col">밤하늘</div>
+    <div class="container bg-page">
+        <div class="main-responsive mx-auto">
+            <div class="main-layout">
+                <main>
+                    <ul class="main-layout-grid">
+                        <li class="main-layout-card" th:each="post : ${postList}">
+                            <input type="hidden" name="lastId" th:value="${post.id}" />
+                            <div class="main-layout-thumbnail" th:if="${post.useThumbnail()}">
+                                <a th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}">
+                                    <img th:src="${post.thumbnail}" alt="thumbnail" style="width:100%; height:100%; object-fit: cover" />
+                                </a>
+                            </div>
+                            <div class="post-card-content">
+                                <a class="text-dark" th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}">
+                                    <h5 class="mb-2" th:text="${post.title}"></h5>
+                                    <p class="post-card-description" th:text="${post.description}"></p>
+                                </a>
+                                <div class="post-card-sub-info">
+                                    <p>
+                                        <span th:text="${post.publishedTime}"></span>
+                                        ⋅
+                                        <span th:text="${post.commentCount}"></span>개의 댓글
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="post-card-footer">
+                                <a class="d-flex align-items-center" th:href="@{'/blog/' + ${post.writer.id} + '/post'}">
+                                    <img class="round" th:src="${post.writer.profileImage}" th:alt="${post.writer.userId}" style="width:1.5rem; height:1.5rem" />
+                                    <span class="ps-1">by <b class="text-dark" th:text="${post.writer.userId}"></b></span>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </main>
+            </div>
         </div>
     </div>
 </div>
+<script th:replace="fragments :: ajax-csrf-header"></script>
+<script type="application/javascript" th:inline="javascript">
+    $(function() {
+        let lastId = $(".main-layout-grid .main-layout-card:last-child input[name='lastId']").val();
+        const $mainLayoutGrid = $('.main-layout-grid');
+
+        function getList() {
+            $.ajax({
+                type : 'get',
+                contentType: "application/json; charset=utf-8",
+                url : '/scroll/' + lastId,
+            }).done(function(data, status) {
+                drawList(data);
+            })
+        }
+
+        function drawList(data) {
+            let listHtml = '';
+            data.forEach((item, index) => {
+                listHtml += '<li class="main-layout-card">';
+                listHtml += '<input type="hidden" name="lastId" value="' + item.id + '" />';
+
+                if (item.thumbnail) {
+                    listHtml += '<div class="main-layout-thumbnail">';
+                    listHtml += '<a href="/blog/' + item.writer.id + '/view/' + item.url + '">';
+                    listHtml += '<img src="' + item.thumbnail + '" alt="thumbnail" style="width:100%; height:100%; object-fit: cover" />';
+                    listHtml += '</a>';
+                    listHtml += '</div>';
+                }
+
+                listHtml += '<div class="post-card-content">';
+                listHtml += '<a class="text-dark" href="/blog/' + item.writer.id + '/view/' + item.url + '">';
+                listHtml += '<h5 class="mb-2">' + item.title + '</h5>';
+                listHtml += '<p class="post-card-description">' + item.description + '</p>';
+                listHtml += '</a>';
+                listHtml += '<div class="post-card-sub-info">';
+                listHtml += '<p>';
+                listHtml += '<span>' + item.publishedTime + '</span>';
+                listHtml += ' ⋅ ';
+                listHtml += '<span>' + item.commentCount + '</span>개의 댓글';
+                listHtml += '</p>';
+                listHtml += '</div>';
+                listHtml += '</div>';
+                listHtml += '<div class="post-card-footer">';
+                listHtml += '<a class="d-flex align-items-center" href="/blog/' + item.writer.id + '/post">';
+                listHtml += '<img class="round" src="' + item.writer.profileImage + '" alt="' + item.writer.userId + '" style="width:1.5rem; height:1.5rem" />';
+                listHtml += '<span class="ps-1">by <b class="text-dark">' + item.writer.userId + '</b></span>';
+                listHtml += '</a>';
+                listHtml += '</div>';
+                listHtml += '</li>';
+
+                if (index === data.length - 1) {
+                    lastId = item.id;
+                }
+            })
+
+            $mainLayoutGrid.append(listHtml);
+        }
+
+        $(window).on('scroll', function () {
+            const SCROLLED_HEIGHT = $(window).scrollTop();
+            const WINDOW_HEIGHT = $(window).height();
+            const DOC_TOTAL_HEIGHT = $(document).height();
+            const IS_BOTTOM = WINDOW_HEIGHT + SCROLLED_HEIGHT === DOC_TOTAL_HEIGHT;
+
+            if (IS_BOTTOM) {
+                getList();
+            }
+        })
+    })
+</script>
 </body>
 </html>

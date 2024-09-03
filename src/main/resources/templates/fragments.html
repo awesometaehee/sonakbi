@@ -345,7 +345,7 @@
                                             <div class="d-flex justify-content-end mb-2">
                                                 <label for="thumbnailReUpload" class="btn btn-light btn-sm me-2">재업로드</label>
                                                 <input type="file" id="thumbnailReUpload" hidden />
-                                                <button id="thumbnailDelete" class="btn btn-light btn-sm">제거</button>
+                                                <button type="button" id="thumbnailDelete" class="btn btn-light btn-sm">제거</button>
                                             </div>
                                         </div>
                                         <div id="currentThumbnailImage" class="div-thumbnail rounded">
@@ -496,6 +496,7 @@
             $newThumbnailImage.hide();
             $thumbnailSettingWrap.hide();
             $currentThumbnailImage.show();
+            $thumbnailImage.val(null);
         })
 
         if($thumbnailImage[0].value.length > 0) {

@@ -169,4 +169,8 @@ public class EditorService {
     public List<Editor> getSeachEditorList(Account writer, boolean disclosure, String keyword) {
         return editorRepository.findByKeywordContainingIgnoreCase(writer, disclosure, keyword);
     }
+
+    public List<Editor> getListTop40(boolean disclosure) {
+        return editorRepository.findTop40ByDisclosureOrderByIdDesc(disclosure);
+    }
 }

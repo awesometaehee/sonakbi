@@ -1,6 +1,7 @@
 package com.sonakbi.modules.editor;
 
 import com.sonakbi.modules.series.Series;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,6 +29,12 @@ public interface EditorRepository extends JpaRepository<Editor, Long>, EditorRep
     Integer countEditorById(@Param("id") Long id);
 
     List<Editor> findAllBySeriesOrderByOrderIdAsc(Series series);
+
+    @EntityGraph(attributePaths = {"writer"})
+    List<Editor> findTop40ByDisclosureOrderByIdDesc(boolean disclosure);
+
+    @Query("select e.id from Editor e order by e.id desc limit 1")
+    Long findByLastId();
 
     // @EntityGraph(value = "Editor.withTags", type = EntityGraph.EntityGraphType.LOAD)
     // List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure);

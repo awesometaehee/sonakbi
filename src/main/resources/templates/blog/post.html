@@ -149,9 +149,9 @@
             const SCROLLED_HEIGHT = $(window).scrollTop();
             const WINDOW_HEIGHT = $(window).height();
             const DOC_TOTAL_HEIGHT = $(document).height();
-            const IS_BOTTOM = (WINDOW_HEIGHT + SCROLLED_HEIGHT > DOC_TOTAL_HEIGHT - 200);
+            const IS_BOTTOM = WINDOW_HEIGHT + SCROLLED_HEIGHT === DOC_TOTAL_HEIGHT;
 
-            if (IS_BOTTOM && !IS_FETCHING) {
+            if (IS_BOTTOM) {
                 getList();
             }
         })

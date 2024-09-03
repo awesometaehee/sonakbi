@@ -4,11 +4,13 @@ package com.sonakbi.modules.editor;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.QAccount;
+import com.sonakbi.modules.comment.QComment;
 import com.sonakbi.modules.editorTag.QEditorTag;
 import com.sonakbi.modules.like.QLikes;
 import com.sonakbi.modules.series.QSeries;
@@ -112,5 +114,27 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
                 .orderBy(editor.id.desc())
                 .limit(1)
                 .fetchFirst();
+    }
+
+    @Override
+    public List<EditorDto> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId) {
+        QEditor editor = QEditor.editor;
+        QAccount account = QAccount.account;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(editor.id.lt(lastId));
+
+        if(!disclosure) {
+            builder.and(editor.disclosure.ne(disclosure));
+        }
+
+        return queryFactory.select(Projections.constructor(EditorDto.class
+                        , editor.id, editor.title, editor.mainText, editor.description, editor.writer, editor.url, editor.thumbnail
+                        , editor.disclosure, editor.publishedTime, editor.likeCount, editor.commentCount, editor.orderId))
+                .from(editor).where(builder)
+                .leftJoin(editor.writer, account)
+                .orderBy(editor.id.desc())
+                .limit(20)
+                .fetch();
     }
 }

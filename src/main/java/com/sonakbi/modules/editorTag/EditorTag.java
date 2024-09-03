@@ -1,5 +1,6 @@
 package com.sonakbi.modules.editorTag;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.tag.Tag;
 import jakarta.persistence.*;

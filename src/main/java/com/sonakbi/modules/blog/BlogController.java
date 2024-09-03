@@ -62,6 +62,7 @@ public class BlogController {
         int followerCount = followRepository.countFollowerByAccountId(accountInfo.getId());
         int followingCount = followRepository.countFollowingByAccountId(accountInfo.getId());
         Editor byLastId = editorRepository.findByLastId(accountInfo, checkEqualAccount);
+        Long lastId = byLastId.getId() + 1;
 
         model.addAttribute(account);
         model.addAttribute("accountInfo", accountInfo);
@@ -69,7 +70,7 @@ public class BlogController {
         model.addAttribute("followerCount", followerCount);
         model.addAttribute("followingCount", followingCount);
         model.addAttribute("total", total);
-        model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount, tagValue, byLastId.getId()));
+        model.addAttribute("postList", editorService.getEditorList(accountInfo, checkEqualAccount, tagValue, lastId));
         model.addAttribute("tagList", tagRepository.findTagCountById(id, checkEqualAccount));
 
         return BLOG + "/post";
