@@ -13,7 +13,7 @@ public interface TagRepository extends JpaRepository<Tag, Long>, TagRepositoryEx
     Tag findByValue(String value);
 
     /*
-    @Query("select new com.sonakbi.modules.tag.TagCountDto(t.value, count(et.id)) "
+    @Query("select new com.sonakbi.modules.tag.dto.TagCountDto(t.value, count(et.id)) "
             + "from Tag t left join t.editorTags et "
             + "left join et.editor e "
             + "left join e.writer a "

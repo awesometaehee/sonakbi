@@ -89,6 +89,25 @@
                             </small>
                         </div>
 
+                        <div class="mb-3">
+                            <p>알림</p>
+                            <div class="row" style="padding-left:0.8rem; padding-right:0.8rem">
+                                <div class="col-sm-4 form-check form-switch">
+                                    <label class="form-check-label" for="notiCommentByWeb">댓글 알림</label>
+                                    <input class="form-check-input" type="checkbox" role="switch" id="notiCommentByWeb" th:field="*{notiCommentByWeb}">
+                                </div>
+                                <div class="col-sm-4 form-check form-switch">
+                                    <label class="form-check-label" for="notiLikeByWeb">좋아요 알림</label>
+                                    <input class="form-check-input" type="checkbox" role="switch" id="notiLikeByWeb" th:field="*{notiLikeByWeb}">
+                                </div>
+                                <div class="col-sm-4 form-check form-switch">
+                                    <label class="form-check-label" for="notiFollowByWeb">팔로우 알림</label>
+                                    <input class="form-check-input" type="checkbox" role="switch" id="notiFollowByWeb" th:field="*{notiFollowByWeb}">
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div>
                             <input id="profileImage" type="hidden" th:field="*{profileImage}" />
                         </div>

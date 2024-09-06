@@ -1,4 +1,4 @@
-package com.sonakbi.modules.series;
+package com.sonakbi.modules.series.dto;
 
 import lombok.Data;
 

@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sonakbi.modules.account.QAccount;
 import com.sonakbi.modules.editor.QEditor;
 import com.sonakbi.modules.editorTag.QEditorTag;
+import com.sonakbi.modules.tag.dto.TagCountDto;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;

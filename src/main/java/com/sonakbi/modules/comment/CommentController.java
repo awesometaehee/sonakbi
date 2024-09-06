@@ -1,23 +1,15 @@
 package com.sonakbi.modules.comment;
 
 import com.sonakbi.modules.account.Account;
-import com.sonakbi.modules.account.AccountRepository;
 import com.sonakbi.modules.account.AccountService;
 import com.sonakbi.modules.account.CurrentAccount;
+import com.sonakbi.modules.comment.form.CommentForm;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorService;
-import com.sonakbi.modules.util.Chrono;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.internal.Errors;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor

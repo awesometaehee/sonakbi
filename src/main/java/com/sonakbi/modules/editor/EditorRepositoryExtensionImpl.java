@@ -16,6 +16,7 @@ import com.sonakbi.modules.like.QLikes;
 import com.sonakbi.modules.series.QSeries;
 import com.sonakbi.modules.tag.Tag;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<EditorDto> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId) {
+    public List<Editor> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId) {
         QEditor editor = QEditor.editor;
         QAccount account = QAccount.account;
 
@@ -128,10 +129,7 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
             builder.and(editor.disclosure.ne(disclosure));
         }
 
-        return queryFactory.select(Projections.constructor(EditorDto.class
-                        , editor.id, editor.title, editor.mainText, editor.description, editor.writer, editor.url, editor.thumbnail
-                        , editor.disclosure, editor.publishedTime, editor.likeCount, editor.commentCount, editor.orderId))
-                .from(editor).where(builder)
+        return from(editor).where(builder)
                 .leftJoin(editor.writer, account)
                 .orderBy(editor.id.desc())
                 .limit(20)

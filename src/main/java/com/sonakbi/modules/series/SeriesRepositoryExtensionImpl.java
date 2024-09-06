@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sonakbi.modules.account.QAccount;
 import com.sonakbi.modules.editor.QEditor;
+import com.sonakbi.modules.series.dto.SeriesDto;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;

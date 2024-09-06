@@ -1,4 +1,4 @@
-package com.sonakbi.modules.comment;
+package com.sonakbi.modules.comment.form;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

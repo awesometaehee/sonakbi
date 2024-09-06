@@ -1,4 +1,4 @@
-package com.sonakbi.modules.like;
+package com.sonakbi.modules.like.form;
 
 import lombok.Data;
 

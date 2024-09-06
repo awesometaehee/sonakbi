@@ -541,3 +541,16 @@ p {
 .div-reply {
     display:none;
 }
+
+.noti-circle {
+    width: 11px;
+    height: 11px;
+    display: block;
+    position: absolute;
+    background-color: #ff6262;
+    border-radius: 50%;
+    z-index: 1;
+    top: 10px;
+    right: 7px;
+    border: 1px solid #fff;
+}

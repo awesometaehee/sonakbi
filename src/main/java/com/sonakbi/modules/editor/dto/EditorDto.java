@@ -1,7 +1,10 @@
-package com.sonakbi.modules.editor;
+package com.sonakbi.modules.editor.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sonakbi.modules.account.Account;
-import com.sonakbi.modules.comment.Comment;
+import com.sonakbi.modules.account.dto.AccountEditorDto;
+import com.sonakbi.modules.comment.CommentDto;
+import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.util.Chrono;
 import jakarta.persistence.Basic;
 import jakarta.persistence.FetchType;
@@ -25,7 +28,7 @@ public class EditorDto {
 
     private String description;
 
-    private Account writer;
+    private AccountEditorDto writer;
 
     private String url;
 
@@ -42,7 +45,8 @@ public class EditorDto {
 
     private int orderId;
 
-    private List<Comment> comments;
+    @JsonProperty("comments")
+    private List<CommentDto> comments = new ArrayList<>();
 
     // 필요한 생성자 추가
     public EditorDto(Long id, String title, String mainText, String description, Account writer,
@@ -52,7 +56,7 @@ public class EditorDto {
         this.title = title;
         this.mainText = mainText;
         this.description = description;
-        this.writer = writer;
+        this.writer = AccountEditorDto.from(writer);
         this.url = url;
         this.thumbnail = thumbnail;
         this.disclosure = disclosure;
@@ -60,7 +64,8 @@ public class EditorDto {
         this.likeCount = likeCount;
         this.commentCount = commentCount;
         this.orderId = orderId;
-        this.comments = writer != null ? writer.getComments() : new ArrayList<>();
+        this.comments = CommentDto.from(writer.getComments());
+        // this.comments = writer != null ? writer.getComments() : new ArrayList<>();
     }
 
     public EditorDto(Editor editor) {
@@ -68,7 +73,7 @@ public class EditorDto {
         this.title = editor.getTitle();
         this.mainText = editor.getMainText();
         this.description = editor.getDescription();
-        this.writer = editor.getWriter();
+        this.writer = AccountEditorDto.from(editor.getWriter());
         this.url = editor.getUrl();
         this.thumbnail = editor.getThumbnail();
         this.disclosure = editor.isDisclosure();
@@ -76,7 +81,8 @@ public class EditorDto {
         this.likeCount = editor.getLikeCount();
         this.commentCount = editor.getCommentCount();
         this.orderId = editor.getOrderId();
-        this.comments = editor.getWriter().getComments();
+        this.comments = CommentDto.from(editor.getWriter().getComments());
+        // this.comments = editor.getWriter().getComments();
     }
 
     public static List<EditorDto> from(List<Editor> editors) {

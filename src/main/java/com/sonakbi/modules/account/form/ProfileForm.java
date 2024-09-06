@@ -27,4 +27,10 @@ public class ProfileForm {
 
     @Lob @Basic(fetch = FetchType.EAGER)
     private String profileImage;
+
+    private boolean notiCommentByWeb;
+
+    private boolean notiLikeByWeb;
+
+    private boolean notiFollowByWeb;
 }

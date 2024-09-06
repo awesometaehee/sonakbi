@@ -1,4 +1,4 @@
-package com.sonakbi.modules.tag;
+package com.sonakbi.modules.tag.dto;
 
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringPath;

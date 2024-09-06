@@ -173,4 +173,8 @@ public class EditorService {
     public List<Editor> getListTop40(boolean disclosure) {
         return editorRepository.findTop40ByDisclosureOrderByIdDesc(disclosure);
     }
+
+    public List<Editor> getList20(boolean disclosure, Long lastId) {
+        return editorRepository.findTop20ByDisclosureOrderByIdDesc(disclosure, lastId);
+    }
 }

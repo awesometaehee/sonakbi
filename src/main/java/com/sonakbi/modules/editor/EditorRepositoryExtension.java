@@ -19,6 +19,6 @@ public interface EditorRepositoryExtension {
 
     Editor findByLastId(Account account, boolean disclosure);
 
-    List<EditorDto> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId);
+    List<Editor> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId);
 
 }

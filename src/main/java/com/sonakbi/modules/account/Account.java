@@ -6,6 +6,7 @@ import com.sonakbi.modules.follow.Follow;
 import com.sonakbi.modules.series.Series;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -49,6 +50,12 @@ public class Account {
     private String authority;
 
     private String aboutDescription;
+
+    private boolean notiCommentByWeb = true;
+
+    private boolean notiLikeByWeb = true;
+
+    private boolean notiFollowByWeb = true;
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JsonIgnore

@@ -3,6 +3,8 @@ package com.sonakbi.modules.series;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorRepository;
+import com.sonakbi.modules.series.dto.SeriesUpdateDto;
+import com.sonakbi.modules.series.dto.SeriesUpdateListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

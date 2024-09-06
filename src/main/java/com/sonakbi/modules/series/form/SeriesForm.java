@@ -1,4 +1,4 @@
-package com.sonakbi.modules.series;
+package com.sonakbi.modules.series.form;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

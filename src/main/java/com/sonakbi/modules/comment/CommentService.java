@@ -1,8 +1,10 @@
 package com.sonakbi.modules.comment;
 
 import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.comment.event.CommentCreatedEvent;
 import com.sonakbi.modules.editor.Editor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Comment createComment(String content, Editor editor, Account account, Long parentId) {
         editor.addComment();
@@ -29,6 +32,8 @@ public class CommentService {
             Comment parentComment = commentRepository.findById(parentId).orElseThrow();
             comment.setParentComment(parentComment);
         }
+
+        eventPublisher.publishEvent(new CommentCreatedEvent(comment, editor));
 
         return commentRepository.save(comment);
     }
