@@ -1,7 +1,7 @@
 package com.sonakbi.modules.comment;
 
 import com.sonakbi.modules.account.Account;
-import com.sonakbi.modules.comment.event.CommentCreatedEvent;
+import com.sonakbi.modules.comment.event.CommentCreateEvent;
 import com.sonakbi.modules.editor.Editor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,7 +33,7 @@ public class CommentService {
             comment.setParentComment(parentComment);
         }
 
-        eventPublisher.publishEvent(new CommentCreatedEvent(comment, editor));
+        eventPublisher.publishEvent(new CommentCreateEvent(comment, editor));
 
         return commentRepository.save(comment);
     }

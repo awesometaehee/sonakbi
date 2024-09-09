@@ -2,7 +2,10 @@ package com.sonakbi.modules.like;
 
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.editor.Editor;
+import com.sonakbi.modules.like.event.LikesCreateEvent;
+import com.sonakbi.modules.like.event.LikesEventListener;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +17,7 @@ import java.util.Optional;
 public class LikesService {
 
     private final LikesRepository likesRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void likeSubmit(Editor editor, Account account, String url) {
         editor.checkIfExistingEditor(url, account);
@@ -28,6 +32,8 @@ public class LikesService {
             // newLike.setEditor(editor);
             likesRepository.save(newLike);
             editor.addLike();
+
+            eventPublisher.publishEvent(new LikesCreateEvent(newLike, editor));
         }
     }
 

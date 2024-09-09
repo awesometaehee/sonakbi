@@ -3,7 +3,9 @@ package com.sonakbi.modules.follow;
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.AccountFollowDto;
 import com.sonakbi.modules.account.AccountRepository;
+import com.sonakbi.modules.follow.event.FollowCreateEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final AccountRepository accountRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void follow(Long followerId, Long followingId) {
         Account follower = accountRepository.findById(followerId).orElseThrow();
@@ -31,6 +34,7 @@ public class FollowService {
                     .build();
 
             followRepository.save(follow);
+            eventPublisher.publishEvent(new FollowCreateEvent(follow));
         } else {
             throw new IllegalArgumentException("이미 팔로우한 계정입니다.");
         }

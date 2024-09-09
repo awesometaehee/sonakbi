@@ -1,6 +1,7 @@
 package com.sonakbi.modules.notification;
 
 import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.util.Chrono;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,10 @@ public class Notification {
     private Account account;
 
     private LocalDateTime createdDateTime;
+
+    public String getCreatedDateTime() {
+        return Chrono.timesAgo(this.createdDateTime);
+    }
 
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType;

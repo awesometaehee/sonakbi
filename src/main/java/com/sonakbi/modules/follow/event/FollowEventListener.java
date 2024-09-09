@@ -1,4 +1,4 @@
-package com.sonakbi.modules.comment.event;
+package com.sonakbi.modules.follow.event;
 
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.AccountRepository;
@@ -19,29 +19,28 @@ import java.time.LocalDateTime;
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class CommentEventListener {
+public class FollowEventListener {
 
     private final AccountRepository accountRepository;
     private final NotificationRepository notificationRepository;
 
     @EventListener
-    public void handlerCommentCreatedEvent(CommentCreateEvent commentCreateEvent) {
-        Account account = accountRepository.findById(commentCreateEvent.getEditor().getWriter().getId()).orElseThrow();
-        Account commentUser = accountRepository.findById(commentCreateEvent.getComment().getAccount().getId()).orElseThrow();
+    public void handlerFollowCreatedEvent(FollowCreateEvent followCreateEvent) {
+        Account account = accountRepository.findById(followCreateEvent.getFollow().getFollowing().getId()).orElseThrow();
+        Account followUser = accountRepository.findById(followCreateEvent.getFollow().getFollower().getId()).orElseThrow();
 
-        if(account.isNotiCommentByWeb()) {
+        if(account.isNotiFollowByWeb()) {
             Notification notification = Notification.builder()
-                    .title(commentUser.getUserId() + "님이 댓글을 등록했습니다.")
-                    .link("/blog/" + account.getId() + "/view/" + commentCreateEvent.getEditor().getUrl())
-                    .message(commentCreateEvent.getComment().getContent())
+                    .title("팔로우 소식이 있습니다.")
+                    .link("/blog/" + account.getId() + "/post")
+                    .message(followUser.getUserId() + "님이 팔로우했습니다.")
                     .checked(false)
                     .createdDateTime(LocalDateTime.now())
                     .account(account)
-                    .notificationType(NotificationType.NOTIFICATION_COMMENT)
+                    .notificationType(NotificationType.NOTIFICATION_FOLLOW)
                     .build();
 
             notificationRepository.save(notification);
         }
     }
-
 }

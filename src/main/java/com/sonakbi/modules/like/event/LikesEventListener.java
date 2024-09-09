@@ -1,4 +1,4 @@
-package com.sonakbi.modules.comment.event;
+package com.sonakbi.modules.like.event;
 
 import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.AccountRepository;
@@ -19,29 +19,28 @@ import java.time.LocalDateTime;
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class CommentEventListener {
+public class LikesEventListener {
 
     private final AccountRepository accountRepository;
     private final NotificationRepository notificationRepository;
 
     @EventListener
-    public void handlerCommentCreatedEvent(CommentCreateEvent commentCreateEvent) {
-        Account account = accountRepository.findById(commentCreateEvent.getEditor().getWriter().getId()).orElseThrow();
-        Account commentUser = accountRepository.findById(commentCreateEvent.getComment().getAccount().getId()).orElseThrow();
+    public void handlerLikesCreatedEvent(LikesCreateEvent likesCreateEvent) {
+        Account account = accountRepository.findById(likesCreateEvent.getEditor().getWriter().getId()).orElseThrow();
+        Account likedUser = accountRepository.findById(likesCreateEvent.getLikes().getAccount().getId()).orElseThrow();
 
-        if(account.isNotiCommentByWeb()) {
+        if(account.isNotiLikeByWeb()) {
             Notification notification = Notification.builder()
-                    .title(commentUser.getUserId() + "님이 댓글을 등록했습니다.")
-                    .link("/blog/" + account.getId() + "/view/" + commentCreateEvent.getEditor().getUrl())
-                    .message(commentCreateEvent.getComment().getContent())
+                    .title("좋아요 알림이 있습니다.")
+                    .link("/blog/" + account.getId() + "/view/" + likesCreateEvent.getEditor().getUrl())
+                    .message(likedUser.getUserId() + "님이 좋아요를 눌렀습니다.")
                     .checked(false)
                     .createdDateTime(LocalDateTime.now())
                     .account(account)
-                    .notificationType(NotificationType.NOTIFICATION_COMMENT)
+                    .notificationType(NotificationType.NOTIFICATION_LIKE)
                     .build();
 
             notificationRepository.save(notification);
         }
     }
-
 }
