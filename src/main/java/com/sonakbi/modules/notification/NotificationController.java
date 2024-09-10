@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,12 @@ public class NotificationController {
         model.addAttribute("isNew", false);
 
         return "notification/list";
+    }
+
+    @PostMapping("/notifications/delete")
+    public String deleteAllNotifications(@CurrentAccount Account account) {
+        notificationRepository.deleteByAccountAndChecked(account, true);
+        return "redirect:/notifications";
     }
 
     private void putCategorizedNotifications(Account account, Model model, List<Notification> notifications, long numberOfChecked, long numberOfNotChecked) {
