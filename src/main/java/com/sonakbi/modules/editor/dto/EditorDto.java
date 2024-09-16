@@ -5,6 +5,7 @@ import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.dto.AccountEditorDto;
 import com.sonakbi.modules.comment.CommentDto;
 import com.sonakbi.modules.editor.Editor;
+import com.sonakbi.modules.editorTag.EditorTag;
 import com.sonakbi.modules.util.Chrono;
 import jakarta.persistence.Basic;
 import jakarta.persistence.FetchType;
@@ -13,7 +14,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Setter @Getter
@@ -35,6 +38,8 @@ public class EditorDto {
     @Lob @Basic(fetch = FetchType.EAGER)
     private String thumbnail;
 
+    private Set<EditorTag> editorTags = new HashSet<>();
+
     private boolean disclosure;
 
     private String publishedTime;
@@ -50,7 +55,7 @@ public class EditorDto {
 
     // 필요한 생성자 추가
     public EditorDto(Long id, String title, String mainText, String description, Account writer,
-                     String url, String thumbnail, boolean disclosure, LocalDateTime publishedTime,
+                     String url, String thumbnail, Set<EditorTag> editorTags, boolean disclosure, LocalDateTime publishedTime,
                      int likeCount, int commentCount, int orderId) {
         this.id = id;
         this.title = title;
@@ -59,6 +64,7 @@ public class EditorDto {
         this.writer = AccountEditorDto.from(writer);
         this.url = url;
         this.thumbnail = thumbnail;
+        this.editorTags = editorTags;
         this.disclosure = disclosure;
         this.publishedTime = Chrono.timesAgo(publishedTime);
         this.likeCount = likeCount;
@@ -76,6 +82,7 @@ public class EditorDto {
         this.writer = AccountEditorDto.from(editor.getWriter());
         this.url = editor.getUrl();
         this.thumbnail = editor.getThumbnail();
+        this.editorTags = editor.getEditorTags();
         this.disclosure = editor.isDisclosure();
         this.publishedTime = editor.getPublishedTime();
         this.likeCount = editor.getLikeCount();

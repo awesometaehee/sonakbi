@@ -14,6 +14,7 @@ import com.sonakbi.modules.comment.QComment;
 import com.sonakbi.modules.editorTag.QEditorTag;
 import com.sonakbi.modules.like.QLikes;
 import com.sonakbi.modules.series.QSeries;
+import com.sonakbi.modules.tag.QTag;
 import com.sonakbi.modules.tag.Tag;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +100,31 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
+    public List<Editor> findByKeywordIgnoreCase(String keyword, Long lastId) {
+        QEditor editor = QEditor.editor;
+        QEditorTag editorTag = QEditorTag.editorTag;
+        QTag tag = QTag.tag;
+        QAccount account = QAccount.account;
+        QLikes likes = QLikes.likes;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(editor.title.containsIgnoreCase(keyword));
+        builder.or(tag.value.containsIgnoreCase(keyword));
+        builder.and(editor.disclosure.eq(true));
+        builder.and(editor.id.lt(lastId));
+
+        return from(editor).where(builder)
+                .leftJoin(editor.editorTags, editorTag)
+                .leftJoin(editor.writer, account)
+                .leftJoin(editorTag.tag, tag)
+                .leftJoin(editor.likes, likes)
+                .distinct()
+                .orderBy(editor.publishedTime.desc())
+                .limit(20)
+                .fetch();
+    }
+
+    @Override
     public Editor findByLastId(Account writer, boolean disclosure) {
         QEditor editor = QEditor.editor;
         QAccount account = QAccount.account;
@@ -132,6 +158,30 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
         return from(editor).where(builder)
                 .leftJoin(editor.writer, account)
                 .orderBy(editor.id.desc())
+                .limit(20)
+                .fetch();
+    }
+
+    @Override
+    public List<Editor> findFirst20ByKeywordContainingOrderByIdDesc(String keyword) {
+        QEditor editor = QEditor.editor;
+        QEditorTag editorTag = QEditorTag.editorTag;
+        QTag tag = QTag.tag;
+        QAccount account = QAccount.account;
+        QLikes likes = QLikes.likes;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(editor.title.containsIgnoreCase(keyword));
+        builder.or(tag.value.containsIgnoreCase(keyword));
+        builder.and(editor.disclosure.eq(true));
+
+        return from(editor).where(builder)
+                .leftJoin(editor.editorTags, editorTag)
+                .leftJoin(editor.writer, account)
+                .leftJoin(editorTag.tag, tag)
+                .leftJoin(editor.likes, likes)
+                .distinct()
+                .orderBy(editor.publishedTime.desc())
                 .limit(20)
                 .fetch();
     }

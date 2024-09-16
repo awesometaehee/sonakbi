@@ -17,8 +17,12 @@ public interface EditorRepositoryExtension {
 
     List<Editor> findByKeywordContainingIgnoreCase(Account writer, boolean disclosure, String keyword);
 
+    List<Editor> findByKeywordIgnoreCase(String keyword, Long lastId);
+
     Editor findByLastId(Account account, boolean disclosure);
 
     List<Editor> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId);
+
+    List<Editor> findFirst20ByKeywordContainingOrderByIdDesc(String keyword);
 
 }

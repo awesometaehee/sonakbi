@@ -39,7 +39,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/}">
+                <a class="nav-link" th:href="@{/search}">
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </a>
             </li>
@@ -722,5 +722,41 @@
         <p th:text="${noti.message}" class="text-start mb-0 mt-1">message</p>
     </a>
 </ul>
+
+<div th:fragment="search-list-fragment (searchList)">
+    <ul class="search-list" id="searchList">
+        <li class="item" th:each="post : ${searchList}">
+            <input type="hidden" name="postId" th:value="${post.id}" />
+            <div class="user-info">
+                <a th:href="@{'/blog/' + ${post.writer.id} + '/post'}">
+                    <img th:src="${post.writer.profileImage}" th:alt="${post.writer.userId}" />
+                </a>
+                <p class="user-name" th:text="${post.writer.userId}"></p>
+            </div>
+            <div class="search-thumbnail" th:if="${post.useThumbnail()}">
+                <a th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}">
+                    <img th:src="${post.thumbnail}" th:alt="${post.title}" />
+                </a>
+            </div>
+            <a class="text-dark underline" th:href="@{'/blog/' + ${post.writer.id} + '/view/' + ${post.url}}">
+                <h2 class="search-tit" th:text="${post.title}">title</h2>
+            </a>
+            <div class="description">
+                <p th:text="${post.description}">소개</p>
+            </div>
+            <div class="search-tag-list">
+        <span class="badge rounded-pill bg-dark me-2" th:each="editorTag : ${post.editorTags}">
+            <a th:text="${editorTag.tag.value}"></a>
+        </span>
+            </div>
+            <div class="search-footer">
+                <span class="fs-7 text-muted" th:text="${post.publishedTime}"></span> ⋅
+                <span class="fs-7 text-muted">댓글 <span th:text="${post.commentCount}">0</span>개</span> ⋅
+                <span class="fs-7 text-muted">♥ <span th:text="${post.likeCount}">0</span></span>
+            </div>
+        </li>
+    </ul>
+    <input type="hidden" id="nextCursor" th:value="${nextCursor}" />
+</div>
 
 </html>

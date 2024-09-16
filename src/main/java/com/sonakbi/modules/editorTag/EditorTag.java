@@ -6,6 +6,8 @@ import com.sonakbi.modules.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Getter @Setter
 @EqualsAndHashCode(of = "id")

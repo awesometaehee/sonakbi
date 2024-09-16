@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments :: head"></head>
+<body>
+<div class="w-100 h-100 d-grid">
+    <div th:replace="fragments :: main-nav"></div>
+    <div class="container">
+        <div class="w-768 mx-auto">
+            <div style="margin-top:80px" class="search-box">
+                <div class="search-inp-box">
+                    <form class="input-group input-group-lg" id="searchForm">
+                        <input type="text" id="searchInp" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+                        <div class="input-group-prepend">
+                            <button id="searchBtn" class="btn btn-lg btn-dark" style="border-radius:0 .5rem .5rem 0">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div th:replace="fragments :: search-list-fragment (searchList=${searchList})"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:replace="fragments :: ajax-csrf-header"></script>
+<script type="application/javascript" th:inline="javascript">
+    $(function() {
+        const $searchInp = $('#searchInp');
+        const $searchBtn = $('#searchBtn');
+        const $searchForm = $('#searchForm');
+        const $searchList = $('#searchList');
+        const url = '/search/q';
+        let lastId = null;
+        let isFirst = false;
+
+        $searchForm.on('submit', function(e) {
+            e.preventDefault();
+
+            if($searchInp.val() === "") {
+                alert("검색어를 입력하세요.");
+            } else {
+                $.ajax({
+                    type : 'get',
+                    contentType: "application/json; charset=utf-8",
+                    dataType : "text",
+                    data : {keyword : $searchInp.val(), lastId : lastId},
+                    url : url
+                }).done(function(fragment) {
+                    $('#searchList').empty();
+                    $('#searchList').append($(fragment).find('.item'));
+
+                    lastId = $(fragment).find('#nextCursor').val();
+                })
+            }
+        })
+
+        function getList() {
+            if($searchInp.val() === "") {
+                alert("검색어를 입력하세요.");
+            } else {
+                $.ajax({
+                    type : 'get',
+                    contentType: "application/json; charset=utf-8",
+                    dataType : "text",
+                    data : {keyword : $searchInp.val(), lastId : lastId},
+                    url : url
+                }).done(function(fragment) {
+                    $('#searchList').append($(fragment).find('.item'));
+                    lastId = $(fragment).find('#nextCursor').val();
+                })
+            }
+        }
+
+        $(window).on('scroll', function () {
+            const SCROLLED_HEIGHT = $(window).scrollTop();
+            const WINDOW_HEIGHT = $(window).height();
+            const DOC_TOTAL_HEIGHT = $(document).height();
+            const IS_BOTTOM = WINDOW_HEIGHT + SCROLLED_HEIGHT === DOC_TOTAL_HEIGHT;
+
+            if (IS_BOTTOM && lastId) {
+                getList();
+            }
+        })
+    })
+</script>
+</html>

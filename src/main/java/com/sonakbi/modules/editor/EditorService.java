@@ -177,4 +177,12 @@ public class EditorService {
     public List<Editor> getList20(boolean disclosure, Long lastId) {
         return editorRepository.findTop20ByDisclosureOrderByIdDesc(disclosure, lastId);
     }
+
+    public List<Editor> searchWithKeyword(String keyword, Long lastId) {
+        if(lastId == null) {
+            return editorRepository.findFirst20ByKeywordContainingOrderByIdDesc(keyword);
+        } else {
+            return editorRepository.findByKeywordIgnoreCase(keyword, lastId);
+        }
+    }
 }

@@ -191,7 +191,7 @@ p {
     top:0;
     left:0;
     right:0;
-    z-index: 1;
+    z-index: 10;
     background-color: #fff;
 }
 
@@ -553,4 +553,83 @@ p {
     top: 10px;
     right: 7px;
     border: 1px solid #fff;
+}
+
+.search-inp-box {
+    margin-bottom:1rem;
+}
+
+.search-post-count {
+    margin-bottom:2.5rem;
+    color:#495057;
+}
+
+.search-box .search-list .item {
+    padding:4rem 0;
+}
+
+.search-box .search-list .user-info {
+    display:flex;
+    align-items: center;
+    margin-bottom:1.5rem;
+}
+
+.search-box .search-list .user-info img {
+    width:3rem;
+    height:3rem;
+    display: block;
+    margin-right: 1rem;
+    background-color: #F8F9FA;
+    object-fit: cover;
+    border-radius: 1.5rem;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
+}
+
+.search-box .search-list .user-info .user-name {
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+.search-box .search-thumbnail {
+    margin-bottom:1.5rem;
+}
+
+.search-box .search-thumbnail a {
+    display:block;
+    width:100%;
+    height:400px;
+}
+
+.search-box .search-thumbnail img {
+    width:100%;
+    height:100%;
+    display: block;
+    object-fit: cover;
+}
+
+.search-box .search-list .search-tit {
+    font-size:1.6rem;
+    font-weight: bold;
+    margin-bottom:.7rem;
+}
+
+.search-box .search-list .description {
+    margin-bottom:1.5rem;
+}
+
+.search-box .search-list .description p {
+    width:100%;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.search-box .search-tag-list {
+    margin-bottom:1rem;
+}
+
+.search-box .search-tag-list span {
+    font-size:1rem;
 }

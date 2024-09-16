@@ -35,8 +35,11 @@ public interface EditorRepository extends JpaRepository<Editor, Long>, EditorRep
     @Query("select e.id from Editor e order by e.id desc limit 1")
     Long findByLastId();
 
-    @Query("select e from Editor e left join e.comments c where c.id = :id")
-    Editor findEditorWithCommentById(Long id);
+    @Query("select e.id from Editor e left join e.editorTags et left join et.tag t where (lower(e.title) like lower(concat('%', :keyword, '%')) or lower(t.value) like lower(concat('%', :keyword, '%'))) and e.disclosure = true order by e.id desc limit 1")
+    Long findByKeywordAndLastId(String keyword);
+
+    @Query("select count(e) from Editor e left join e.editorTags et left join et.tag t where (lower(e.title) like lower(concat('%', :keyword, '%')) or lower(t.value) like lower(concat('%', :keyword, '%'))) and e.disclosure = true")
+    Integer countEditorByKeyword(String keyword);
 
     // @EntityGraph(value = "Editor.withTags", type = EntityGraph.EntityGraphType.LOAD)
     // List<Editor> findEditorByWriterOrderByPublishedTimeDesc(Account writer, boolean disclosure);
