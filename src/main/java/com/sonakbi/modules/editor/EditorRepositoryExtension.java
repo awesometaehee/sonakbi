@@ -1,12 +1,14 @@
 package com.sonakbi.modules.editor;
 
 import com.sonakbi.modules.account.Account;
+import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.series.Series;
 import com.sonakbi.modules.tag.Tag;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Transactional(readOnly = true)
 public interface EditorRepositoryExtension {
@@ -24,5 +26,7 @@ public interface EditorRepositoryExtension {
     List<Editor> findTop20ByDisclosureOrderByIdDesc(boolean disclosure, Long lastId);
 
     List<Editor> findFirst20ByKeywordContainingOrderByIdDesc(String keyword);
+
+    List<Editor> findByLikes(Set<Likes> likes);
 
 }

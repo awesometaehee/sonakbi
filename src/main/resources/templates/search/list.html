@@ -33,7 +33,11 @@
         const $searchList = $('#searchList');
         const url = '/search/q';
         let lastId = null;
-        let isFirst = false;
+
+        if(sessionStorage.getItem('loadedPosts')) {
+            $('#searchList').html(sessionStorage.getItem('loadedPosts'));
+            $searchInp.val(sessionStorage.getItem('keyword'));
+        }
 
         $searchForm.on('submit', function(e) {
             e.preventDefault();
@@ -50,8 +54,10 @@
                 }).done(function(fragment) {
                     $('#searchList').empty();
                     $('#searchList').append($(fragment).find('.item'));
-
                     lastId = $(fragment).find('#nextCursor').val();
+
+                    sessionStorage.setItem('loadedPosts', $('#searchList').html());
+                    sessionStorage.setItem('keyword', $searchInp.val());
                 })
             }
         })
@@ -69,6 +75,8 @@
                 }).done(function(fragment) {
                     $('#searchList').append($(fragment).find('.item'));
                     lastId = $(fragment).find('#nextCursor').val();
+
+                    sessionStorage.setItem('loadedPosts', $('#searchList').html());
                 })
             }
         }
@@ -81,6 +89,14 @@
 
             if (IS_BOTTOM && lastId) {
                 getList();
+            }
+        })
+
+        // 검색한 게시글 이동 제외한 나머지 페이지 이동은 session clear
+        $('a').on('click', function(e) {
+            const nextPageUrl = $(this).attr('href');
+            if(!nextPageUrl.includes('/view/')) {
+                sessionStorage.clear();
             }
         })
     })

@@ -8,10 +8,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @Transactional(readOnly = true)
 public interface LikesRepository extends JpaRepository<Likes, Long> {
 
     Optional<Likes> findByEditorAndAccount(Editor editor, Account account);
+
+    Set<Likes> findByAccount(Account account);
 }

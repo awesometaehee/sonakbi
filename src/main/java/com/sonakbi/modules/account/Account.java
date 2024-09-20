@@ -3,18 +3,14 @@ package com.sonakbi.modules.account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sonakbi.modules.comment.Comment;
 import com.sonakbi.modules.follow.Follow;
+import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.series.Series;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -87,11 +83,4 @@ public class Account {
         return this.userId.equals(account.getUsername());
     }
 
-    public int getFollowerCount() {
-        return 1;
-    }
-
-    public int getFollowingCount() {
-        return 2;
-    }
 }

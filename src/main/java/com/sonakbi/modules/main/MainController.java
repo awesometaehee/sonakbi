@@ -24,10 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainController {
 
-    private final AccountRepository accountRepository;
-    private final EditorRepository editorRepository;
     private final EditorService editorService;
-    private final AccountService accountService;
 
     @GetMapping("/")
     public String home(@CurrentAccount Account account, Model model) {
@@ -50,19 +47,13 @@ public class MainController {
 
     @GetMapping("/search")
     public String searchForm(@CurrentAccount Account account, Model model) {
-        model.addAttribute(account);
+        if(account != null) {
+            model.addAttribute(account);
+        }
+
         model.addAttribute("isFirst", true);
         return "search/list";
     }
-
-    /*
-    @GetMapping("/search/q")
-    @ResponseBody
-    public ResponseEntity<?> searchWithKeyword(@RequestParam(value="keyword", required = false) String keyword) {
-        List<EditorDto> postList = EditorDto.from(editorRepository.findByKeywordIgnoreCase(keyword));
-        return ResponseEntity.ok(postList);
-    }
-    */
 
     @GetMapping("/search/q")
     public String searchWithKeyword(@RequestParam(value="keyword") String keyword

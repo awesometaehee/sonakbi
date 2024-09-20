@@ -12,6 +12,7 @@ import com.sonakbi.modules.account.Account;
 import com.sonakbi.modules.account.QAccount;
 import com.sonakbi.modules.comment.QComment;
 import com.sonakbi.modules.editorTag.QEditorTag;
+import com.sonakbi.modules.like.Likes;
 import com.sonakbi.modules.like.QLikes;
 import com.sonakbi.modules.series.QSeries;
 import com.sonakbi.modules.tag.QTag;
@@ -20,6 +21,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport implements EditorRepositoryExtension {
 
@@ -183,6 +185,24 @@ public class EditorRepositoryExtensionImpl extends QuerydslRepositorySupport imp
                 .distinct()
                 .orderBy(editor.publishedTime.desc())
                 .limit(20)
+                .fetch();
+    }
+
+    @Override
+    public List<Editor> findByLikes(Set<Likes> likesSet) {
+        QEditor editor = QEditor.editor;
+        QAccount account = QAccount.account;
+        QLikes likes = QLikes.likes;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(editor.disclosure.eq(true));
+        builder.and(editor.likes.any().in(likesSet));
+
+        return from(editor).where(builder)
+                .leftJoin(editor.writer, account)
+                .leftJoin(editor.likes, likes)
+                .orderBy(editor.publishedTime.desc())
+                .distinct()
                 .fetch();
     }
 }
