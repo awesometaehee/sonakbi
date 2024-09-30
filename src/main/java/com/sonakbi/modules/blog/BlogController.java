@@ -62,7 +62,7 @@ public class BlogController {
         int followerCount = followRepository.countFollowerByAccountId(accountInfo.getId());
         int followingCount = followRepository.countFollowingByAccountId(accountInfo.getId());
         Editor byLastId = editorRepository.findByLastId(accountInfo, checkEqualAccount);
-        Long lastId = byLastId.getId() + 1;
+        Long lastId = (byLastId != null) ? byLastId.getId() + 1 : 0;
 
         model.addAttribute(account);
         model.addAttribute("accountInfo", accountInfo);
