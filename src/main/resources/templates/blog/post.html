@@ -29,12 +29,12 @@
                         <div class="border-bottom pb-3 mb-3">태그 목록</div>
                         <ul class="fs-7">
                             <li>
-                                <a class="text-dark" th:href="@{'/blog/' + ${account.id} + '/post'}">전체보기</a>
+                                <a class="text-dark" th:href="@{'/blog/' + ${accountInfo.id} + '/post'}">전체보기</a>
                                 <span>(<span th:text="${total}">0</span>)</span>
                             </li>
                             <li th:each="tag : ${tagList}">
                                 <!-- TODO classappend 설정 작업 필요 -->
-                                <a class="text-dark" th:href="@{/blog/{id}/post(id=${account.id}, tag=${tag.value})}" th:text="${tag.value}">태그</a>
+                                <a class="text-dark" th:href="@{/blog/{id}/post(id=${accountInfo.id}, tag=${tag.value})}" th:text="${tag.value}">태그</a>
                                 <span>(<span th:text="${tag.count}">0</span>)</span>
                             </li>
                         </ul>
@@ -80,19 +80,18 @@
     $(function() {
         let lastId = $("#postListWrap .post-item:last-child input[name='postId']").val();
         const $postListWrap = $('#postListWrap');
-        let IS_FETCHING = false;
 
         function getList() {
-            IS_FETCHING = true;
             const url = '/blog/' + [[${accountInfo.id}]] + '/post/' + lastId;
 
             $.ajax({
                 type : 'get',
                 contentType: "application/json; charset=utf-8",
                 url : url,
+                async : false,
             }).done(function(data, status) {
-                const dataList = JSON.parse(data);
-                drawList(dataList);
+                // const dataList = JSON.parse(data);
+                drawList(data);
             })
         }
 
@@ -117,9 +116,16 @@
                 listHtml += '<p class="mb-3">' + item.description + '</p>';
 
                 listHtml += '<div class="mb-3">';
+                /*
                 item.editorTags.forEach(function(tag) {
                     listHtml += '<span class="badge rounded-pill bg-dark me-2">';
                     listHtml += '<a href="#">' + tag.value + '</a>';
+                    listHtml += '</span>';
+                });
+                */
+                item.tags.forEach(function(tag) {
+                    listHtml += '<span class="badge rounded-pill bg-dark me-2">';
+                    listHtml += '<a>' + tag + '</a>';
                     listHtml += '</span>';
                 });
                 listHtml += '</div>';
@@ -141,7 +147,6 @@
                     lastId = item.id;
                 }
             })
-            IS_FETCHING = false;
             $postListWrap.append(listHtml);
         }
 
@@ -149,7 +154,8 @@
             const SCROLLED_HEIGHT = $(window).scrollTop();
             const WINDOW_HEIGHT = $(window).height();
             const DOC_TOTAL_HEIGHT = $(document).height();
-            const IS_BOTTOM = WINDOW_HEIGHT + SCROLLED_HEIGHT === DOC_TOTAL_HEIGHT;
+            // 두번째 스크롤 시 소숫점 때문에 조건이 맞지 않음 ==> 합한 값을 소수점 올림 처리함
+            const IS_BOTTOM = Math.ceil(WINDOW_HEIGHT + SCROLLED_HEIGHT) === DOC_TOTAL_HEIGHT;
 
             if (IS_BOTTOM) {
                 getList();

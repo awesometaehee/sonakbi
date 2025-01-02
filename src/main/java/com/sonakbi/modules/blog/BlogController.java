@@ -12,6 +12,7 @@ import com.sonakbi.modules.comment.CommentService;
 import com.sonakbi.modules.editor.Editor;
 import com.sonakbi.modules.editor.EditorRepository;
 import com.sonakbi.modules.editor.EditorService;
+import com.sonakbi.modules.editor.dto.EditorDto;
 import com.sonakbi.modules.follow.FollowRepository;
 import com.sonakbi.modules.follow.FollowService;
 import com.sonakbi.modules.series.*;
@@ -82,9 +83,11 @@ public class BlogController {
                 , @RequestParam(value = "tag", required = false) String tagValue, @PathVariable Long lastId) throws JsonProcessingException {
         Account accountInfo = accountService.getAccountInfo(id);
         boolean checkEqualAccount = account.checkEqualAccount(account, accountInfo); // true = 본 계정 false = 방문자
-        List<Editor> postList = editorService.getEditorList(accountInfo, checkEqualAccount, tagValue, lastId);
+        // List<Editor> postList = editorService.getEditorList(accountInfo, checkEqualAccount, tagValue, lastId);
+        List<EditorDto> postList = EditorDto.from(editorService.getEditorList(
+                accountInfo, checkEqualAccount, tagValue, lastId));
 
-        return ResponseEntity.ok().body(objectMapper.writeValueAsString(postList));
+        return ResponseEntity.ok(postList);
     }
 
 

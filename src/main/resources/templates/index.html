@@ -54,6 +54,7 @@
                 type : 'get',
                 contentType: "application/json; charset=utf-8",
                 url : '/scroll/' + lastId,
+                async : false,
             }).done(function(data, status) {
                 drawList(data);
             })
@@ -106,7 +107,7 @@
             const SCROLLED_HEIGHT = $(window).scrollTop();
             const WINDOW_HEIGHT = $(window).height();
             const DOC_TOTAL_HEIGHT = $(document).height();
-            const IS_BOTTOM = WINDOW_HEIGHT + SCROLLED_HEIGHT === DOC_TOTAL_HEIGHT;
+            const IS_BOTTOM = Math.ceil(WINDOW_HEIGHT + SCROLLED_HEIGHT) === DOC_TOTAL_HEIGHT;
 
             if (IS_BOTTOM) {
                 getList();

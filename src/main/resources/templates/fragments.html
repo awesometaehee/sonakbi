@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-    <title>sonakbi</title>
+    <title>logloglog</title>
     <!--<link rel="stylesheet" th:href="@{/css/tailwind-out.css}" />-->
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&family=Noto+Sans+KR:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />
@@ -27,7 +27,7 @@
 
 <nav th:fragment="main-nav" id="mainNav" class="navbar navbar-expand-sm px-4 border border-bottom">
     <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
-        <h4 class="nanum-myeongjo-regular text-black mb-0">조용히완전히영원히.</h4>
+        <h4 class="text-black mb-0">LoglOgloG.</h4>
     </a>
     <div class="collapse navbar-collapse">
         <div class="me-auto"></div>
@@ -68,7 +68,7 @@
                     <a class="dropdown-item" th:href="@{/profile}">내 정보 수정</a>
                 </li>
                 <li>
-                    <a class="dropdown-item" th:href="@{/liked}">읽기 목록</a>
+                    <a class="dropdown-item" th:href="@{/liked}">좋아요 목록</a>
                 </li>
                 <li>
                     <form th:action="@{/logout}" method="post">
@@ -611,7 +611,9 @@
         })
 
         $('#seriesResetBtn').on('click', function() {
-            $series.val();
+            $('#series').css({
+                'color': 'transparent',
+            });
             $('#seriesOpenBtn').show();
             $('#seriesForm').hide();
         })

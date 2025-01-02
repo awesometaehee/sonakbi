@@ -67,8 +67,10 @@ public class EditorController {
     }
 
     /*
+     * 게시글 임의 생성
+     */
     @GetMapping("/test")
-    public String test(@CurrentAccount Account account) {
+    public String writeTest(@CurrentAccount Account account) {
         for(int i=0; i<100; i++) {
             String random = RandomString.make(5);
             Editor editor = new Editor();
@@ -83,7 +85,7 @@ public class EditorController {
         }
         return null;
     }
-    */
+
 
     @PostMapping("/write")
     public String writeFormSubmit(@CurrentAccount Account account, EditorForm editorForm, Errors errors, Model model)

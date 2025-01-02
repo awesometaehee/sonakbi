@@ -27,8 +27,8 @@ public class CommentDto {
     public CommentDto(Comment comment) {
         this.content = comment.getContent();
         this.commentId = comment.getId();
-        this.userId = comment.getAccount().getUserId();
-        this.profileImage = comment.getAccount().getProfileImage();
+        // this.userId = comment.getAccount().getUserId();
+        // this.profileImage = comment.getAccount().getProfileImage();
         this.createdAt = comment.getCreatedAt();
         this.childrenComment = comment.getChildrenComment();
     }

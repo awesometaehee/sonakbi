@@ -148,6 +148,8 @@ public class Editor {
             if(series.getEditor() != null) {
                 series.getEditor().add(this);
             }
+        } else {
+            this.orderId = 0;
         }
     }
 

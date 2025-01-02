@@ -75,7 +75,7 @@ public class EditorService {
         }
 
         modelMapper.map(editorForm, editor);
-        editor.addSeries(series, true);
+        editor.addSeries(series, false);
         editor.setUrl(editorUrl);
 
         if(editorForm.getThumbnail().isEmpty()) {
@@ -160,10 +160,6 @@ public class EditorService {
             // 시리즈에 속하지 않은 경우 그냥 삭제
             editorRepository.delete(editor);
         }
-    }
-
-    public void addSeries(Editor editor, Series series) {
-        editor.addSeries(series, true);
     }
 
     public List<Editor> getSeachEditorList(Account writer, boolean disclosure, String keyword) {

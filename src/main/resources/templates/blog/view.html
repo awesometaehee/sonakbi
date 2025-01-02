@@ -41,7 +41,7 @@
                     </h4>
                     <ol class="series-ol show">
                        <li class="mb-2" th:classappend="${ed.title == editor.title} ? active" th:each="ed, edStat : ${editorList}">
-                           <a class="text-dark underline" th:href="@{'/blog/' + ${account.id} + '/view/' + ${ed.url}}" th:text="${ed.title}"></a>
+                           <a class="text-dark underline" th:href="@{'/blog/' + ${accountInfo.id} + '/view/' + ${ed.url}}" th:text="${ed.title}"></a>
                            <input id="seriesHiddenIdx" type="hidden" th:value="${edStat.index + 1}">
                        </li>
                     </ol>
